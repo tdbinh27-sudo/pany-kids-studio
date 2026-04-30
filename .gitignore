@@ -1,0 +1,16 @@
+# Workspace-level — let apps/web/.gitignore handle Next.js specifics
+node_modules
+.DS_Store
+*.log
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode
+.idea
+
+# OS
+Thumbs.db
