@@ -8,7 +8,7 @@
 
 ## Objective
 
-Xây dựng một dashboard giáo dục 24/7 cho 3 con trong gia đình, làm "trung tâm điều phối" cho:
+Xây dựng một dashboard giáo dục 24/7 cho 3 con trong gia đình (mở rộng cho trẻ 6-16 tuổi), làm "trung tâm điều phối" cho:
 
 1. **Lộ trình học 5 năm** (2026—2031) — 6 trụ cột phát triển
 2. **Hướng nghiệp** — khám phá 10 nghề tương lai dựa trên năng lực thực tế

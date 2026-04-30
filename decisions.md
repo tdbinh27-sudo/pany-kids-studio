@@ -65,5 +65,5 @@
 
 ### D-008: Visual style = anime/funny (NOT editorial)
 - **Decision**: Fredoka + Quicksand + Caveat fonts, pastel palette, emoji-rich, animations
-- **Why**: Audience là kids 8-12, anime style attract follow; v2 editorial cho adults
+- **Why**: Audience là kids 6-16 (mở rộng 2026-04-30 — Year 1 phù hợp 6 tuổi với content đơn giản hơn), anime style attract follow; v2 editorial cho adults
 - **Tradeoff**: Less "professional looking" cho người lớn nhìn → giải pháp: bố mode có thể toggle styles trong v4 nếu cần

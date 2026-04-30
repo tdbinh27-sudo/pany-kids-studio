@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Pany Kids Studio",
   description:
-    "5-Year Family Learning System · 2026—2031 · Tech, English, Finance, Critical Thinking, Business, Life Experience for kids 8-16.",
+    "5-Year Family Learning System · 2026—2031 · Tech, English, Finance, Critical Thinking, Business, Life Experience for kids 6-16.",
 };
 
 export default function RootLayout({

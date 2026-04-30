@@ -19,7 +19,7 @@ import ChatBot from '@/components/ChatBot';
 
 const I18N = {
   vi: {
-    appTitle: 'Pany Kids Studio', appSubtitle: 'Hệ thống học tập gia đình 5 năm · 2026—2031',
+    appTitle: 'Pany Kids Studio', appSubtitle: 'Hệ thống học tập gia đình 5 năm · Cho trẻ 6-16 tuổi · 2026—2031',
     estLine: 'thành lập 2026 · cho các bạn nhỏ nhà Pany',
     students: 'học viên', activeLearners: 'đang học',
     overview: 'Tổng quan', roadmap: 'Lộ trình 5 năm', calendar: 'Lịch tuần',
@@ -65,7 +65,7 @@ const I18N = {
     weekFocus: 'Tâm điểm tuần', daily: 'Hằng ngày', weekly: 'Hằng tuần',
   },
   en: {
-    appTitle: 'Pany Kids Studio', appSubtitle: '5-Year Family Learning System · 2026—2031',
+    appTitle: 'Pany Kids Studio', appSubtitle: '5-Year Family Learning System · For kids 6-16 · 2026—2031',
     estLine: 'est. 2026 · for the children of Pany',
     students: 'students', activeLearners: 'active learners',
     overview: 'Overview', roadmap: '5-Year Roadmap', calendar: 'Weekly Calendar',
@@ -131,7 +131,7 @@ const YEAR_PLANS = [
   {
     year: 1, vi_title: 'Năm 1 — Khởi động', en_title: 'Year 1 — Foundations',
     vi_subtitle: 'Khởi đầu', en_subtitle: 'Foundations & Curiosity',
-    age_focus: '8-12', emoji: '🌱',
+    age_focus: '6-12', emoji: '🌱',
     quarters: [
       { vi_name: 'Q1: Làm quen AI & Tiếng Anh', en_name: 'Q1: AI & English Intro', weeks: '1-12',
         vi_obj: ['Hiểu AI là công cụ', 'Học 200 từ vựng qua truyện', 'Hoàn thành 3 dự án Story Cards'],
@@ -154,7 +154,7 @@ const YEAR_PLANS = [
   {
     year: 2, vi_title: 'Năm 2 — Mở rộng', en_title: 'Year 2 — Expanding',
     vi_subtitle: 'Mở rộng kỹ năng', en_subtitle: 'Skills Deepen',
-    age_focus: '9-13', emoji: '🌿',
+    age_focus: '7-13', emoji: '🌿',
     quarters: [
       { vi_name: 'Q1: Tiếng Anh giao tiếp', en_name: 'Q1: English Communication', weeks: '49-60',
         vi_obj: ['Kể chuyện 5 phút bằng tiếng Anh', 'Đọc sách thiếu nhi tiếng Anh', '500 từ vựng tích lũy'],
@@ -177,7 +177,7 @@ const YEAR_PLANS = [
   {
     year: 3, vi_title: 'Năm 3 — Sáng tạo', en_title: 'Year 3 — Creative ID',
     vi_subtitle: 'Sáng tạo & Cá tính', en_subtitle: 'Creative Identity',
-    age_focus: '10-14', emoji: '🌳',
+    age_focus: '8-14', emoji: '🌳',
     quarters: [
       { vi_name: 'Q1: Web Development', en_name: 'Q1: Web Development', weeks: '97-108',
         vi_obj: ['Trang web cá nhân (HTML/CSS)', 'Deploy GitHub Pages/Vercel', 'Portfolio 2 năm qua'],
@@ -200,7 +200,7 @@ const YEAR_PLANS = [
   {
     year: 4, vi_title: 'Năm 4 — Tư duy hệ thống', en_title: 'Year 4 — Systems',
     vi_subtitle: 'Tư duy hệ thống', en_subtitle: 'Systems Thinking',
-    age_focus: '11-15', emoji: '🌲',
+    age_focus: '9-15', emoji: '🌲',
     quarters: [
       { vi_name: 'Q1: Python + AI', en_name: 'Q1: Python + AI', weeks: '145-156',
         vi_obj: ['Python cơ bản', 'Chatbot với Anthropic API', 'Prompt engineering'],
@@ -223,7 +223,7 @@ const YEAR_PLANS = [
   {
     year: 5, vi_title: 'Năm 5 — Tự lập', en_title: 'Year 5 — Independence',
     vi_subtitle: 'Tự lập & Chuyển giao', en_subtitle: 'Independence & Mastery',
-    age_focus: '12-16', emoji: '🌟',
+    age_focus: '10-16', emoji: '🌟',
     quarters: [
       { vi_name: 'Q1: Chọn chuyên ngành', en_name: 'Q1: Pick Specialty', weeks: '193-204',
         vi_obj: ['Chọn 1 hướng sâu', 'Tự lập learning plan 12 tuần', 'Bố là cố vấn'],
@@ -444,6 +444,7 @@ const HARDWARE_BY_AGE = [
 ];
 
 const FINANCIAL_SKILLS = [
+  { age: '6-7', vi_skills: ['Đếm tiền xu/tờ tiền', 'Phân biệt mệnh giá', '3 hũ vật lý (nhìn thấy)'], en_skills: ['Count coins/bills', 'Recognize denominations', 'Physical 3 jars (visible)'], vi_milestone: 'Bỏ tiền vào 3 hũ tự phân chia', en_milestone: 'Drop coins into 3 jars by self' },
   { age: '8-10', vi_skills: ['Cần vs muốn', 'Tiết kiệm 3 hũ', 'Cộng trừ tiền'], en_skills: ['Need vs want', '3-jar saving', 'Add/subtract money'], vi_milestone: 'Để dành mua món yêu thích', en_milestone: 'Save for a favorite item' },
   { age: '11-13', vi_skills: ['Lãi-lỗ', 'Chi phí cố định/biến đổi', 'Đọc hóa đơn'], en_skills: ['Profit-loss', 'Fixed/variable cost', 'Read receipts'], vi_milestone: 'Vận hành tiệm có lãi', en_milestone: 'Run a profitable shop' },
   { age: '14-16', vi_skills: ['Lãi suất kép', 'Stock vs bond', 'Tax', 'Budget tháng'], en_skills: ['Compound interest', 'Stock vs bond', 'Tax', 'Monthly budget'], vi_milestone: 'Quản lý 100% tiền + tiết kiệm dài hạn', en_milestone: 'Manage 100% money + long-term saving' },
@@ -482,6 +483,7 @@ const PUBLISHING = [
 const SOFTWARE_STACK = [
   { vi_pillar: 'AI & Lập trình', en_pillar: 'AI & Coding',
     items: [
+      { age: '6-7', tools: ['Bee-Bot', 'ScratchJr', 'Code-a-pillar'], vi_note: 'Code không màn hình — robot/đồ chơi', en_note: 'Screenless coding — robots/toys' },
       { age: '8-10', tools: ['Scratch', 'Code.org', 'Tynker'], vi_note: 'Kéo thả', en_note: 'Drag-drop' },
       { age: '11-13', tools: ['MIT App Inventor', 'Python (Thonny)', 'Replit Kids'], vi_note: 'Bắt đầu gõ code', en_note: 'Start typing code' },
       { age: '14-16', tools: ['VSCode', 'Claude Code (cùng bố)', 'GitHub', 'Cursor'], vi_note: 'Dev tools chuẩn', en_note: 'Pro dev tools' },
@@ -494,6 +496,7 @@ const SOFTWARE_STACK = [
   },
   { vi_pillar: 'Tiếng Anh', en_pillar: 'English',
     items: [
+      { age: '6-7', tools: ['Lingokids', 'CocoMelon', 'Super Simple Songs'], vi_note: 'Nghe + hát theo, không đọc viết', en_note: 'Listen + sing along, no reading/writing' },
       { age: '8-10', tools: ['Duolingo Kids', 'Khan Academy Kids', 'Lingokids'], vi_note: 'Game-based', en_note: 'Game-based' },
       { age: '11-13', tools: ['Duolingo', 'Cambridge One', 'BBC Learning English'], vi_note: 'Có cấu trúc', en_note: 'Structured' },
       { age: '14-16', tools: ['Cambridge prep', 'TED-Ed', 'YouGlish'], vi_note: 'Học thuật', en_note: 'Academic' },
@@ -506,6 +509,7 @@ const SOFTWARE_STACK = [
   },
   { vi_pillar: 'Tài chính', en_pillar: 'Finance',
     items: [
+      { age: '6-7', tools: ['3 hũ trong suốt', 'Đồng xu thật'], vi_note: 'Cầm nắm tiền vật lý — chưa cần app', en_note: 'Hands-on physical money — no app yet' },
       { age: '8-10', tools: ['Sổ giấy', 'GoHenry'], vi_note: 'Vật lý trước', en_note: 'Physical first' },
       { age: '11-13', tools: ['Money Lover Kids', 'Excel/Sheets'], vi_note: 'Track tiền tiêu vặt', en_note: 'Track allowance' },
       { age: '14-16', tools: ['Vietcombank Junior', 'Investopedia sim'], vi_note: 'Đầu tư mô phỏng', en_note: 'Mock investing' },
@@ -514,6 +518,7 @@ const SOFTWARE_STACK = [
 ];
 
 const ENGLISH_STAGES = [
+  { stage_vi: '6-7 tuổi · Listening', stage_en: 'Age 6-7 · Listening', apps: ['Lingokids', 'Super Simple Songs', 'CocoMelon', 'Bài hát + truyện đêm bố kể bằng EN'], target_vi: '50 từ · nghe hiểu', target_en: '50 words · listening comprehension', method_vi: 'Hát theo + xem hoạt hình EN, không cần đọc viết', method_en: 'Sing-along + EN cartoons, no reading/writing yet' },
   { stage_vi: '8-10 tuổi · Foundation', stage_en: 'Age 8-10 · Foundation', apps: ['Duolingo Kids', 'Lingokids', 'Khan Academy Kids', 'Story Cards với bố'], target_vi: '200 từ · Hello-level', target_en: '200 words · Hello-level', method_vi: 'Game + storytelling, không grammar', method_en: 'Game + storytelling, no grammar' },
   { stage_vi: '11-13 tuổi · Communication', stage_en: 'Age 11-13 · Communication', apps: ['Duolingo', 'Cambridge One', 'BBC Learning English Kids', 'Speak App AI'], target_vi: '1000 từ · Cambridge Movers/Flyers', target_en: '1000 words · Cambridge Movers/Flyers', method_vi: 'Speaking-first, đọc sách thiếu nhi', method_en: 'Speaking-first, read kids books' },
   { stage_vi: '14-16 tuổi · Academic', stage_en: 'Age 14-16 · Academic', apps: ['Cambridge prep', 'TED-Ed', 'YouGlish', 'IELTS prep nhẹ'], target_vi: 'KET → PET → FCE', target_en: 'KET → PET → FCE', method_vi: 'Essay writing, listening academic', method_en: 'Essay writing, academic listening' },
