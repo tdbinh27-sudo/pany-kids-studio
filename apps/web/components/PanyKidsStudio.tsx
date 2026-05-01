@@ -853,8 +853,9 @@ export default function PanyKidsStudio() {
 
       <Header lang={lang} setLang={setLangP} t={t} kids={kids} activeKidId={activeKidId} setActiveKidId={setActiveKidId} setShowLogin={setShowLogin} parentLocked={parentLocked} parentUnlocked={parentUnlocked} setParentUnlocked={setParentUnlocked} L={L} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <TabNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} L={L} />
+      <MobileTabBar activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
 
-      <main style={{ maxWidth: 1400, padding: '32px 24px 80px', marginLeft: sidebarOpen ? 240 : 0, transition: 'margin-left 0.25s ease-out' }} className="main-content">
+      <main style={{ maxWidth: 1400, padding: '20px 16px 80px', marginLeft: sidebarOpen ? 240 : 0, transition: 'margin-left 0.25s ease-out' }} className="main-content">
         {activeTab === 'overview'    && <OverviewTab     kids={kids} getOverall={getOverall} getYearProgress={getYearProgress} getPillarProgress={getPillarProgress} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} />}
         {activeTab === 'roadmap'     && <RoadmapTab      kids={kids} progress={progress} toggleObjective={toggleObjective} expandedYear={expandedYear} setExpandedYear={setExpandedYear} openEval={openEval} getQuarterProgress={getQuarterProgress} t={t} L={L} lang={lang} />}
         {activeTab === 'calendar'    && <CalendarTab     kids={kids} weeklyTasks={weeklyTasks} setTasksP={setTasksP} streaks={streaks} checkInToday={checkInToday} t={t} L={L} />}
@@ -947,11 +948,17 @@ function GlobalStyles() {
       .scrolly::-webkit-scrollbar { width: 6px; }
       .scrolly::-webkit-scrollbar-thumb { background: #FFD1E8; border-radius: 3px; }
       @media (max-width: 1023px) {
-        .main-content { margin-left: 0 !important; }
-        .sidebar-nav { width: 88vw !important; max-width: 320px; }
+        .main-content { margin-left: 0 !important; padding: 12px 12px 80px !important; }
+        .sidebar-nav { width: 82vw !important; max-width: 280px; }
+        .mobile-tab-bar { display: block !important; }
+        .sidebar-toggle { display: flex !important; }
       }
       @media (min-width: 1024px) {
         .sidebar-close-btn { display: none; }
+        .mobile-tab-bar { display: none !important; }
+      }
+      @media (max-width: 1023px) {
+        .header-sidebar-toggle { display: none !important; }
       }
       .anime-bg { background-image: radial-gradient(circle at 20% 20%, rgba(255,107,157,0.06) 0, transparent 40%), radial-gradient(circle at 80% 80%, rgba(77,171,247,0.06) 0, transparent 40%); }
     `}</style>
@@ -1000,6 +1007,7 @@ function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLo
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             aria-label="Toggle sidebar"
+            className="header-sidebar-toggle"
             style={{
               background: 'rgba(255,255,255,0.2)', color: '#fff', border: 'none',
               width: 40, height: 40, borderRadius: 12, cursor: 'pointer',
@@ -1072,6 +1080,65 @@ function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLo
   );
 }
 
+// Mobile-only horizontal scrollable tab bar (shown < 1024px via CSS)
+function MobileTabBar({ activeTab, setActiveTab, t }) {
+  const tabs = [
+    { id: 'overview',    label: t('overview'),    em: '🏠' },
+    { id: 'roadmap',     label: t('roadmap'),     em: '🗺️' },
+    { id: 'calendar',    label: t('calendar'),    em: '📅' },
+    { id: 'skilltree',   label: t('skillTree'),   em: '🌳' },
+    { id: 'career',      label: t('career'),      em: '💼' },
+    { id: 'kids',        label: t('kidsTab'),     em: '👥' },
+    { id: 'badges',      label: t('badges'),      em: '🏆' },
+    { id: 'journal',     label: t('journal'),     em: '📓' },
+    { id: 'portfolio',   label: t('portfolio'),   em: '🖼️' },
+    { id: 'leaderboard', label: t('leaderboard'), em: '📊' },
+    { id: 'hardware',    label: t('hardware'),    em: '💻' },
+    { id: 'software',    label: t('software'),    em: '🤖' },
+    { id: 'english',     label: t('english'),     em: '🌍' },
+    { id: 'finance',     label: t('finance'),     em: '💰' },
+    { id: 'thinking',    label: t('thinking'),    em: '🧠' },
+    { id: 'rewards',     label: t('rewards'),     em: '🎁' },
+    { id: 'experiences', label: t('experiences'), em: '🌳' },
+    { id: 'publish',     label: t('publish'),     em: '📤' },
+    { id: 'library',     label: t('library'),     em: '📚' },
+    { id: 'aisearch',    label: t('aiSearch'),    em: '🔍' },
+    { id: 'quiz',        label: t('quiz'),        em: '🧩' },
+    { id: 'report',      label: t('report'),      em: '📋' },
+    { id: 'settings',    label: t('settings'),    em: '⚙️' },
+  ];
+  return (
+    <nav className="scrollx mobile-tab-bar" style={{
+      background: '#fff', borderBottom: `1px solid ${C.border}`,
+      position: 'sticky', top: 0, zIndex: 18, display: 'none',
+      boxShadow: '0 2px 6px rgba(132,94,194,0.06)',
+    }}>
+      <div style={{ display: 'flex', gap: 4, overflowX: 'auto', padding: '8px 12px', WebkitOverflowScrolling: 'touch' }}>
+        {tabs.map(tab => {
+          const active = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className="body-f"
+              style={{
+                background: active ? `linear-gradient(135deg, ${C.pink}, ${C.purple})` : 'transparent',
+                color: active ? '#fff' : C.sub,
+                border: 'none', padding: '8px 12px', fontSize: 12, fontWeight: 700,
+                cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6,
+                whiteSpace: 'nowrap', borderRadius: 999, flexShrink: 0,
+                boxShadow: active ? `0 3px 8px ${C.pink}40` : 'none',
+              }}
+            >
+              <span style={{ fontSize: 14 }}>{tab.em}</span> {tab.label}
+            </button>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
 function TabNav({ activeTab, setActiveTab, t, sidebarOpen, setSidebarOpen, L }) {
   const tabGroups = [
     { vi: 'Tổng quan', en: 'Overview', items: [
@@ -1114,19 +1181,7 @@ function TabNav({ activeTab, setActiveTab, t, sidebarOpen, setSidebarOpen, L }) 
   return (
     <>
       {/* Mobile toggle button */}
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        aria-label="Toggle sidebar"
-        style={{
-          position: 'fixed', top: 16, left: 16, zIndex: 31,
-          background: `linear-gradient(135deg, ${C.pink}, ${C.purple})`,
-          color: '#fff', border: 'none', width: 40, height: 40, borderRadius: 12,
-          cursor: 'pointer', boxShadow: C.shadow,
-          display: sidebarOpen ? 'none' : 'flex',
-          alignItems: 'center', justifyContent: 'center', fontSize: 18,
-        }}
-        className="sidebar-toggle"
-      >☰</button>
+      {/* Floating ☰ button removed — only Header toggle on desktop, mobile uses MobileTabBar */}
 
       {/* Sidebar overlay (mobile) */}
       {sidebarOpen && (
