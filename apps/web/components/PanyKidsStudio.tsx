@@ -15,6 +15,7 @@ import ChatBot from '@/components/ChatBot';
 import VietnamMap from '@/components/VietnamMap';
 import AISearchTab from '@/components/AISearch';
 import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
+import { QUIZ_BANK } from '@/lib/quiz';
 
 // ============================================================
 // PANY KIDS STUDIO v3 — ANIME/FUNNY · BILINGUAL · ALL TIERS
@@ -125,9 +126,9 @@ const I18N = {
 };
 
 const DEFAULT_KIDS = [
-  { id: 'kid_1', name: 'Phúc',  age: 8,  color: '#FF6B9D', emoji: '🌟', pin: '1111', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
-  { id: 'kid_2', name: 'An',    age: 10, color: '#4DABF7', emoji: '🚀', pin: '2222', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
-  { id: 'kid_3', name: 'Y',     age: 12, color: '#51CF66', emoji: '🎨', pin: '3333', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
+  { id: 'kid_1', name: 'Phúc',  age: 8,  color: '#FF6B9D', emoji: '🌟', pin: '1111', pinHint: '', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
+  { id: 'kid_2', name: 'An',    age: 10, color: '#4DABF7', emoji: '🚀', pin: '2222', pinHint: '', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
+  { id: 'kid_3', name: 'Y',     age: 12, color: '#51CF66', emoji: '🎨', pin: '3333', pinHint: '', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
 ];
 
 const PILLARS = [
@@ -384,38 +385,7 @@ const RESOURCES = [
   { type: 'websites', age: '14-16', vi_title: 'Coursera (audit free)', en_title: 'Coursera (audit free)', author: 'Coursera', vi_why: 'Course đại học free audit', en_why: 'Free audit university courses', url: 'https://coursera.org' },
 ];
 
-// === QUIZ TEMPLATES (Tier 3) ===
-const QUIZ_BANK = [
-  { pillar: 'tech', age: '8-10', vi_q: 'Trong Scratch, lệnh nào lặp lại 10 lần?', en_q: 'In Scratch, which block repeats 10 times?',
-    vi_options: ['repeat 10', 'forever', 'wait 10', 'if-then'], en_options: ['repeat 10', 'forever', 'wait 10', 'if-then'], answer: 0 },
-  { pillar: 'tech', age: '11-13', vi_q: 'Python: lệnh in ra màn hình là gì?', en_q: 'Python: which prints to screen?',
-    vi_options: ['print()', 'console.log()', 'echo', 'show()'], en_options: ['print()', 'console.log()', 'echo', 'show()'], answer: 0 },
-  { pillar: 'tech', age: '14-16', vi_q: 'API là viết tắt của gì?', en_q: 'What does API stand for?',
-    vi_options: ['Application Programming Interface', 'Apple Pie Interface', 'Auto Print Index', 'Async Process Init'],
-    en_options: ['Application Programming Interface', 'Apple Pie Interface', 'Auto Print Index', 'Async Process Init'], answer: 0 },
-  { pillar: 'english', age: '8-10', vi_q: 'Từ "happy" nghĩa là gì?', en_q: 'What does "happy" mean?',
-    vi_options: ['Vui', 'Buồn', 'Tức giận', 'Sợ'], en_options: ['Joyful', 'Sad', 'Angry', 'Scared'], answer: 0 },
-  { pillar: 'english', age: '11-13', vi_q: 'Past tense của "go" là?', en_q: 'Past tense of "go"?',
-    vi_options: ['went', 'goed', 'gone', 'going'], en_options: ['went', 'goed', 'gone', 'going'], answer: 0 },
-  { pillar: 'english', age: '14-16', vi_q: 'Cambridge KET tương đương level CEFR nào?', en_q: 'Cambridge KET = which CEFR level?',
-    vi_options: ['A2', 'B1', 'B2', 'C1'], en_options: ['A2', 'B1', 'B2', 'C1'], answer: 0 },
-  { pillar: 'finance', age: '8-10', vi_q: 'Hệ thống 3 hũ: Hũ Tiêu là bao nhiêu %?', en_q: '3-jar system: Spend jar is what %?',
-    vi_options: ['50%', '40%', '10%', '100%'], en_options: ['50%', '40%', '10%', '100%'], answer: 0 },
-  { pillar: 'finance', age: '11-13', vi_q: 'Lãi - Chi phí = ?', en_q: 'Revenue - Cost = ?',
-    vi_options: ['Lợi nhuận', 'Doanh thu', 'Vốn', 'Thuế'], en_options: ['Profit', 'Revenue', 'Capital', 'Tax'], answer: 0 },
-  { pillar: 'finance', age: '14-16', vi_q: 'Lãi suất kép có nghĩa là?', en_q: 'Compound interest means?',
-    vi_options: ['Lãi sinh ra lãi', 'Lãi cố định', 'Không có lãi', 'Lãi giảm'],
-    en_options: ['Interest on interest', 'Fixed interest', 'No interest', 'Decreasing interest'], answer: 0 },
-  { pillar: 'thinking', age: '11-13', vi_q: 'Logical fallacy "ad hominem" nghĩa là?', en_q: '"Ad hominem" fallacy means?',
-    vi_options: ['Tấn công cá nhân thay vì lý lẽ', 'Lập luận đúng', 'Cho ví dụ', 'Tóm tắt'],
-    en_options: ['Attack person not argument', 'Valid argument', 'Give example', 'Summarize'], answer: 0 },
-  { pillar: 'business', age: '11-13', vi_q: 'ROI viết tắt của gì?', en_q: 'What does ROI stand for?',
-    vi_options: ['Return on Investment', 'Rate of Income', 'Real Output Index', 'Run on Internet'],
-    en_options: ['Return on Investment', 'Rate of Income', 'Real Output Index', 'Run on Internet'], answer: 0 },
-  { pillar: 'business', age: '14-16', vi_q: 'MVP trong startup là gì?', en_q: 'What is MVP in startup?',
-    vi_options: ['Minimum Viable Product', 'Most Valuable Player', 'Major Value Proposition', 'Multi Vendor Platform'],
-    en_options: ['Minimum Viable Product', 'Most Valuable Player', 'Major Value Proposition', 'Multi Vendor Platform'], answer: 0 },
-];
+// QUIZ_BANK now imported from @/lib/quiz (60+ questions, expanded 2026-04-30)
 
 // === HARDWARE / SOFTWARE / FINANCE / EXPERIENCES / etc (giữ lại từ v2 + bilingual nhẹ) ===
 const HARDWARE_BY_AGE = [
@@ -1620,6 +1590,8 @@ function CareerTab({ t, L, kids, getPillarProgress }) {
 function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidData, startEditKid, saveEditKid, addNewKid, showAddKid, setShowAddKid, newKidName, setNewKidName, newKidAge, setNewKidAge, removeKid, getYearProgress, evaluations, streaks, unlockedBadges, t, L, setKidsP, activeKidId, isParentAuthed }) {
   const [editingPin, setEditingPin] = React.useState(null);
   const [pinValue, setPinValue] = React.useState('');
+  const [pinHintValue, setPinHintValue] = React.useState('');
+  const startEditPin = (kid) => { setEditingPin(kid.id); setPinValue(kid.pin); setPinHintValue(kid.pinHint || ''); };
   // Privacy: kid in kid-mode can only edit own profile; parent can edit all
   const canEdit = (kidId) => isParentAuthed || activeKidId === kidId;
 
@@ -1731,14 +1703,18 @@ function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidD
                     <div>
                       <div className="display" style={{ fontSize: 24, fontWeight: 700 }}>{kid.name}</div>
                       <div className="body-f" style={{ fontSize: 12, color: C.sub, fontWeight: 600 }}>{kid.age} {L('tuổi', 'years old')}</div>
-                      <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 2 }}>🔐 PIN: {editingPin === kid.id ? '' : '••••'}</div>
+                      <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 2 }}>🔐 PIN: ••••{kid.pinHint ? ` · 💭 ${kid.pinHint}` : ''}</div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
                     {canEdit(kid.id) && (
                       <>
-                        <button onClick={() => startEditKid(kid)} className="btn-bounce" style={{ background: C.soft, border: 'none', padding: 8, borderRadius: 12, cursor: 'pointer' }} title={L('Sửa hồ sơ', 'Edit profile')}><Edit3 size={16} color={C.purple} /></button>
-                        <button onClick={() => { setEditingPin(kid.id); setPinValue(kid.pin); }} className="btn-bounce" style={{ background: C.soft, border: 'none', padding: 8, borderRadius: 12, cursor: 'pointer' }} title={L('Đổi PIN', 'Change PIN')}><Lock size={16} color={C.sky} /></button>
+                        <button onClick={() => startEditKid(kid)} className="btn-bounce body-f" style={{ background: C.soft, border: 'none', padding: '8px 12px', borderRadius: 12, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: C.purple }} title={L('Sửa hồ sơ', 'Edit profile')}>
+                          <Edit3 size={14} /> {L('Hồ sơ', 'Profile')}
+                        </button>
+                        <button onClick={() => startEditPin(kid)} className="btn-bounce body-f" style={{ background: '#FFF4D1', border: 'none', padding: '8px 12px', borderRadius: 12, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: '#9B6800' }} title={L('Đổi mật mã 4 số', 'Change 4-digit passcode')}>
+                          <Lock size={14} /> {L('Đổi mật mã', 'Change PIN')}
+                        </button>
                       </>
                     )}
                     {!canEdit(kid.id) && (
@@ -1753,11 +1729,39 @@ function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidD
                 </div>
 
                 {editingPin === kid.id && (
-                  <div style={{ marginBottom: 16, padding: 12, background: C.soft, borderRadius: 12 }}>
-                    <input type="text" maxLength={4} value={pinValue} onChange={e => setPinValue(e.target.value.replace(/\D/g, ''))}
-                      placeholder={t('enterPin')} style={{ width: '100%', padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 16, fontWeight: 700, letterSpacing: 8, textAlign: 'center', outline: 'none', marginBottom: 8 }} />
+                  <div className="pop-in" style={{ marginBottom: 16, padding: 16, background: '#FFF4D1', borderRadius: 14, border: `2px solid ${C.gold}` }}>
+                    <h4 className="display" style={{ fontSize: 16, fontWeight: 700, margin: '0 0 4px', color: '#9B6800' }}>🔒 {L('Đổi mật mã', 'Change passcode')}</h4>
+                    <div className="body-f" style={{ fontSize: 12, color: '#9B6800', marginBottom: 12, lineHeight: 1.5 }}>
+                      {L('Mật mã 4 chữ số. Đặt số con dễ nhớ. Có thể ghi gợi ý bên dưới (chỉ con thấy).', '4-digit passcode. Pick numbers easy to remember. Add a private hint below.')}
+                    </div>
+
+                    <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: '#9B6800', display: 'block', marginBottom: 4 }}>
+                      🔢 {L('Mật mã mới (4 số)', 'New passcode (4 digits)')}
+                    </label>
+                    <input type="text" maxLength={4} value={pinValue} autoFocus
+                      onChange={e => setPinValue(e.target.value.replace(/\D/g, ''))}
+                      placeholder="••••" style={{ width: '100%', padding: 12, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 22, fontWeight: 700, letterSpacing: 12, textAlign: 'center', outline: 'none', marginBottom: 12 }} />
+
+                    <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: '#9B6800', display: 'block', marginBottom: 4 }}>
+                      💭 {L('Gợi ý cho con (tuỳ chọn)', 'Hint for yourself (optional)')}
+                    </label>
+                    <input type="text" maxLength={50} value={pinHintValue}
+                      onChange={e => setPinHintValue(e.target.value)}
+                      placeholder={L('VD: Ngày sinh con thêm 1', 'e.g. Birthday plus 1')}
+                      style={{ width: '100%', padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 13, outline: 'none', marginBottom: 12 }} />
+
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <Btn onClick={() => { setKidsP(kids.map(k => k.id === kid.id ? { ...k, pin: pinValue } : k)); setEditingPin(null); }} color={C.mint} size="sm" style={{ flex: 1 }}>{t('save')}</Btn>
+                      <Btn
+                        onClick={() => {
+                          if (pinValue.length !== 4) {
+                            alert(L('Mật mã phải đủ 4 số.', 'Passcode must be 4 digits.'));
+                            return;
+                          }
+                          setKidsP(kids.map(k => k.id === kid.id ? { ...k, pin: pinValue, pinHint: pinHintValue } : k));
+                          setEditingPin(null);
+                        }}
+                        color={C.mint} size="sm" icon={Save} style={{ flex: 1, justifyContent: 'center' }}
+                      >{L('Lưu mật mã mới', 'Save new passcode')}</Btn>
                       <Btn onClick={() => setEditingPin(null)} color={C.mute} variant="outline" size="sm">{t('cancel')}</Btn>
                     </div>
                   </div>
@@ -2003,7 +2007,7 @@ function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
           <div style={{ marginBottom: 18 }}>
             <div className="body-f" style={{ fontSize: 12, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{t('age')}</div>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {[null, '8-10', '11-13', '14-16'].map(a => (
+              {[null, '6-7', '8-10', '11-13', '14-16'].map(a => (
                 <button key={a || 'all'} onClick={() => setFilter({ ...filter, age: a })} className="btn-bounce body-f" style={{ background: filter.age === a ? C.purple : '#fff', color: filter.age === a ? '#fff' : C.purple, border: `2px solid ${C.purple}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{a || L('Tất cả', 'All')}</button>
               ))}
             </div>

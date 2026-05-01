@@ -67,14 +67,14 @@ export default function ChatBot({ ctx }: { ctx: ChatBotContext }) {
         body: JSON.stringify({ ctx, history: messages, message: msg }),
       });
       const data = await res.json();
-      const reply = data.reply ?? t("Đại Ka chưa trả lời được. Em thử lại nhé!", "Đại Ka couldn't reply. Try again!");
+      const reply = data.reply ?? t("Đại Ka chưa trả lời được. Con thử lại nhé!", "Đại Ka couldn't reply. Try again, con!");
       setMessages([...next, { role: "assistant", content: reply }]);
     } catch {
       setMessages([
         ...next,
         {
           role: "assistant",
-          content: t("Mất kết nối rồi. Em thử lại sau nhé!", "Lost connection. Try again later!"),
+          content: t("Mất kết nối rồi. Con thử lại sau nhé!", "Lost connection. Try again later, con!"),
         },
       ]);
     } finally {
@@ -86,12 +86,12 @@ export default function ChatBot({ ctx }: { ctx: ChatBotContext }) {
     role: "assistant",
     content: ctx.kidName
       ? t(
-          `Chào ${ctx.kidName}! Đại Ka đây. Em đang học gì hôm nay? 🌸`,
-          `Hi ${ctx.kidName}! Đại Ka here. What are you learning today? 🌸`
+          `Chào con ${ctx.kidName}! Đại Ka đây — đại diện bố Bình 🌸 Hôm nay con muốn cùng Đại Ka khám phá gì nhỉ?`,
+          `Chào con ${ctx.kidName}! Đại Ka here — representing Dad Bình 🌸 What does con want to explore today?`
         )
       : t(
-          "Chào em! Đại Ka đây — anh cả AI của studio. Hỏi Đại Ka điều gì cũng được nhé. 🌸",
-          "Hi there! I'm Đại Ka — the studio's big-bro AI. Ask me anything. 🌸"
+          "Chào con! Đại Ka đây — đại diện AI của bố Bình. Bố bận thì có Đại Ka ngồi cùng con. Con cứ hỏi Đại Ka thoải mái nhé 🌸",
+          "Chào con! Đại Ka here — Dad Bình's AI representative. When Dad's busy, Đại Ka sits with con. Ask anything 🌸"
         ),
   };
 
@@ -169,7 +169,7 @@ export default function ChatBot({ ctx }: { ctx: ChatBotContext }) {
                 Đại Ka
               </div>
               <div style={{ fontSize: 11, opacity: 0.9 }}>
-                {t("anh cả AI · luôn ở đây", "AI big-bro · always here")}
+                {t("đại diện bố Bình · luôn ở đây với con", "Dad Bình's AI · always here for con")}
               </div>
             </div>
             <button

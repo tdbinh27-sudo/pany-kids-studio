@@ -50,8 +50,8 @@ export async function POST(req: NextRequest) {
       {
         reply:
           ctx.lang === "vi"
-            ? "Em chat hơi nhiều rồi đó! Đại Ka cần nghỉ một xíu. Quay lại sau 1 tiếng nhé. 😴"
-            : "You've been chatting a lot! Đại Ka needs a break. Come back in an hour. 😴",
+            ? "Con chat hơi nhiều rồi! Đại Ka cần nghỉ một xíu. Con quay lại sau 1 tiếng nhé. 😴"
+            : "Con's been chatting a lot! Đại Ka needs a break. Come back in an hour. 😴",
         rateLimited: true,
       },
       { status: 429 }
@@ -74,8 +74,8 @@ export async function POST(req: NextRequest) {
         error: "claude_error",
         reply:
           ctx.lang === "vi"
-            ? "Đại Ka đang gặp trục trặc kỹ thuật. Em thử lại sau ít phút nhé!"
-            : "Đại Ka has a technical hiccup. Try again in a few minutes!",
+            ? "Đại Ka đang gặp trục trặc kỹ thuật. Con thử lại sau ít phút nhé!"
+            : "Đại Ka has a technical hiccup. Try again in a few minutes, con!",
       },
       { status: 502 }
     );
