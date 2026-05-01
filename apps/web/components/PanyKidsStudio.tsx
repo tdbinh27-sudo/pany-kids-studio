@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { storage } from '@/lib/storage';
 import ChatBot from '@/components/ChatBot';
+import VietnamMap from '@/components/VietnamMap';
+import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
 
 // ============================================================
 // PANY KIDS STUDIO v3 — ANIME/FUNNY · BILINGUAL · ALL TIERS
@@ -805,6 +807,34 @@ export default function PanyKidsStudio() {
     URL.revokeObjectURL(url);
   };
 
+  const importData = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        const ok = window.confirm(
+          lang === 'vi'
+            ? `Sẽ ghi đè dữ liệu hiện tại bằng:\n- ${data.kids?.length || 0} học viên\n- ${Object.keys(data.progress || {}).length} progress entries\n- ${Object.keys(data.journal || {}).length} journal entries\n\nTiếp tục?`
+            : `Will overwrite current data with:\n- ${data.kids?.length || 0} students\n- ${Object.keys(data.progress || {}).length} progress entries\n- ${Object.keys(data.journal || {}).length} journal entries\n\nContinue?`
+        );
+        if (!ok) return;
+        if (data.lang) setLangP(data.lang);
+        if (data.kids) setKidsP(data.kids);
+        if (data.progress) setProgP(data.progress);
+        if (data.evaluations) setEvalsP(data.evaluations);
+        if (data.streaks) setStreaksP(data.streaks);
+        if (data.journal) setJournalP(data.journal);
+        if (data.portfolio) setPortfolioP(data.portfolio);
+        if (data.weeklyTasks) setTasksP(data.weeklyTasks);
+        if (data.unlockedBadges) setBadgesP(data.unlockedBadges);
+        alert(lang === 'vi' ? '✅ Import thành công! Reload trang nhé.' : '✅ Import successful! Reload the page.');
+      } catch (err) {
+        alert(lang === 'vi' ? '❌ File không hợp lệ.' : '❌ Invalid file.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   if (loading) return <LoadingScreen t={t} />;
 
   // ============== RENDER ==============
@@ -833,12 +863,12 @@ export default function PanyKidsStudio() {
         {activeTab === 'finance'     && <FinanceTab      t={t} L={L} />}
         {activeTab === 'thinking'    && <ThinkingTab     t={t} L={L} />}
         {activeTab === 'rewards'     && <RewardsTab      t={t} L={L} />}
-        {activeTab === 'experiences' && <ExperiencesTab  t={t} L={L} />}
+        {activeTab === 'experiences' && <ExperiencesTab  t={t} L={L} kids={kids} lang={lang} />}
         {activeTab === 'publish'     && <PublishTab      t={t} L={L} />}
         {activeTab === 'library'     && <LibraryTab      t={t} L={L} />}
         {activeTab === 'quiz'        && <QuizTab         kids={kids} quizState={quizState} setQuizState={setQuizState} t={t} L={L} lang={lang} />}
         {activeTab === 'report'      && <ReportTab       kids={kids} getOverall={getOverall} streaks={streaks} unlockedBadges={unlockedBadges} getPillarProgress={getPillarProgress} exportReport={exportReport} exportData={exportData} t={t} L={L} />}
-        {activeTab === 'settings'    && <SettingsTab     lang={lang} setLangP={setLangP} exportData={exportData} t={t} />}
+        {activeTab === 'settings'    && <SettingsTab     lang={lang} setLangP={setLangP} exportData={exportData} importData={importData} t={t} L={L} />}
       </main>
 
       {evalKid && evalQuarter && (
@@ -1742,50 +1772,121 @@ function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidD
 }
 
 function LibraryTab({ t, L }) {
-  const [filter, setFilter] = React.useState('all');
-  const types = [
-    { id: 'all', em: '📚', vi: 'Tất cả', en: 'All' },
-    { id: 'books', em: '📖', vi: t('books'), en: t('books') },
-    { id: 'videos', em: '🎬', vi: t('videos'), en: t('videos') },
-    { id: 'tools', em: '🛠️', vi: t('tools'), en: t('tools') },
-    { id: 'websites', em: '🌐', vi: t('websites'), en: t('websites') },
-  ];
-  const filtered = filter === 'all' ? RESOURCES : RESOURCES.filter(r => r.type === filter);
+  const [filterPillar, setFilterPillar] = React.useState(null);
+  const [filterAge, setFilterAge] = React.useState(null);
+  const [filterType, setFilterType] = React.useState(null);
+
+  const filtered = CURATED_RESOURCES.filter(r =>
+    (!filterPillar || r.pillar === filterPillar) &&
+    (!filterAge || (filterAge >= r.age_min && filterAge <= r.age_max)) &&
+    (!filterType || r.type === filterType)
+  );
+
+  const pillarColors = { tech: C.sky, english: C.pink, finance: C.mint, thinking: C.purple, business: C.sunny, life: C.coral };
+  const typeEmojis = { video: '🎬', article: '📰', tool: '🛠️', game: '🎮', book: '📖', course: '🎓', channel: '📺' };
 
   return (
     <div className="fade-in">
       <SectionHeader title={t('library')} subtitle={t('resourceLib')} emoji="📚" />
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-        {types.map(typ => (
-          <button key={typ.id} onClick={() => setFilter(typ.id)} className="btn-bounce body-f" style={{
-            background: filter === typ.id ? `linear-gradient(135deg, ${C.purple}, ${C.pink})` : '#fff',
-            color: filter === typ.id ? '#fff' : C.purple,
-            border: `2px solid ${C.purple}`, padding: '8px 16px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 13,
-          }}>{typ.em} {L(typ.vi, typ.en)}</button>
-        ))}
+      <div style={{ background: 'linear-gradient(135deg, #845EC2, #FF6B9D)', color: '#fff', padding: 14, borderRadius: 16, marginBottom: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+        <div className="body-f" style={{ fontSize: 13, fontWeight: 600 }}>
+          ✨ {L(`${CURATED_RESOURCES.length} tài nguyên đã chọn lọc · cập nhật hằng tháng`, `${CURATED_RESOURCES.length} curated resources · refreshed monthly`)}
+        </div>
+        <div className="body-f" style={{ fontSize: 11, opacity: 0.9 }}>📅 {L('Cập nhật', 'Refreshed')}: {LAST_REFRESHED}</div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
-        {filtered.map((r, i) => {
-          const colors = { books: C.coral, videos: C.pink, tools: C.sky, websites: C.mint };
-          const emojis = { books: '📖', videos: '🎬', tools: '🛠️', websites: '🌐' };
+      {/* Pillar filter */}
+      <div style={{ marginBottom: 12 }}>
+        <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{L('Trụ cột', 'Pillar')}</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button onClick={() => setFilterPillar(null)} className="btn-bounce body-f" style={{
+            background: !filterPillar ? C.ink : '#fff', color: !filterPillar ? '#fff' : C.ink,
+            border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{L('Tất cả', 'All')}</button>
+          {PILLARS.map(p => (
+            <button key={p.id} onClick={() => setFilterPillar(p.id)} className="btn-bounce body-f" style={{
+              background: filterPillar === p.id ? p.color : '#fff', color: filterPillar === p.id ? '#fff' : p.color,
+              border: `2px solid ${p.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+            }}>{L(p.vi, p.en)}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Age filter */}
+      <div style={{ marginBottom: 12 }}>
+        <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{t('age')}</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button onClick={() => setFilterAge(null)} className="btn-bounce body-f" style={{
+            background: !filterAge ? C.ink : '#fff', color: !filterAge ? '#fff' : C.ink,
+            border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{L('Mọi tuổi', 'All ages')}</button>
+          {[6, 8, 10, 12, 14, 16].map(a => (
+            <button key={a} onClick={() => setFilterAge(a)} className="btn-bounce body-f" style={{
+              background: filterAge === a ? C.purple : '#fff', color: filterAge === a ? '#fff' : C.purple,
+              border: `2px solid ${C.purple}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+            }}>{a} {L('tuổi', 'y')}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Type filter */}
+      <div style={{ marginBottom: 18 }}>
+        <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{L('Loại', 'Type')}</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button onClick={() => setFilterType(null)} className="btn-bounce body-f" style={{
+            background: !filterType ? C.ink : '#fff', color: !filterType ? '#fff' : C.ink,
+            border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{L('Tất cả', 'All')}</button>
+          {Object.entries(typeEmojis).map(([t, em]) => (
+            <button key={t} onClick={() => setFilterType(t)} className="btn-bounce body-f" style={{
+              background: filterType === t ? C.coral : '#fff', color: filterType === t ? '#fff' : C.coral,
+              border: `2px solid ${C.coral}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+            }}>{em} {t}</button>
+          ))}
+        </div>
+      </div>
+
+      <div className="body-f" style={{ fontSize: 12, color: C.mute, marginBottom: 14 }}>
+        {filtered.length} {L('tài nguyên', 'resources')}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14 }}>
+        {filtered.map(r => {
+          const c = pillarColors[r.pillar];
+          const pillar = PILLARS.find(p => p.id === r.pillar);
           return (
-            <Card key={i} accent={colors[r.type]} padding={16}>
+            <Card key={r.id} accent={c} padding={16}>
               <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 8 }}>
-                <div style={{ fontSize: 32 }}>{emojis[r.type]}</div>
+                <div style={{ fontSize: 28 }}>{typeEmojis[r.type]}</div>
                 <div style={{ flex: 1 }}>
-                  <Pill color={colors[r.type]}>{r.age === 'all' ? '👶➡️🧑' : r.age}</Pill>
-                  <div className="display" style={{ fontSize: 15, fontWeight: 700, marginTop: 6, lineHeight: 1.3 }}>{L(r.vi_title, r.en_title)}</div>
-                  <div className="body-f" style={{ fontSize: 11, color: C.mute, fontWeight: 600 }}>by {r.author}</div>
+                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 4 }}>
+                    <Pill color={c}>{pillar ? L(pillar.vi, pillar.en) : r.pillar}</Pill>
+                    <Pill color={C.purple}>{r.age_min}-{r.age_max}{L(' tuổi', 'y')}</Pill>
+                    {r.duration_min && <Pill color={C.mute}>⏱ {r.duration_min}p</Pill>}
+                  </div>
+                  <div className="display" style={{ fontSize: 15, fontWeight: 700, marginTop: 4, lineHeight: 1.3 }}>{L(r.title_vi, r.title_en)}</div>
+                  <div className="body-f" style={{ fontSize: 11, color: C.mute, fontWeight: 600 }}>{r.source}</div>
                 </div>
               </div>
-              <div className="body-f" style={{ fontSize: 12, color: C.sub, lineHeight: 1.5, marginBottom: 10 }}>{L(r.vi_why, r.en_why)}</div>
-              {r.url && <a href={r.url} target="_blank" rel="noreferrer" className="body-f btn-bounce" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: colors[r.type], fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>🔗 {L('Mở link', 'Open link')}</a>}
+              <div className="body-f" style={{ fontSize: 12, color: C.sub, lineHeight: 1.5, marginBottom: 10 }}>{L(r.why_vi, r.why_en)}</div>
+              {r.prompt_vi && (
+                <div style={{ padding: 10, background: '#FFF4D1', borderRadius: 10, marginBottom: 10, borderLeft: `3px solid ${C.gold}` }}>
+                  <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.gold, marginBottom: 4 }}>💭 {L('Câu hỏi suy nghĩ', 'Reflection prompt')}</div>
+                  <div className="body-f" style={{ fontSize: 12, color: C.ink, fontStyle: 'italic' }}>{L(r.prompt_vi, r.prompt_en)}</div>
+                </div>
+              )}
+              <a href={r.url} target="_blank" rel="noreferrer" className="body-f btn-bounce" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: c, fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>🔗 {L('Mở link', 'Open link')}</a>
             </Card>
           );
         })}
       </div>
+
+      {filtered.length === 0 && (
+        <div className="body-f" style={{ textAlign: 'center', padding: 40, color: C.mute, fontStyle: 'italic' }}>
+          {L('Không có tài nguyên phù hợp với filter này. Thử bỏ bớt filter.', 'No resources match these filters. Try removing some.')}
+        </div>
+      )}
     </div>
   );
 }
@@ -2001,7 +2102,13 @@ function ReportTab({ kids, getOverall, streaks, unlockedBadges, getPillarProgres
   );
 }
 
-function SettingsTab({ lang, setLangP, exportData, t }) {
+function SettingsTab({ lang, setLangP, exportData, importData, t, L }) {
+  const fileInputRef = React.useRef(null);
+  const onFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (file) importData(file);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
   return (
     <div className="fade-in">
       <SectionHeader title={t('settings')} subtitle="⚙️" emoji="⚙️" />
@@ -2026,9 +2133,19 @@ function SettingsTab({ lang, setLangP, exportData, t }) {
         <Card accent={C.mint}>
           <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>💾 {t('dataMgmt')}</h3>
           <div style={{ display: 'grid', gap: 10 }}>
-            <Btn onClick={exportData} color={C.mint} icon={Download} style={{ width: '100%', justifyContent: 'center' }}>{t('exportData')} (JSON)</Btn>
+            <Btn onClick={exportData} color={C.mint} icon={Download} style={{ width: '100%', justifyContent: 'center' }}>📤 {t('exportData')} (JSON)</Btn>
             <div className="body-f" style={{ fontSize: 11, color: C.mute, textAlign: 'center', lineHeight: 1.5 }}>
-              {lang === 'vi' ? 'Lưu backup toàn bộ dữ liệu (kids, progress, badges, journal, portfolio...)' : 'Backup all data (kids, progress, badges, journal, portfolio...)'}
+              {lang === 'vi' ? 'Lưu backup toàn bộ dữ liệu (kids, progress, badges, journal, portfolio, pins...)' : 'Backup all data (kids, progress, badges, journal, portfolio, pins...)'}
+            </div>
+
+            <div style={{ height: 1, background: C.border, margin: '8px 0' }} />
+
+            <input ref={fileInputRef} type="file" accept="application/json" onChange={onFileSelect} style={{ display: 'none' }} />
+            <Btn onClick={() => fileInputRef.current?.click()} color={C.sky} variant="outline" style={{ width: '100%', justifyContent: 'center' }}>
+              📥 {t('importData')} (JSON)
+            </Btn>
+            <div className="body-f" style={{ fontSize: 11, color: C.mute, textAlign: 'center', lineHeight: 1.5 }}>
+              {L('Khôi phục từ file backup. Sẽ ghi đè data hiện tại.', 'Restore from backup file. Will overwrite current data.')}
             </div>
           </div>
         </Card>
@@ -2286,22 +2403,29 @@ function RewardsTab({ t, L }) {
   );
 }
 
-function ExperiencesTab({ t, L }) {
+function ExperiencesTab({ t, L, kids, lang }) {
   return (
     <div className="fade-in">
-      <SectionHeader title={t('experiences')} subtitle={L('Khám phá thế giới ngoài màn hình', 'Discover the world beyond screens')} emoji="🌳" />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 18 }}>
-        {EXPERIENCES.map((e, i) => (
-          <Card key={i} accent={C.coral}>
-            <div className="hand" style={{ fontSize: 22, color: C.coral, marginBottom: 4 }}>{L(e.vi_when, e.en_when)}</div>
-            <div className="display" style={{ fontSize: 18, fontWeight: 700, marginBottom: 14 }}>{['🌸 Quarterly', '🏕️ Bi-annual', '🌍 Yearly'][i]}</div>
-            {(L(e.vi_acts, e.en_acts)).map((act, j) => (
-              <div key={j} style={{ padding: 12, background: C.soft, borderRadius: 12, marginBottom: 8, borderLeft: `4px solid ${C.coral}`, fontSize: 13 }} className="body-f">
-                ✨ {act}
-              </div>
-            ))}
-          </Card>
-        ))}
+      {/* VN Map + GPS */}
+      <VietnamMap kids={kids} lang={lang} L={L} t={t} />
+
+      {/* Suggestions */}
+      <div style={{ marginTop: 32, paddingTop: 24, borderTop: `2px dashed ${C.border}` }}>
+        <h3 className="display" style={{ fontSize: 24, fontWeight: 700, margin: '0 0 4px' }}>💡 {L('Gợi ý trải nghiệm', 'Experience ideas')}</h3>
+        <div className="hand" style={{ fontSize: 20, color: C.coral, marginBottom: 18 }}>{L('Khám phá thế giới ngoài màn hình', 'Discover the world beyond screens')}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 18 }}>
+          {EXPERIENCES.map((e, i) => (
+            <Card key={i} accent={C.coral}>
+              <div className="hand" style={{ fontSize: 22, color: C.coral, marginBottom: 4 }}>{L(e.vi_when, e.en_when)}</div>
+              <div className="display" style={{ fontSize: 18, fontWeight: 700, marginBottom: 14 }}>{['🌸 Quarterly', '🏕️ Bi-annual', '🌍 Yearly'][i]}</div>
+              {(L(e.vi_acts, e.en_acts)).map((act, j) => (
+                <div key={j} style={{ padding: 12, background: C.soft, borderRadius: 12, marginBottom: 8, borderLeft: `4px solid ${C.coral}`, fontSize: 13 }} className="body-f">
+                  ✨ {act}
+                </div>
+              ))}
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
