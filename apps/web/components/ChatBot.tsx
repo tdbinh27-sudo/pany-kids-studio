@@ -25,6 +25,66 @@ export default function ChatBot({ ctx }: { ctx: ChatBotContext }) {
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Draggable position (right + bottom from viewport)
+  const [pos, setPos] = useState({ right: 24, bottom: 24 });
+  const [dragging, setDragging] = useState(false);
+  const dragStartRef = useRef<{ x: number; y: number; right: number; bottom: number } | null>(null);
+  const movedRef = useRef(false);
+
+  // Load saved position
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem('pks3-chatbot-pos');
+      if (raw) setPos(JSON.parse(raw));
+    } catch {}
+  }, []);
+
+  // Persist position
+  useEffect(() => {
+    try { window.localStorage.setItem('pks3-chatbot-pos', JSON.stringify(pos)); } catch {}
+  }, [pos]);
+
+  // Mouse / touch move handlers
+  useEffect(() => {
+    if (!dragging) return;
+
+    const handleMove = (clientX: number, clientY: number) => {
+      if (!dragStartRef.current) return;
+      const dx = clientX - dragStartRef.current.x;
+      const dy = clientY - dragStartRef.current.y;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) movedRef.current = true;
+      const newRight = Math.max(8, Math.min(window.innerWidth - 72, dragStartRef.current.right - dx));
+      const newBottom = Math.max(8, Math.min(window.innerHeight - 72, dragStartRef.current.bottom - dy));
+      setPos({ right: newRight, bottom: newBottom });
+    };
+
+    const onMouseMove = (e: MouseEvent) => handleMove(e.clientX, e.clientY);
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches[0]) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    };
+    const onUp = () => {
+      setDragging(false);
+      dragStartRef.current = null;
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onUp);
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onUp);
+    };
+  }, [dragging]);
+
+  const startDrag = (clientX: number, clientY: number) => {
+    movedRef.current = false;
+    dragStartRef.current = { x: clientX, y: clientY, right: pos.right, bottom: pos.bottom };
+    setDragging(true);
+  };
+
   const storageKey = `pks3-chat-${ctx.kidId ?? "anon"}`;
 
   // Load history once per kid switch
@@ -99,32 +159,45 @@ export default function ChatBot({ ctx }: { ctx: ChatBotContext }) {
 
   return (
     <>
-      {/* Floating button */}
+      {/* Floating button — draggable */}
       {!open && (
         <button
-          onClick={() => setOpen(true)}
-          aria-label="Open chat with Đại Ka"
+          onMouseDown={e => { e.preventDefault(); startDrag(e.clientX, e.clientY); }}
+          onTouchStart={e => { if (e.touches[0]) startDrag(e.touches[0].clientX, e.touches[0].clientY); }}
+          onClick={e => {
+            // Only open if didn't drag
+            if (movedRef.current) {
+              e.preventDefault();
+              movedRef.current = false;
+              return;
+            }
+            setOpen(true);
+          }}
+          aria-label="Open chat with Đại Ka (drag to move)"
+          title={ctx.lang === 'vi' ? 'Click để mở · Kéo để di chuyển' : 'Click to open · Drag to move'}
           style={{
             position: "fixed",
-            bottom: 24,
-            right: 24,
+            bottom: pos.bottom,
+            right: pos.right,
             width: 64,
             height: 64,
             borderRadius: "50%",
             background: "linear-gradient(135deg, #FF6B9D 0%, #845EC2 50%, #4DABF7 100%)",
             border: "none",
-            cursor: "pointer",
-            boxShadow: "0 8px 24px rgba(132, 94, 194, 0.4)",
+            cursor: dragging ? "grabbing" : "grab",
+            boxShadow: dragging ? "0 12px 32px rgba(132, 94, 194, 0.6)" : "0 8px 24px rgba(132, 94, 194, 0.4)",
             zIndex: 9998,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             color: "#fff",
             fontSize: 28,
-            transition: "transform 0.2s",
+            transition: dragging ? "none" : "transform 0.2s, box-shadow 0.2s",
+            touchAction: "none",
+            userSelect: "none",
           }}
-          onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.1)")}
-          onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+          onMouseEnter={e => { if (!dragging) e.currentTarget.style.transform = "scale(1.08)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }}
         >
           🌸
         </button>

@@ -552,6 +552,14 @@ export default function PanyKidsStudio() {
   const [evalText, setEvalText] = useState('');
   const [evalRating, setEvalRating] = useState(0);
   const [confettiOn, setConfettiOn] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Sidebar starts open on desktop, closed on mobile
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSidebarOpen(window.innerWidth >= 1024);
+    }
+  }, []);
   const [quizState, setQuizState] = useState({ kidId: null, qIdx: 0, score: 0, answered: null, pillar: null, age: null });
   const [showLogin, setShowLogin] = useState(false);
 
@@ -843,10 +851,10 @@ export default function PanyKidsStudio() {
       <GlobalStyles />
       {confettiOn && <ConfettiBurst />}
 
-      <Header lang={lang} setLang={setLangP} t={t} kids={kids} activeKidId={activeKidId} setActiveKidId={setActiveKidId} setShowLogin={setShowLogin} parentLocked={parentLocked} parentUnlocked={parentUnlocked} setParentUnlocked={setParentUnlocked} L={L} />
-      <TabNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
+      <Header lang={lang} setLang={setLangP} t={t} kids={kids} activeKidId={activeKidId} setActiveKidId={setActiveKidId} setShowLogin={setShowLogin} parentLocked={parentLocked} parentUnlocked={parentUnlocked} setParentUnlocked={setParentUnlocked} L={L} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <TabNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} L={L} />
 
-      <main style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px 80px' }}>
+      <main style={{ maxWidth: 1400, padding: '32px 24px 80px', marginLeft: sidebarOpen ? 240 : 0, transition: 'margin-left 0.25s ease-out' }} className="main-content">
         {activeTab === 'overview'    && <OverviewTab     kids={kids} getOverall={getOverall} getYearProgress={getYearProgress} getPillarProgress={getPillarProgress} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} />}
         {activeTab === 'roadmap'     && <RoadmapTab      kids={kids} progress={progress} toggleObjective={toggleObjective} expandedYear={expandedYear} setExpandedYear={setExpandedYear} openEval={openEval} getQuarterProgress={getQuarterProgress} t={t} L={L} lang={lang} />}
         {activeTab === 'calendar'    && <CalendarTab     kids={kids} weeklyTasks={weeklyTasks} setTasksP={setTasksP} streaks={streaks} checkInToday={checkInToday} t={t} L={L} />}
@@ -936,6 +944,15 @@ function GlobalStyles() {
       input, textarea, select { font-family: inherit; }
       .scrollx::-webkit-scrollbar { height: 6px; }
       .scrollx::-webkit-scrollbar-thumb { background: #FFD1E8; border-radius: 3px; }
+      .scrolly::-webkit-scrollbar { width: 6px; }
+      .scrolly::-webkit-scrollbar-thumb { background: #FFD1E8; border-radius: 3px; }
+      @media (max-width: 1023px) {
+        .main-content { margin-left: 0 !important; }
+        .sidebar-nav { width: 88vw !important; max-width: 320px; }
+      }
+      @media (min-width: 1024px) {
+        .sidebar-close-btn { display: none; }
+      }
       .anime-bg { background-image: radial-gradient(circle at 20% 20%, rgba(255,107,157,0.06) 0, transparent 40%), radial-gradient(circle at 80% 80%, rgba(77,171,247,0.06) 0, transparent 40%); }
     `}</style>
   );
@@ -968,7 +985,7 @@ function LoadingScreen({ t }) {
   );
 }
 
-function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLogin, parentLocked, parentUnlocked, setParentUnlocked, L }) {
+function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLogin, parentLocked, parentUnlocked, setParentUnlocked, L, sidebarOpen, setSidebarOpen }) {
   const activeKid = kids.find(k => k.id === activeKidId);
   return (
     <header style={{
@@ -979,13 +996,26 @@ function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLo
       <div style={{ position: 'absolute', bottom: -30, left: 60, fontSize: 90, opacity: 0.12 }}>⭐</div>
       <div style={{ position: 'absolute', top: 30, right: 200, fontSize: 50, opacity: 0.18 }} className="float-anim">🎈</div>
       <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, position: 'relative' }}>
-        <div>
-          <div className="hand" style={{ color: '#FFE5F1', fontSize: 22, marginBottom: -4 }}>{t('estLine')}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle sidebar"
+            style={{
+              background: 'rgba(255,255,255,0.2)', color: '#fff', border: 'none',
+              width: 40, height: 40, borderRadius: 12, cursor: 'pointer',
+              fontSize: 18, fontWeight: 700, display: 'flex',
+              alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              backdropFilter: 'blur(8px)',
+            }}
+          >☰</button>
+          <div>
+            <div className="hand" style={{ color: '#FFE5F1', fontSize: 22, marginBottom: -4 }}>{t('estLine')}</div>
           <h1 className="display" style={{ fontSize: 44, margin: '4px 0', fontWeight: 700, letterSpacing: -0.5, lineHeight: 1, textShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
             🌸 Pany Kids <em style={{ color: '#FFD43B', fontStyle: 'normal' }}>Studio</em> ✨
           </h1>
           <div className="body-f" style={{ color: '#FFE5F1', fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 8, fontWeight: 600 }}>
             {t('appSubtitle')}
+          </div>
           </div>
         </div>
 
@@ -1042,51 +1072,130 @@ function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLo
   );
 }
 
-function TabNav({ activeTab, setActiveTab, t }) {
-  const tabs = [
-    { id: 'overview',    icon: BarChart3,     label: t('overview'),    em: '🏠' },
-    { id: 'roadmap',     icon: Calendar,       label: t('roadmap'),     em: '🗺️' },
-    { id: 'calendar',    icon: Calendar,       label: t('calendar'),    em: '📅' },
-    { id: 'skilltree',   icon: Sparkles,      label: t('skillTree'),   em: '🌳' },
-    { id: 'career',      icon: Briefcase,     label: t('career'),      em: '💼' },
-    { id: 'kids',        icon: Users,          label: t('kidsTab'),     em: '👥' },
-    { id: 'badges',      icon: Award,          label: t('badges'),      em: '🏆' },
-    { id: 'journal',     icon: BookOpen,      label: t('journal'),     em: '📓' },
-    { id: 'portfolio',   icon: Image,         label: t('portfolio'),   em: '🖼️' },
-    { id: 'leaderboard', icon: TrendingUp,    label: t('leaderboard'), em: '📊' },
-    { id: 'hardware',    icon: Package,       label: t('hardware'),    em: '💻' },
-    { id: 'software',    icon: Cpu,            label: t('software'),    em: '🤖' },
-    { id: 'english',     icon: Globe,          label: t('english'),     em: '🌍' },
-    { id: 'finance',     icon: DollarSign,    label: t('finance'),     em: '💰' },
-    { id: 'thinking',    icon: Brain,          label: t('thinking'),    em: '🧠' },
-    { id: 'rewards',     icon: Trophy,        label: t('rewards'),     em: '🎁' },
-    { id: 'experiences', icon: MapPin,         label: t('experiences'), em: '🌳' },
-    { id: 'publish',     icon: Send,           label: t('publish'),     em: '📤' },
-    { id: 'library',     icon: Library,       label: t('library'),     em: '📚' },
-    { id: 'aisearch',    icon: Sparkles,      label: t('aiSearch'),    em: '🔍' },
-    { id: 'quiz',        icon: Puzzle,        label: t('quiz'),        em: '🧩' },
-    { id: 'report',      icon: FileText,      label: t('report'),      em: '📋' },
-    { id: 'settings',    icon: Settings,      label: t('settings'),    em: '⚙️' },
+function TabNav({ activeTab, setActiveTab, t, sidebarOpen, setSidebarOpen, L }) {
+  const tabGroups = [
+    { vi: 'Tổng quan', en: 'Overview', items: [
+      { id: 'overview',    label: t('overview'),    em: '🏠' },
+      { id: 'roadmap',     label: t('roadmap'),     em: '🗺️' },
+      { id: 'calendar',    label: t('calendar'),    em: '📅' },
+      { id: 'skilltree',   label: t('skillTree'),   em: '🌳' },
+      { id: 'career',      label: t('career'),      em: '💼' },
+    ]},
+    { vi: 'Học viên', en: 'Students', items: [
+      { id: 'kids',        label: t('kidsTab'),     em: '👥' },
+      { id: 'badges',      label: t('badges'),      em: '🏆' },
+      { id: 'journal',     label: t('journal'),     em: '📓' },
+      { id: 'portfolio',   label: t('portfolio'),   em: '🖼️' },
+      { id: 'leaderboard', label: t('leaderboard'), em: '📊' },
+    ]},
+    { vi: 'Công cụ học', en: 'Learning', items: [
+      { id: 'hardware',    label: t('hardware'),    em: '💻' },
+      { id: 'software',    label: t('software'),    em: '🤖' },
+      { id: 'english',     label: t('english'),     em: '🌍' },
+      { id: 'finance',     label: t('finance'),     em: '💰' },
+      { id: 'thinking',    label: t('thinking'),    em: '🧠' },
+    ]},
+    { vi: 'Hoạt động', en: 'Activities', items: [
+      { id: 'rewards',     label: t('rewards'),     em: '🎁' },
+      { id: 'experiences', label: t('experiences'), em: '🌳' },
+      { id: 'publish',     label: t('publish'),     em: '📤' },
+    ]},
+    { vi: 'Khám phá', en: 'Explore', items: [
+      { id: 'library',     label: t('library'),     em: '📚' },
+      { id: 'aisearch',    label: t('aiSearch'),    em: '🔍' },
+      { id: 'quiz',        label: t('quiz'),        em: '🧩' },
+    ]},
+    { vi: 'Hệ thống', en: 'System', items: [
+      { id: 'report',      label: t('report'),      em: '📋' },
+      { id: 'settings',    label: t('settings'),    em: '⚙️' },
+    ]},
   ];
+
   return (
-    <nav className="scrollx" style={{ background: '#fff', borderBottom: `2px solid ${C.border}`, position: 'sticky', top: 0, zIndex: 20, boxShadow: C.shadowSoft }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', gap: 4, overflowX: 'auto', padding: '8px 16px' }}>
-        {tabs.map(tab => {
-          const active = activeTab === tab.id;
-          return (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className="tab-btn body-f" style={{
-              background: active ? `linear-gradient(135deg, ${C.pink}, ${C.purple})` : 'transparent',
-              color: active ? '#fff' : C.sub,
-              border: 'none', padding: '10px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap', borderRadius: 999,
-              boxShadow: active ? `0 4px 12px ${C.pink}55` : 'none',
-            }}>
-              <span style={{ fontSize: 14 }}>{tab.em}</span> {tab.label}
-            </button>
-          );
-        })}
-      </div>
-    </nav>
+    <>
+      {/* Mobile toggle button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        aria-label="Toggle sidebar"
+        style={{
+          position: 'fixed', top: 16, left: 16, zIndex: 31,
+          background: `linear-gradient(135deg, ${C.pink}, ${C.purple})`,
+          color: '#fff', border: 'none', width: 40, height: 40, borderRadius: 12,
+          cursor: 'pointer', boxShadow: C.shadow,
+          display: sidebarOpen ? 'none' : 'flex',
+          alignItems: 'center', justifyContent: 'center', fontSize: 18,
+        }}
+        className="sidebar-toggle"
+      >☰</button>
+
+      {/* Sidebar overlay (mobile) */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(45,27,78,0.4)',
+            backdropFilter: 'blur(4px)', zIndex: 29,
+          }}
+          className="sidebar-overlay"
+        />
+      )}
+
+      <nav
+        className="scrolly sidebar-nav"
+        style={{
+          background: '#fff', borderRight: `2px solid ${C.border}`,
+          width: 240, height: '100vh', overflowY: 'auto',
+          position: 'fixed', top: 0, left: sidebarOpen ? 0 : -260,
+          zIndex: 30, boxShadow: sidebarOpen ? '4px 0 20px rgba(132,94,194,0.15)' : 'none',
+          padding: '20px 0 80px', transition: 'left 0.25s ease-out',
+        }}
+      >
+        {/* Sidebar header */}
+        <div style={{ padding: '0 18px 16px', borderBottom: `1px dashed ${C.border}`, marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div className="display" style={{ fontSize: 16, fontWeight: 700, color: C.purple, lineHeight: 1.1 }}>🌸 Pany Kids</div>
+            <div className="hand" style={{ fontSize: 14, color: C.pink, marginTop: 2 }}>v3.1 Studio</div>
+          </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close sidebar"
+            style={{ background: C.soft, border: 'none', padding: 6, borderRadius: 8, cursor: 'pointer' }}
+            className="sidebar-close-btn"
+          >✕</button>
+        </div>
+
+        {tabGroups.map((group, gi) => (
+          <div key={gi} style={{ marginBottom: 16 }}>
+            <div className="body-f" style={{ fontSize: 10, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1.5, padding: '0 22px 6px' }}>
+              {L(group.vi, group.en)}
+            </div>
+            {group.items.map(tab => {
+              const active = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
+                  className="tab-btn body-f"
+                  style={{
+                    width: 'calc(100% - 12px)',
+                    background: active ? `linear-gradient(135deg, ${C.pink}, ${C.purple})` : 'transparent',
+                    color: active ? '#fff' : C.ink,
+                    border: 'none', padding: '10px 14px', fontSize: 13, fontWeight: 600,
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
+                    borderRadius: 12, margin: '2px 6px',
+                    boxShadow: active ? `0 4px 10px ${C.pink}40` : 'none',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span style={{ fontSize: 16, width: 20, textAlign: 'center' }}>{tab.em}</span>
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </nav>
+    </>
   );
 }
 
