@@ -2746,13 +2746,41 @@ function PublishTab({ t, L }) {
 }
 
 function JournalTab({ kids, journal, saveJournal, t, L, activeKidId, isParentAuthed }) {
-  // Privacy: in kid mode, only show own journal; parent sees all
-  const visibleKids = isParentAuthed ? kids : kids.filter(k => k.id === activeKidId);
+  // PRIVACY: Journal is strictly private — only the kid who wrote it can read.
+  // Parent CANNOT view kids' journal (privacy from kids' side).
+  if (isParentAuthed && !activeKidId) {
+    return (
+      <div className="fade-in">
+        <SectionHeader title={t('journal')} subtitle={L('Nhật ký là bí mật cá nhân', 'Journal is personal secret')} emoji="📓" />
+        <div style={{
+          background: 'linear-gradient(135deg, #FFE5F1, #E5F3FF)',
+          borderRadius: 24, padding: 40, textAlign: 'center',
+          border: `2px dashed ${C.purple}`,
+        }}>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>🔒</div>
+          <h3 className="display" style={{ fontSize: 24, fontWeight: 700, color: C.purple, marginBottom: 12 }}>
+            {L('Nhật ký là bí mật của các bạn', 'Journal is the kids\' secret')}
+          </h3>
+          <p className="body-f" style={{ fontSize: 14, color: C.sub, lineHeight: 1.7, maxWidth: 480, margin: '0 auto 16px' }}>
+            {L(
+              'Chỉ học viên mới đọc được nhật ký của chính mình. Bố/mẹ tôn trọng không gian riêng tư của các bạn — đây là nơi các bạn tâm sự với Đại Ka.',
+              'Only each student can read their own journal. Parents respect kids\' privacy — this is where they confide in Đại Ka.'
+            )}
+          </p>
+          <p className="body-f" style={{ fontSize: 13, color: C.mute, fontStyle: 'italic' }}>
+            💡 {L('Bố/mẹ có thể xem tổng quan, tiến độ, badges, lộ trình ở các tab khác.', 'Parents can view overview, progress, badges, roadmap in other tabs.')}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Kid mode: only own journal
+  const visibleKids = kids.filter(k => k.id === activeKidId);
   const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
-  // Auto-correct selectedKid if user just switched modes
   React.useEffect(() => {
-    if (!isParentAuthed && activeKidId && selectedKid !== activeKidId) setSelectedKid(activeKidId);
-  }, [activeKidId, isParentAuthed]);
+    if (activeKidId && selectedKid !== activeKidId) setSelectedKid(activeKidId);
+  }, [activeKidId]);
   const [learned, setLearned] = React.useState('');
   const [hard, setHard] = React.useState('');
   const [happy, setHappy] = React.useState('');
@@ -2843,12 +2871,48 @@ function JournalTab({ kids, journal, saveJournal, t, L, activeKidId, isParentAut
 }
 
 function PortfolioTab({ kids, portfolio, addPortfolioItem, setPortfolioP, t, L, activeKidId, isParentAuthed }) {
-  // Privacy: portfolio CAN be public showcase, but Edit/Add only for own or parent
-  const visibleKids = isParentAuthed ? kids : kids.filter(k => k.id === activeKidId);
+  // PRIVACY: Portfolio details are private to each kid (their personal learning items).
+  // Parent sees count summary only, not the actual content.
+  if (isParentAuthed && !activeKidId) {
+    return (
+      <div className="fade-in">
+        <SectionHeader title={t('portfolio')} subtitle={L('Sản phẩm cá nhân của các bạn', 'Personal projects of kids')} emoji="🖼️" />
+        <div style={{
+          background: 'linear-gradient(135deg, #FFE5F1, #E5F3FF)',
+          borderRadius: 24, padding: 32, textAlign: 'center',
+          border: `2px dashed ${C.sky}`,
+        }}>
+          <div style={{ fontSize: 56, marginBottom: 14 }}>🔒</div>
+          <h3 className="display" style={{ fontSize: 22, fontWeight: 700, color: C.sky, marginBottom: 12 }}>
+            {L('Portfolio cá nhân của các bạn', 'Kids\' personal portfolio')}
+          </h3>
+          <p className="body-f" style={{ fontSize: 14, color: C.sub, lineHeight: 1.7, maxWidth: 480, margin: '0 auto 16px' }}>
+            {L(
+              'Bố/mẹ chỉ xem được số lượng, không xem chi tiết. Các bạn có thể chủ động chia sẻ với gia đình ở Demo Day.',
+              'Parents see counts only, not details. Kids share with family at Demo Day.'
+            )}
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginTop: 24, maxWidth: 600, margin: '24px auto 0' }}>
+            {kids.map(k => (
+              <div key={k.id} style={{ background: '#fff', borderRadius: 16, padding: 16, border: `2px solid ${k.color}` }}>
+                <div style={{ fontSize: 36 }}>{k.emoji}</div>
+                <div className="display" style={{ fontSize: 16, fontWeight: 700, color: k.color, marginTop: 4 }}>{k.name}</div>
+                <div className="display" style={{ fontSize: 28, fontWeight: 700, color: C.purple, marginTop: 8 }}>{(portfolio[k.id] || []).length}</div>
+                <div className="body-f" style={{ fontSize: 11, color: C.mute, fontWeight: 600 }}>{L('sản phẩm', 'projects')}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Kid mode: only own portfolio
+  const visibleKids = kids.filter(k => k.id === activeKidId);
   const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
   React.useEffect(() => {
-    if (!isParentAuthed && activeKidId && selectedKid !== activeKidId) setSelectedKid(activeKidId);
-  }, [activeKidId, isParentAuthed]);
+    if (activeKidId && selectedKid !== activeKidId) setSelectedKid(activeKidId);
+  }, [activeKidId]);
   const [showAdd, setShowAdd] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [url, setUrl] = React.useState('');
