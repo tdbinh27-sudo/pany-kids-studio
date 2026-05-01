@@ -13,6 +13,7 @@ import {
 import { storage } from '@/lib/storage';
 import ChatBot from '@/components/ChatBot';
 import VietnamMap from '@/components/VietnamMap';
+import AISearchTab from '@/components/AISearch';
 import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
 
 // ============================================================
@@ -31,7 +32,7 @@ const I18N = {
     leaderboard: 'Bảng xếp hạng', hardware: 'Phần cứng', software: 'Phần mềm',
     english: 'Tiếng Anh', finance: 'Tài chính', thinking: 'Tư duy',
     rewards: 'Phần thưởng', experiences: 'Trải nghiệm', publish: 'Xuất bản',
-    library: 'Thư viện', quiz: 'Quiz', report: 'Báo cáo', settings: 'Cài đặt',
+    library: 'Thư viện', aiSearch: 'Search AI', quiz: 'Quiz', report: 'Báo cáo', settings: 'Cài đặt',
     progress: 'Tiến độ', objectives: 'Mục tiêu', skills: 'Kỹ năng',
     evaluate: 'Đánh giá', edit: 'Sửa', save: 'Lưu', cancel: 'Hủy',
     add: 'Thêm', remove: 'Xóa', name: 'Tên', age: 'Tuổi', notes: 'Ghi chú',
@@ -81,7 +82,7 @@ const I18N = {
     leaderboard: 'Leaderboard', hardware: 'Hardware', software: 'Software',
     english: 'English', finance: 'Finance', thinking: 'Thinking',
     rewards: 'Rewards', experiences: 'Experiences', publish: 'Publishing',
-    library: 'Library', quiz: 'Quiz', report: 'Report', settings: 'Settings',
+    library: 'Library', aiSearch: 'AI Search', quiz: 'Quiz', report: 'Report', settings: 'Settings',
     progress: 'Progress', objectives: 'Goals', skills: 'Skills',
     evaluate: 'Review', edit: 'Edit', save: 'Save', cancel: 'Cancel',
     add: 'Add', remove: 'Remove', name: 'Name', age: 'Age', notes: 'Notes',
@@ -564,6 +565,11 @@ export default function PanyKidsStudio() {
   const [unlockedBadges, setUnlockedBadges] = useState({}); // {kidId: {badgeId: dateISO}}
   const [activeKidId, setActiveKidId] = useState(null); // null = parent mode
   const [pinAttempt, setPinAttempt] = useState({ kidId: null, value: '' });
+  const [parentPin, setParentPin] = useState('0000');
+  const [parentLocked, setParentLocked] = useState(false);
+  const [parentUnlocked, setParentUnlocked] = useState(true); // session-only, resets on reload if locked
+  const [parentLoginAttempt, setParentLoginAttempt] = useState('');
+  const [parentLoginError, setParentLoginError] = useState(false);
   const [expandedYear, setExpandedYear] = useState(1);
   const [editingKidId, setEditingKidId] = useState(null);
   const [editKidData, setEditKidData] = useState({ name: '', age: '', emoji: '', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' });
@@ -585,7 +591,7 @@ export default function PanyKidsStudio() {
   // ============== STORAGE ==============
   useEffect(() => {
     const load = async () => {
-      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges'];
+      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges', 'parentPin', 'parentLocked'];
       for (const k of keys) {
         try {
           const r = await storage.get(`pks3-${k}`);
@@ -600,6 +606,11 @@ export default function PanyKidsStudio() {
             if (k === 'portfolio') setPortfolio(v);
             if (k === 'tasks') setWeeklyTasks(v);
             if (k === 'badges') setUnlockedBadges(v);
+            if (k === 'parentPin') setParentPin(v);
+            if (k === 'parentLocked') {
+              setParentLocked(v);
+              if (v) setParentUnlocked(false);
+            }
           }
         } catch (e) {}
       }
@@ -618,6 +629,25 @@ export default function PanyKidsStudio() {
   const setPortfolioP = (v) => { setPortfolio(v); persist('portfolio', v); };
   const setTasksP = (v) => { setWeeklyTasks(v); persist('tasks', v); };
   const setBadgesP = (v) => { setUnlockedBadges(v); persist('badges', v); };
+  const setParentPinP = (v) => { setParentPin(v); persist('parentPin', v); };
+  const setParentLockedP = (v) => { setParentLocked(v); persist('parentLocked', v); if (v && !activeKidId) setParentUnlocked(false); };
+
+  const tryParentLogin = (val) => {
+    if (val === parentPin) {
+      setParentUnlocked(true);
+      setParentLoginAttempt('');
+      setParentLoginError(false);
+      return true;
+    }
+    setParentLoginError(true);
+    setTimeout(() => setParentLoginError(false), 1500);
+    setParentLoginAttempt('');
+    return false;
+  };
+
+  // Parent has full access if (not in kid mode) AND (not locked OR unlocked)
+  const isParentMode = !activeKidId;
+  const isParentAuthed = isParentMode && (!parentLocked || parentUnlocked);
 
   // ============== HELPERS ==============
   const today = () => new Date().toISOString().slice(0, 10);
@@ -843,7 +873,7 @@ export default function PanyKidsStudio() {
       <GlobalStyles />
       {confettiOn && <ConfettiBurst />}
 
-      <Header lang={lang} setLang={setLangP} t={t} kids={kids} activeKidId={activeKidId} setActiveKidId={setActiveKidId} setShowLogin={setShowLogin} />
+      <Header lang={lang} setLang={setLangP} t={t} kids={kids} activeKidId={activeKidId} setActiveKidId={setActiveKidId} setShowLogin={setShowLogin} parentLocked={parentLocked} parentUnlocked={parentUnlocked} setParentUnlocked={setParentUnlocked} L={L} />
       <TabNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
 
       <main style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px 80px' }}>
@@ -852,10 +882,10 @@ export default function PanyKidsStudio() {
         {activeTab === 'calendar'    && <CalendarTab     kids={kids} weeklyTasks={weeklyTasks} setTasksP={setTasksP} streaks={streaks} checkInToday={checkInToday} t={t} L={L} />}
         {activeTab === 'skilltree'   && <SkillTreeTab    kids={kids} getPillarProgress={getPillarProgress} t={t} L={L} />}
         {activeTab === 'career'      && <CareerTab       t={t} L={L} kids={kids} getPillarProgress={getPillarProgress} />}
-        {activeTab === 'kids'        && <KidsTab         kids={kids} editingKidId={editingKidId} setEditingKidId={setEditingKidId} editKidData={editKidData} setEditKidData={setEditKidData} startEditKid={startEditKid} saveEditKid={saveEditKid} addNewKid={addNewKid} showAddKid={showAddKid} setShowAddKid={setShowAddKid} newKidName={newKidName} setNewKidName={setNewKidName} newKidAge={newKidAge} setNewKidAge={setNewKidAge} removeKid={removeKid} getYearProgress={getYearProgress} evaluations={evaluations} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} setKidsP={setKidsP} />}
+        {activeTab === 'kids'        && <KidsTab         kids={kids} editingKidId={editingKidId} setEditingKidId={setEditingKidId} editKidData={editKidData} setEditKidData={setEditKidData} startEditKid={startEditKid} saveEditKid={saveEditKid} addNewKid={addNewKid} showAddKid={showAddKid} setShowAddKid={setShowAddKid} newKidName={newKidName} setNewKidName={setNewKidName} newKidAge={newKidAge} setNewKidAge={setNewKidAge} removeKid={removeKid} getYearProgress={getYearProgress} evaluations={evaluations} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} setKidsP={setKidsP} activeKidId={activeKidId} isParentAuthed={isParentAuthed} />}
         {activeTab === 'badges'      && <BadgesTab       kids={kids} unlockedBadges={unlockedBadges} t={t} L={L} />}
-        {activeTab === 'journal'     && <JournalTab      kids={kids} journal={journal} saveJournal={saveJournal} t={t} L={L} />}
-        {activeTab === 'portfolio'   && <PortfolioTab    kids={kids} portfolio={portfolio} addPortfolioItem={addPortfolioItem} setPortfolioP={setPortfolioP} t={t} L={L} />}
+        {activeTab === 'journal'     && <JournalTab      kids={kids} journal={journal} saveJournal={saveJournal} t={t} L={L} activeKidId={activeKidId} isParentAuthed={isParentAuthed} />}
+        {activeTab === 'portfolio'   && <PortfolioTab    kids={kids} portfolio={portfolio} addPortfolioItem={addPortfolioItem} setPortfolioP={setPortfolioP} t={t} L={L} activeKidId={activeKidId} isParentAuthed={isParentAuthed} />}
         {activeTab === 'leaderboard' && <LeaderboardTab  kids={kids} getOverall={getOverall} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} />}
         {activeTab === 'hardware'    && <HardwareTab     t={t} L={L} />}
         {activeTab === 'software'    && <SoftwareTab     t={t} L={L} />}
@@ -866,16 +896,17 @@ export default function PanyKidsStudio() {
         {activeTab === 'experiences' && <ExperiencesTab  t={t} L={L} kids={kids} lang={lang} />}
         {activeTab === 'publish'     && <PublishTab      t={t} L={L} />}
         {activeTab === 'library'     && <LibraryTab      t={t} L={L} />}
+        {activeTab === 'aisearch'    && <AISearchTab     lang={lang} L={L} />}
         {activeTab === 'quiz'        && <QuizTab         kids={kids} quizState={quizState} setQuizState={setQuizState} t={t} L={L} lang={lang} />}
         {activeTab === 'report'      && <ReportTab       kids={kids} getOverall={getOverall} streaks={streaks} unlockedBadges={unlockedBadges} getPillarProgress={getPillarProgress} exportReport={exportReport} exportData={exportData} t={t} L={L} />}
-        {activeTab === 'settings'    && <SettingsTab     lang={lang} setLangP={setLangP} exportData={exportData} importData={importData} t={t} L={L} />}
+        {activeTab === 'settings'    && <SettingsTab     lang={lang} setLangP={setLangP} exportData={exportData} importData={importData} t={t} L={L} parentPin={parentPin} setParentPinP={setParentPinP} parentLocked={parentLocked} setParentLockedP={setParentLockedP} />}
       </main>
 
       {evalKid && evalQuarter && (
         <EvalModal evalKid={evalKid} evalQuarter={evalQuarter} evalText={evalText} setEvalText={setEvalText} evalRating={evalRating} setEvalRating={setEvalRating} saveEval={saveEval} setEvalKid={setEvalKid} setEvalQuarter={setEvalQuarter} kids={kids} t={t} L={L} />
       )}
 
-      {showLogin && <LoginModal kids={kids} pinAttempt={pinAttempt} setPinAttempt={setPinAttempt} tryLogin={tryLogin} setShowLogin={setShowLogin} setActiveKidId={setActiveKidId} t={t} L={L} />}
+      {showLogin && <LoginModal kids={kids} pinAttempt={pinAttempt} setPinAttempt={setPinAttempt} tryLogin={tryLogin} setShowLogin={setShowLogin} setActiveKidId={setActiveKidId} t={t} L={L} parentLocked={parentLocked} parentUnlocked={parentUnlocked} tryParentLogin={tryParentLogin} parentLoginAttempt={parentLoginAttempt} setParentLoginAttempt={setParentLoginAttempt} parentLoginError={parentLoginError} />}
 
       {(() => {
         const chatKid = kids.find(k => k.id === activeKidId) || kids[0];
@@ -967,7 +998,7 @@ function LoadingScreen({ t }) {
   );
 }
 
-function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLogin }) {
+function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLogin, parentLocked, parentUnlocked, setParentUnlocked, L }) {
   const activeKid = kids.find(k => k.id === activeKidId);
   return (
     <header style={{
@@ -1007,11 +1038,22 @@ function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLo
               <span style={{ fontSize: 18 }}>{activeKid.emoji}</span> {activeKid.name}
               <Unlock size={14} />
             </button>
+          ) : parentLocked && !parentUnlocked ? (
+            <button onClick={() => setShowLogin(true)} className="btn-bounce body-f glow" style={{
+              background: '#FFD43B', color: C.ink, border: 'none', padding: '8px 14px', borderRadius: 999,
+              cursor: 'pointer', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              <Lock size={14} /> {L('Đăng nhập Bố/Mẹ', 'Login Bố/Mẹ')}
+            </button>
           ) : (
             <>
-              <div className="body-f" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', padding: '8px 14px', borderRadius: 999, fontSize: 12, fontWeight: 700, backdropFilter: 'blur(8px)' }}>
-                👨‍👩‍👧 {t('parentMode')}
-              </div>
+              <button onClick={() => parentLocked ? setParentUnlocked(false) : null} className="body-f btn-bounce" style={{
+                background: 'rgba(255,255,255,0.25)', color: '#fff', padding: '8px 14px', borderRadius: 999,
+                fontSize: 12, fontWeight: 700, backdropFilter: 'blur(8px)', border: 'none',
+                cursor: parentLocked ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: 6,
+              }} title={parentLocked ? L('Click để khoá', 'Click to lock') : ''}>
+                👨‍👩‍👧 {t('parentMode')} {parentLocked && <Unlock size={12} />}
+              </button>
               <button onClick={() => setShowLogin(true)} className="btn-bounce body-f" style={{
                 background: '#FFD43B', color: C.ink, border: 'none', padding: '8px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12, display: 'flex', alignItems: 'center', gap: 6,
               }}>
@@ -1051,6 +1093,7 @@ function TabNav({ activeTab, setActiveTab, t }) {
     { id: 'experiences', icon: MapPin,         label: t('experiences'), em: '🌳' },
     { id: 'publish',     icon: Send,           label: t('publish'),     em: '📤' },
     { id: 'library',     icon: Library,       label: t('library'),     em: '📚' },
+    { id: 'aisearch',    icon: Sparkles,      label: t('aiSearch'),    em: '🔍' },
     { id: 'quiz',        icon: Puzzle,        label: t('quiz'),        em: '🧩' },
     { id: 'report',      icon: FileText,      label: t('report'),      em: '📋' },
     { id: 'settings',    icon: Settings,      label: t('settings'),    em: '⚙️' },
@@ -1574,16 +1617,26 @@ function CareerTab({ t, L, kids, getPillarProgress }) {
   );
 }
 
-function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidData, startEditKid, saveEditKid, addNewKid, showAddKid, setShowAddKid, newKidName, setNewKidName, newKidAge, setNewKidAge, removeKid, getYearProgress, evaluations, streaks, unlockedBadges, t, L, setKidsP }) {
+function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidData, startEditKid, saveEditKid, addNewKid, showAddKid, setShowAddKid, newKidName, setNewKidName, newKidAge, setNewKidAge, removeKid, getYearProgress, evaluations, streaks, unlockedBadges, t, L, setKidsP, activeKidId, isParentAuthed }) {
   const [editingPin, setEditingPin] = React.useState(null);
   const [pinValue, setPinValue] = React.useState('');
+  // Privacy: kid in kid-mode can only edit own profile; parent can edit all
+  const canEdit = (kidId) => isParentAuthed || activeKidId === kidId;
 
   return (
     <div className="fade-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 24 }}>
         <SectionHeader title={t('kidsTab')} subtitle={L('Quản lý học viên · PIN cá nhân', 'Manage students · Personal PIN')} emoji="👥" />
-        <Btn onClick={() => setShowAddKid(true)} color={C.pink} icon={Plus}>{t('addStudent')}</Btn>
+        {isParentAuthed && <Btn onClick={() => setShowAddKid(true)} color={C.pink} icon={Plus}>{t('addStudent')}</Btn>}
       </div>
+
+      {!isParentAuthed && (
+        <div style={{ background: '#FFF4D1', borderRadius: 12, padding: 12, marginBottom: 16, border: '2px dashed #FFB800' }}>
+          <div className="body-f" style={{ fontSize: 12, color: '#9B6800', fontWeight: 700 }}>
+            🔒 {L('Em đang ở mode học viên — chỉ sửa được hồ sơ của chính em. Bố/mẹ vào mode parent để edit tất cả.', 'Student mode — you can only edit your own profile. Switch to parent mode to edit all.')}
+          </div>
+        </div>
+      )}
 
       {showAddKid && (
         <Card accent={C.pink} style={{ marginBottom: 20, background: '#FFE5F1' }}>
@@ -1682,10 +1735,19 @@ function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidD
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    <button onClick={() => startEditKid(kid)} className="btn-bounce" style={{ background: C.soft, border: 'none', padding: 8, borderRadius: 12, cursor: 'pointer' }}><Edit3 size={16} color={C.purple} /></button>
-                    <button onClick={() => { setEditingPin(kid.id); setPinValue(kid.pin); }} className="btn-bounce" style={{ background: C.soft, border: 'none', padding: 8, borderRadius: 12, cursor: 'pointer' }}><Lock size={16} color={C.sky} /></button>
-                    {kids.length > 1 && (
-                      <button onClick={() => removeKid(kid.id)} className="btn-bounce" style={{ background: '#FFE5E5', border: 'none', padding: 8, borderRadius: 12, cursor: 'pointer' }}><X size={16} color={C.coral} /></button>
+                    {canEdit(kid.id) && (
+                      <>
+                        <button onClick={() => startEditKid(kid)} className="btn-bounce" style={{ background: C.soft, border: 'none', padding: 8, borderRadius: 12, cursor: 'pointer' }} title={L('Sửa hồ sơ', 'Edit profile')}><Edit3 size={16} color={C.purple} /></button>
+                        <button onClick={() => { setEditingPin(kid.id); setPinValue(kid.pin); }} className="btn-bounce" style={{ background: C.soft, border: 'none', padding: 8, borderRadius: 12, cursor: 'pointer' }} title={L('Đổi PIN', 'Change PIN')}><Lock size={16} color={C.sky} /></button>
+                      </>
+                    )}
+                    {!canEdit(kid.id) && (
+                      <div title={L('Chỉ bố/mẹ hoặc chính bạn đó mới sửa được', 'Only parent or this student can edit')} style={{ background: '#F0E6FF', border: 'none', padding: 8, borderRadius: 12, opacity: 0.5 }}>
+                        <Lock size={16} color={C.mute} />
+                      </div>
+                    )}
+                    {isParentAuthed && kids.length > 1 && (
+                      <button onClick={() => removeKid(kid.id)} className="btn-bounce" style={{ background: '#FFE5E5', border: 'none', padding: 8, borderRadius: 12, cursor: 'pointer' }} title={L('Xoá học viên (chỉ bố/mẹ)', 'Remove student (parent only)')}><X size={16} color={C.coral} /></button>
                     )}
                   </div>
                 </div>
@@ -2102,12 +2164,22 @@ function ReportTab({ kids, getOverall, streaks, unlockedBadges, getPillarProgres
   );
 }
 
-function SettingsTab({ lang, setLangP, exportData, importData, t, L }) {
+function SettingsTab({ lang, setLangP, exportData, importData, t, L, parentPin, setParentPinP, parentLocked, setParentLockedP }) {
   const fileInputRef = React.useRef(null);
+  const [editingPin, setEditingPin] = React.useState(false);
+  const [newParentPin, setNewParentPin] = React.useState(parentPin);
   const onFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (file) importData(file);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+  const saveParentPin = () => {
+    if (newParentPin.length === 4 && /^\d+$/.test(newParentPin)) {
+      setParentPinP(newParentPin);
+      setEditingPin(false);
+    } else {
+      alert(L('PIN phải là 4 chữ số.', 'PIN must be 4 digits.'));
+    }
   };
   return (
     <div className="fade-in">
@@ -2147,6 +2219,51 @@ function SettingsTab({ lang, setLangP, exportData, importData, t, L }) {
             <div className="body-f" style={{ fontSize: 11, color: C.mute, textAlign: 'center', lineHeight: 1.5 }}>
               {L('Khôi phục từ file backup. Sẽ ghi đè data hiện tại.', 'Restore from backup file. Will overwrite current data.')}
             </div>
+          </div>
+        </Card>
+
+        <Card accent={C.gold}>
+          <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>🔐 {L('Khoá Bố/Mẹ', 'Parent Lock')}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, padding: 12, background: parentLocked ? '#FFF4D1' : C.soft, borderRadius: 12 }}>
+            <div>
+              <div className="body-f" style={{ fontSize: 13, fontWeight: 700, color: C.ink }}>
+                {parentLocked ? `🔒 ${L('Đã khoá', 'Locked')}` : `🔓 ${L('Chưa khoá', 'Unlocked')}`}
+              </div>
+              <div className="body-f" style={{ fontSize: 11, color: C.sub, marginTop: 2 }}>
+                {parentLocked
+                  ? L('Yêu cầu PIN để vào parent mode', 'Requires PIN to enter parent mode')
+                  : L('Mode bố/mẹ là default — không cần PIN', 'Parent mode is default — no PIN needed')}
+              </div>
+            </div>
+            <button onClick={() => setParentLockedP(!parentLocked)} className="btn-bounce body-f" style={{
+              background: parentLocked ? C.gold : C.mute, color: '#fff', border: 'none',
+              padding: '8px 16px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+            }}>
+              {parentLocked ? L('Mở khoá', 'Unlock') : L('Khoá', 'Lock')}
+            </button>
+          </div>
+
+          <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+            {L('PIN Bố/Mẹ hiện tại', 'Current parent PIN')}: {editingPin ? '' : '••••'}
+          </div>
+          {editingPin ? (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input type="text" maxLength={4} value={newParentPin} autoFocus
+                onChange={e => setNewParentPin(e.target.value.replace(/\D/g, ''))}
+                placeholder="PIN 4 số" style={{
+                  flex: 1, padding: 10, border: `2px solid ${C.border}`, borderRadius: 12,
+                  fontSize: 16, fontWeight: 700, letterSpacing: 8, textAlign: 'center', outline: 'none',
+                }} />
+              <Btn onClick={saveParentPin} color={C.mint} icon={Save} size="sm">{t('save')}</Btn>
+              <Btn onClick={() => { setEditingPin(false); setNewParentPin(parentPin); }} color={C.mute} variant="outline" size="sm">{t('cancel')}</Btn>
+            </div>
+          ) : (
+            <Btn onClick={() => setEditingPin(true)} color={C.gold} variant="outline" icon={Edit3} style={{ width: '100%', justifyContent: 'center' }}>
+              {L('Đổi PIN bố/mẹ', 'Change parent PIN')}
+            </Btn>
+          )}
+          <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 8, fontStyle: 'italic' }}>
+            💡 {L('Mặc định: 0000. Đổi để bảo vệ Settings + edit học viên khỏi các bạn nhỏ tự ý.', 'Default: 0000. Change to protect Settings + student edits from unauthorized kids.')}
           </div>
         </Card>
 
@@ -2478,8 +2595,9 @@ function EvalModal({ evalKid, evalQuarter, evalText, setEvalText, evalRating, se
   );
 }
 
-function LoginModal({ kids, pinAttempt, setPinAttempt, tryLogin, setShowLogin, setActiveKidId, t, L }) {
+function LoginModal({ kids, pinAttempt, setPinAttempt, tryLogin, setShowLogin, setActiveKidId, t, L, parentLocked, parentUnlocked, tryParentLogin, parentLoginAttempt, setParentLoginAttempt, parentLoginError }) {
   const [error, setError] = React.useState(false);
+  const [showParentPin, setShowParentPin] = React.useState(parentLocked && !parentUnlocked);
 
   const tryIt = (kidId, val) => {
     if (val.length === 4) {
@@ -2488,7 +2606,21 @@ function LoginModal({ kids, pinAttempt, setPinAttempt, tryLogin, setShowLogin, s
     }
   };
 
-  const goParent = () => { setActiveKidId(null); setShowLogin(false); };
+  const goParent = () => {
+    setActiveKidId(null);
+    if (parentLocked && !parentUnlocked) {
+      setShowParentPin(true);
+    } else {
+      setShowLogin(false);
+    }
+  };
+
+  const handleParentPin = (val) => {
+    if (val.length === 4) {
+      const ok = tryParentLogin(val);
+      if (ok) setShowLogin(false);
+    }
+  };
 
   return (
     <div onClick={() => setShowLogin(false)} style={{
@@ -2500,8 +2632,27 @@ function LoginModal({ kids, pinAttempt, setPinAttempt, tryLogin, setShowLogin, s
         boxShadow: '0 20px 60px rgba(132,94,194,0.4)',
         maxHeight: '90vh', overflowY: 'auto',
       }}>
-        <h3 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: 8 }}>🔐 {t('selectKid')}</h3>
-        <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>{t('enterPin')}</div>
+        <h3 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          {showParentPin ? `👨‍👩‍👧 ${L('Đăng nhập Bố/Mẹ', 'Parent Login')}` : `🔐 ${t('selectKid')}`}
+        </h3>
+        <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>
+          {showParentPin ? L('Nhập PIN bố/mẹ (mặc định: 0000)', 'Enter parent PIN (default: 0000)') : t('enterPin')}
+        </div>
+
+        {showParentPin && (
+          <div className="pop-in" style={{ marginBottom: 14 }}>
+            <input type="password" maxLength={4} value={parentLoginAttempt} autoFocus
+              onChange={e => { const v = e.target.value.replace(/\D/g, ''); setParentLoginAttempt(v); handleParentPin(v); }}
+              placeholder="••••" style={{
+                width: '100%', padding: 16, border: `3px solid ${parentLoginError ? C.coral : C.border}`, borderRadius: 16,
+                fontSize: 28, fontWeight: 700, letterSpacing: 16, textAlign: 'center', outline: 'none', marginBottom: 12,
+              }} />
+            {parentLoginError && <div className="body-f" style={{ color: C.coral, fontSize: 13, textAlign: 'center', fontWeight: 700, marginBottom: 10 }}>❌ PIN sai!</div>}
+            <Btn onClick={() => setShowParentPin(false)} color={C.mute} variant="outline" style={{ width: '100%', justifyContent: 'center' }}>{L('← Trở lại chọn học viên', '← Back to student select')}</Btn>
+          </div>
+        )}
+
+        {!showParentPin && (<>
 
         {/* PIN hints */}
         {!pinAttempt.kidId && (
@@ -2560,6 +2711,8 @@ function LoginModal({ kids, pinAttempt, setPinAttempt, tryLogin, setShowLogin, s
             </div>
           </div>
         )}
+
+        </>)}
       </div>
     </div>
   );
@@ -2592,8 +2745,14 @@ function PublishTab({ t, L }) {
   );
 }
 
-function JournalTab({ kids, journal, saveJournal, t, L }) {
-  const [selectedKid, setSelectedKid] = React.useState(kids[0]?.id);
+function JournalTab({ kids, journal, saveJournal, t, L, activeKidId, isParentAuthed }) {
+  // Privacy: in kid mode, only show own journal; parent sees all
+  const visibleKids = isParentAuthed ? kids : kids.filter(k => k.id === activeKidId);
+  const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
+  // Auto-correct selectedKid if user just switched modes
+  React.useEffect(() => {
+    if (!isParentAuthed && activeKidId && selectedKid !== activeKidId) setSelectedKid(activeKidId);
+  }, [activeKidId, isParentAuthed]);
   const [learned, setLearned] = React.useState('');
   const [hard, setHard] = React.useState('');
   const [happy, setHappy] = React.useState('');
@@ -2618,8 +2777,14 @@ function JournalTab({ kids, journal, saveJournal, t, L }) {
     <div className="fade-in">
       <SectionHeader title={t('journal')} subtitle={L('Mỗi ngày 3 câu — phản tư là siêu năng lực', 'Daily 3 lines — reflection is a superpower')} emoji="📓" />
 
+      {!isParentAuthed && (
+        <div style={{ background: '#E5F3FF', borderRadius: 12, padding: 10, marginBottom: 14, fontSize: 12 }}>
+          <div className="body-f" style={{ color: C.sky, fontWeight: 700 }}>🔒 {L('Nhật ký là bí mật cá nhân — chỉ em xem được.', 'Journal is personal secret — only you can see.')}</div>
+        </div>
+      )}
+
       <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
-        {kids.map(k => (
+        {visibleKids.map(k => (
           <button key={k.id} onClick={() => setSelectedKid(k.id)} className="btn-bounce body-f" style={{
             background: selectedKid === k.id ? k.color : '#fff', color: selectedKid === k.id ? '#fff' : k.color,
             border: `2px solid ${k.color}`, padding: '10px 18px', borderRadius: 999, cursor: 'pointer', fontWeight: 700,
@@ -2677,8 +2842,13 @@ function JournalTab({ kids, journal, saveJournal, t, L }) {
   );
 }
 
-function PortfolioTab({ kids, portfolio, addPortfolioItem, setPortfolioP, t, L }) {
-  const [selectedKid, setSelectedKid] = React.useState(kids[0]?.id);
+function PortfolioTab({ kids, portfolio, addPortfolioItem, setPortfolioP, t, L, activeKidId, isParentAuthed }) {
+  // Privacy: portfolio CAN be public showcase, but Edit/Add only for own or parent
+  const visibleKids = isParentAuthed ? kids : kids.filter(k => k.id === activeKidId);
+  const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
+  React.useEffect(() => {
+    if (!isParentAuthed && activeKidId && selectedKid !== activeKidId) setSelectedKid(activeKidId);
+  }, [activeKidId, isParentAuthed]);
   const [showAdd, setShowAdd] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [url, setUrl] = React.useState('');
@@ -2703,7 +2873,7 @@ function PortfolioTab({ kids, portfolio, addPortfolioItem, setPortfolioP, t, L }
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
-        {kids.map(k => (
+        {visibleKids.map(k => (
           <button key={k.id} onClick={() => setSelectedKid(k.id)} className="btn-bounce body-f" style={{
             background: selectedKid === k.id ? k.color : '#fff', color: selectedKid === k.id ? '#fff' : k.color,
             border: `2px solid ${k.color}`, padding: '10px 18px', borderRadius: 999, cursor: 'pointer', fontWeight: 700,
