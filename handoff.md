@@ -84,21 +84,64 @@ Type: `Continue pany-kids-studio English 4 skills` and Claude Code will:
    - Settings → Import/Export backup JSON test
 4. **📅 (Optional) Test cron NOW** — GET `https://pany-kids-studio.vercel.app/api/refresh-content?secret=<CRON_SECRET>` to force-run without waiting
 
-## Session 7 priorities (English 4 skills - req 5)
+## Session 8 priorities (anh's new requests 2026-04-30 end of session)
 
-When anh ready, build:
-- **Listen**: TED-Ed embed player + comprehension Q&A from Đại Ka
-- **Speak**: Web Speech API (SpeechRecognition) → kid speaks → API analyzes pronunciation → Đại Ka feedback
-- **Read**: Curated short stories per age + comprehension prompts
-- **Write**: Text input → Đại Ka grades grammar + suggests improvements
-- File import for parent-curated content (PDF reading materials, MP3 audio)
-- Persistence: per-kid English progress in `pks3-english-{kidId}`
+### 🔴 P0 — Tone shift: Đại Ka = bố Bình (request 1)
+- Update `lib/claude.ts` HARD_RULES_VI + HARD_RULES_EN
+- Old identity: "Đại Ka — anh cả AI mentor" calling kid "em"
+- NEW identity: "Đại Ka — bố Bình của các bạn nhỏ" calling kid "con"
+- Replace all "em" → "con" in system prompt
+- Update opening greeting: "Chào con!" instead of "Chào em!"
+- Sample new tone: "Con đang học gì hôm nay? Bố ngồi cùng con này"
+- Update ChatBot.tsx greeting strings
+- This is a meaningful identity shift — Đại Ka now speaks as DAD, not big brother
+
+### 🔴 P1 — Profile photo + greeting (request 3)
+- Profile fields: add `avatarUrl` (image URL) — file upload OR paste URL
+- Profile display: show avatar circle + greeting based on time-of-day
+- Greeting examples (use full name, not nickname):
+  - 5-11h: "Chào buổi sáng Hạnh Phúc!" / "Good morning Hạnh Phúc!"
+  - 11-13h: "Chào buổi trưa An!" / "Good noon An!"
+  - 13-18h: "Chào buổi chiều Như Ý!" / "Good afternoon Như Ý!"
+  - 18-22h: "Chào buổi tối Hạnh Phúc!" / "Good evening Hạnh Phúc!"
+  - 22-5h: "Khuya rồi An ơi, đi ngủ nhé!" / "It's late An, go to sleep!"
+- Add `fullName` field to kid schema (default = name) for the Vietnamese full names
+- Default fullNames: Phúc → Hạnh Phúc, An → Bình An, Y → Như Ý
+- Greeting shows on Overview tab AND when kid logs in (toast/banner)
+
+### 🔴 P1 — Journal photo folder, max 300MB (request 2)
+**Storage challenge**: 300MB exceeds localStorage (5-10MB). Options:
+1. **IndexedDB** — supports ~50% of disk. Best for offline. Use `idb` library or native API.
+2. **Vercel Blob** — backend storage, requires API token. Persistent across devices.
+3. **Cloudinary free tier** — 25GB free + transformations.
+4. **Compressed inline** — compress to <5MB then store base64 in localStorage.
+
+**Recommendation**: IndexedDB for v1 (zero backend cost, works offline). Migrate to Vercel Blob later if multi-device sync needed.
+
+Implementation:
+- New `lib/imageStorage.ts` using IndexedDB (`idb` library — `pnpm add idb`)
+- Per-kid quota: 100MB each (3 kids × 100MB = 300MB total)
+- Show usage bar: "Phúc: 45MB / 100MB used"
+- Upload UI: drag-drop or file picker, validates size + format (jpg/png/webp)
+- Auto-resize: max 1920px wide via canvas before storing (saves space)
+- Display: gallery view per journal entry with thumbnails
+- Delete button per image
+- Total quota warning at 80%, hard block at 100%
+
+### Session 8 implementation order
+1. Đại Ka tone (10 min — small prompt edit)
+2. Greeting + avatar (1-2h — Overview banner + profile field + time-of-day logic)
+3. Journal photo folder (3-4h — IndexedDB integration + upload UI + gallery)
+
+Also still deferred from earlier:
+4. English Listen/Speak/Read/Write — req 5 (Web Speech API)
 
 ## Reference files
-- Source: apps/web/components/PanyKidsStudio.tsx (~3000 lines now)
+- Source: apps/web/components/PanyKidsStudio.tsx (~3500 lines now)
 - Chatbot: apps/web/components/ChatBot.tsx
 - Map: apps/web/components/VietnamMap.tsx
-- Curated data: apps/web/lib/curated.ts (60 resources)
+- AI Search: apps/web/components/AISearch.tsx (NEW v3.1-E)
+- Curated data: apps/web/lib/curated.ts (81 resources after v3.1-E)
 - API: apps/web/app/api/chat/route.ts + apps/web/app/api/refresh-content/route.ts
-- Đại Ka prompt: apps/web/lib/claude.ts
+- Đại Ka prompt: apps/web/lib/claude.ts ← MAJOR EDIT next session
 - Cron config: apps/web/vercel.json

@@ -1,7 +1,7 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-04-30 23:50
-**Current state:** v3.1-BCD LIVE in production
+**Last updated:** 2026-04-30 (end of Session 6 extended)
+**Current state:** v3.1-E LIVE in production (8 commits total)
 
 ## URLs
 - 🌐 Production: https://pany-kids-studio.vercel.app
@@ -15,7 +15,9 @@ abdd9eb  init: Pany Kids Studio v3 (2748 lines)
 8eb92a1  fix: add @ts-nocheck to PanyKidsStudio.tsx for v1 ship
 1e7ae3e  feat(v3.1-A): full kid profiles + login UX improvements
 86b70cf  chore: update status + handoff for v3.1-A checkpoint
-36989c3  feat(v3.1-BCD): curated content + VN map + import + monthly cron   ← latest
+36989c3  feat(v3.1-BCD): curated content + VN map + import + monthly cron
+df91f7b  chore: update Project OS docs after v3.1-BCD checkpoint
+2196c4a  feat(v3.1-E): parent lock + privacy + AI search + curated v2 (81 resources)   ← latest
 ```
 
 ## Phase progress
