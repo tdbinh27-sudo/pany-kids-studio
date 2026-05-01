@@ -56,6 +56,10 @@ const I18N = {
     importData: 'Nhập dữ liệu', resetAll: 'Reset toàn bộ',
     selectKid: 'Chọn học viên', loginPin: 'Mã PIN', enterPin: 'Nhập PIN 4 số',
     parentMode: 'Bố/Mẹ', kidMode: 'Học viên',
+    profileLabel: 'Hồ sơ', editProfile: 'Chỉnh sửa hồ sơ', avatar: 'Avatar (emoji)', birthday: 'Ngày sinh',
+    school: 'Trường', hobbies: 'Sở thích', goals: 'Mục tiêu học tập', bio: 'Giới thiệu', favoriteSubject: 'Môn yêu thích',
+    pinHintTitle: 'PIN mặc định', loginParent: 'Vào mode Bố/Mẹ',
+    parentBadgeTip: 'Bố/Mẹ đang là mode mặc định — bố/mẹ edit thoải mái',
     yourBadges: 'Huy hiệu của bạn', locked: 'Chưa mở', unlocked: 'Đã mở',
     unlockedAt: 'Mở khoá', noEvalYet: 'Chưa có đánh giá',
     pillarRadar: 'Biểu đồ năng lực 6 trụ cột', progressOverTime: 'Tiến độ theo thời gian',
@@ -102,6 +106,10 @@ const I18N = {
     importData: 'Import data', resetAll: 'Reset everything',
     selectKid: 'Select a student', loginPin: 'PIN code', enterPin: 'Enter 4-digit PIN',
     parentMode: 'Parent', kidMode: 'Student',
+    profileLabel: 'Profile', editProfile: 'Edit profile', avatar: 'Avatar (emoji)', birthday: 'Birthday',
+    school: 'School', hobbies: 'Hobbies', goals: 'Learning goals', bio: 'Bio', favoriteSubject: 'Favorite subject',
+    pinHintTitle: 'Default PIN', loginParent: 'Switch to Parent mode',
+    parentBadgeTip: 'Parent mode is default — edit anything freely',
     yourBadges: 'Your badges', locked: 'Locked', unlocked: 'Unlocked',
     unlockedAt: 'Unlocked', noEvalYet: 'No reviews yet',
     pillarRadar: '6-Pillar competency chart', progressOverTime: 'Progress over time',
@@ -114,9 +122,9 @@ const I18N = {
 };
 
 const DEFAULT_KIDS = [
-  { id: 'kid_1', name: 'Phúc',  age: 8,  color: '#FF6B9D', emoji: '🌟', pin: '1111' },
-  { id: 'kid_2', name: 'An',    age: 10, color: '#4DABF7', emoji: '🚀', pin: '2222' },
-  { id: 'kid_3', name: 'Y',     age: 12, color: '#51CF66', emoji: '🎨', pin: '3333' },
+  { id: 'kid_1', name: 'Phúc',  age: 8,  color: '#FF6B9D', emoji: '🌟', pin: '1111', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
+  { id: 'kid_2', name: 'An',    age: 10, color: '#4DABF7', emoji: '🚀', pin: '2222', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
+  { id: 'kid_3', name: 'Y',     age: 12, color: '#51CF66', emoji: '🎨', pin: '3333', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
 ];
 
 const PILLARS = [
@@ -556,8 +564,7 @@ export default function PanyKidsStudio() {
   const [pinAttempt, setPinAttempt] = useState({ kidId: null, value: '' });
   const [expandedYear, setExpandedYear] = useState(1);
   const [editingKidId, setEditingKidId] = useState(null);
-  const [editKidName, setEditKidName] = useState('');
-  const [editKidAge, setEditKidAge] = useState('');
+  const [editKidData, setEditKidData] = useState({ name: '', age: '', emoji: '', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' });
   const [showAddKid, setShowAddKid] = useState(false);
   const [newKidName, setNewKidName] = useState('');
   const [newKidAge, setNewKidAge] = useState('');
@@ -698,8 +705,35 @@ export default function PanyKidsStudio() {
     if (any) { setBadgesP({ ...unlockedBadges, [kidId]: newU }); fireConfetti(); }
   };
 
-  const startEditKid = (kid) => { setEditingKidId(kid.id); setEditKidName(kid.name); setEditKidAge(String(kid.age)); };
-  const saveEditKid = () => { setKidsP(kids.map(k => k.id === editingKidId ? { ...k, name: editKidName, age: parseInt(editKidAge) || k.age } : k)); setEditingKidId(null); };
+  const startEditKid = (kid) => {
+    setEditingKidId(kid.id);
+    setEditKidData({
+      name: kid.name || '',
+      age: String(kid.age || ''),
+      emoji: kid.emoji || '🌟',
+      birthday: kid.birthday || '',
+      school: kid.school || '',
+      hobbies: kid.hobbies || '',
+      goals: kid.goals || '',
+      bio: kid.bio || '',
+      favoriteSubject: kid.favoriteSubject || '',
+    });
+  };
+  const saveEditKid = () => {
+    setKidsP(kids.map(k => k.id === editingKidId ? {
+      ...k,
+      name: editKidData.name || k.name,
+      age: parseInt(editKidData.age) || k.age,
+      emoji: editKidData.emoji || k.emoji,
+      birthday: editKidData.birthday,
+      school: editKidData.school,
+      hobbies: editKidData.hobbies,
+      goals: editKidData.goals,
+      bio: editKidData.bio,
+      favoriteSubject: editKidData.favoriteSubject,
+    } : k));
+    setEditingKidId(null);
+  };
   const addNewKid = () => {
     if (!newKidName.trim()) return;
     const colors = ['#FF6B9D', '#4DABF7', '#51CF66', '#845EC2', '#FFD43B', '#FF8787'];
@@ -788,7 +822,7 @@ export default function PanyKidsStudio() {
         {activeTab === 'calendar'    && <CalendarTab     kids={kids} weeklyTasks={weeklyTasks} setTasksP={setTasksP} streaks={streaks} checkInToday={checkInToday} t={t} L={L} />}
         {activeTab === 'skilltree'   && <SkillTreeTab    kids={kids} getPillarProgress={getPillarProgress} t={t} L={L} />}
         {activeTab === 'career'      && <CareerTab       t={t} L={L} kids={kids} getPillarProgress={getPillarProgress} />}
-        {activeTab === 'kids'        && <KidsTab         kids={kids} editingKidId={editingKidId} setEditingKidId={setEditingKidId} editKidName={editKidName} setEditKidName={setEditKidName} editKidAge={editKidAge} setEditKidAge={setEditKidAge} startEditKid={startEditKid} saveEditKid={saveEditKid} addNewKid={addNewKid} showAddKid={showAddKid} setShowAddKid={setShowAddKid} newKidName={newKidName} setNewKidName={setNewKidName} newKidAge={newKidAge} setNewKidAge={setNewKidAge} removeKid={removeKid} getYearProgress={getYearProgress} evaluations={evaluations} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} setKidsP={setKidsP} />}
+        {activeTab === 'kids'        && <KidsTab         kids={kids} editingKidId={editingKidId} setEditingKidId={setEditingKidId} editKidData={editKidData} setEditKidData={setEditKidData} startEditKid={startEditKid} saveEditKid={saveEditKid} addNewKid={addNewKid} showAddKid={showAddKid} setShowAddKid={setShowAddKid} newKidName={newKidName} setNewKidName={setNewKidName} newKidAge={newKidAge} setNewKidAge={setNewKidAge} removeKid={removeKid} getYearProgress={getYearProgress} evaluations={evaluations} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} setKidsP={setKidsP} />}
         {activeTab === 'badges'      && <BadgesTab       kids={kids} unlockedBadges={unlockedBadges} t={t} L={L} />}
         {activeTab === 'journal'     && <JournalTab      kids={kids} journal={journal} saveJournal={saveJournal} t={t} L={L} />}
         {activeTab === 'portfolio'   && <PortfolioTab    kids={kids} portfolio={portfolio} addPortfolioItem={addPortfolioItem} setPortfolioP={setPortfolioP} t={t} L={L} />}
@@ -811,7 +845,7 @@ export default function PanyKidsStudio() {
         <EvalModal evalKid={evalKid} evalQuarter={evalQuarter} evalText={evalText} setEvalText={setEvalText} evalRating={evalRating} setEvalRating={setEvalRating} saveEval={saveEval} setEvalKid={setEvalKid} setEvalQuarter={setEvalQuarter} kids={kids} t={t} L={L} />
       )}
 
-      {showLogin && <LoginModal kids={kids} pinAttempt={pinAttempt} setPinAttempt={setPinAttempt} tryLogin={tryLogin} setShowLogin={setShowLogin} t={t} />}
+      {showLogin && <LoginModal kids={kids} pinAttempt={pinAttempt} setPinAttempt={setPinAttempt} tryLogin={tryLogin} setShowLogin={setShowLogin} setActiveKidId={setActiveKidId} t={t} L={L} />}
 
       {(() => {
         const chatKid = kids.find(k => k.id === activeKidId) || kids[0];
@@ -1510,7 +1544,7 @@ function CareerTab({ t, L, kids, getPillarProgress }) {
   );
 }
 
-function KidsTab({ kids, editingKidId, setEditingKidId, editKidName, setEditKidName, editKidAge, setEditKidAge, startEditKid, saveEditKid, addNewKid, showAddKid, setShowAddKid, newKidName, setNewKidName, newKidAge, setNewKidAge, removeKid, getYearProgress, evaluations, streaks, unlockedBadges, t, L, setKidsP }) {
+function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidData, startEditKid, saveEditKid, addNewKid, showAddKid, setShowAddKid, newKidName, setNewKidName, newKidAge, setNewKidAge, removeKid, getYearProgress, evaluations, streaks, unlockedBadges, t, L, setKidsP }) {
   const [editingPin, setEditingPin] = React.useState(null);
   const [pinValue, setPinValue] = React.useState('');
 
@@ -1539,13 +1573,70 @@ function KidsTab({ kids, editingKidId, setEditingKidId, editKidName, setEditKidN
         {kids.map(kid => (
           <Card key={kid.id} accent={kid.color}>
             {editingKidId === kid.id ? (
-              <div>
-                <input value={editKidName} onChange={e => setEditKidName(e.target.value)}
-                  style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 16, width: '100%', marginBottom: 8, outline: 'none' }} />
-                <input value={editKidAge} type="number" onChange={e => setEditKidAge(e.target.value)}
-                  style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 14, width: 100, marginBottom: 12, outline: 'none' }} />
+              <div className="pop-in">
+                <h4 className="display" style={{ fontSize: 18, fontWeight: 700, margin: '0 0 14px', color: kid.color }}>✏️ {t('editProfile')}</h4>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 90px 90px', gap: 8, marginBottom: 10 }}>
+                  <div>
+                    <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, display: 'block', marginBottom: 4 }}>{t('name')}</label>
+                    <input value={editKidData.name} onChange={e => setEditKidData({ ...editKidData, name: e.target.value })}
+                      style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 14, width: '100%', outline: 'none' }} />
+                  </div>
+                  <div>
+                    <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, display: 'block', marginBottom: 4 }}>{t('age')}</label>
+                    <input value={editKidData.age} type="number" min={6} max={16} onChange={e => setEditKidData({ ...editKidData, age: e.target.value })}
+                      style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 14, width: '100%', outline: 'none' }} />
+                  </div>
+                  <div>
+                    <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, display: 'block', marginBottom: 4 }}>{t('avatar')}</label>
+                    <input value={editKidData.emoji} onChange={e => setEditKidData({ ...editKidData, emoji: e.target.value })}
+                      style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 18, width: '100%', textAlign: 'center', outline: 'none' }} />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: 10 }}>
+                  <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, display: 'block', marginBottom: 4 }}>🎂 {t('birthday')}</label>
+                  <input type="date" value={editKidData.birthday} onChange={e => setEditKidData({ ...editKidData, birthday: e.target.value })}
+                    style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 14, width: '100%', outline: 'none' }} />
+                </div>
+
+                <div style={{ marginBottom: 10 }}>
+                  <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, display: 'block', marginBottom: 4 }}>🏫 {t('school')}</label>
+                  <input value={editKidData.school} onChange={e => setEditKidData({ ...editKidData, school: e.target.value })}
+                    placeholder={L('VD: Tiểu học Lê Lợi', 'e.g. Lincoln Elementary')}
+                    style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 14, width: '100%', outline: 'none' }} />
+                </div>
+
+                <div style={{ marginBottom: 10 }}>
+                  <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, display: 'block', marginBottom: 4 }}>📚 {t('favoriteSubject')}</label>
+                  <input value={editKidData.favoriteSubject} onChange={e => setEditKidData({ ...editKidData, favoriteSubject: e.target.value })}
+                    placeholder={L('VD: Toán, Tiếng Anh, Vẽ...', 'e.g. Math, English, Art...')}
+                    style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 14, width: '100%', outline: 'none' }} />
+                </div>
+
+                <div style={{ marginBottom: 10 }}>
+                  <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, display: 'block', marginBottom: 4 }}>🎨 {t('hobbies')}</label>
+                  <textarea value={editKidData.hobbies} onChange={e => setEditKidData({ ...editKidData, hobbies: e.target.value })}
+                    placeholder={L('VD: vẽ, đọc sách, chơi piano...', 'e.g. drawing, reading, piano...')}
+                    style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 13, width: '100%', minHeight: 50, resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
+                </div>
+
+                <div style={{ marginBottom: 10 }}>
+                  <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, display: 'block', marginBottom: 4 }}>🎯 {t('goals')}</label>
+                  <textarea value={editKidData.goals} onChange={e => setEditKidData({ ...editKidData, goals: e.target.value })}
+                    placeholder={L('Năm nay em muốn đạt...', 'This year I want to...')}
+                    style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 13, width: '100%', minHeight: 50, resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
+                </div>
+
+                <div style={{ marginBottom: 14 }}>
+                  <label className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, display: 'block', marginBottom: 4 }}>💬 {t('bio')}</label>
+                  <textarea value={editKidData.bio} onChange={e => setEditKidData({ ...editKidData, bio: e.target.value })}
+                    placeholder={L('Em là ai? Em thích gì?', 'Who are you? What do you love?')}
+                    style={{ padding: 10, border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 13, width: '100%', minHeight: 50, resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
+                </div>
+
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <Btn onClick={saveEditKid} color={C.mint} icon={Save} style={{ flex: 1 }}>{t('save')}</Btn>
+                  <Btn onClick={saveEditKid} color={C.mint} icon={Save} style={{ flex: 1, justifyContent: 'center' }}>{t('save')}</Btn>
                   <Btn onClick={() => setEditingKidId(null)} color={C.mute} variant="outline">{t('cancel')}</Btn>
                 </div>
               </div>
@@ -1594,6 +1685,18 @@ function KidsTab({ kids, editingKidId, setEditingKidId, editKidName, setEditKidN
                     <div className="body-f" style={{ fontSize: 10, color: C.sub, fontWeight: 600 }}>{t('evaluate')}</div>
                   </div>
                 </div>
+
+                {(kid.school || kid.favoriteSubject || kid.hobbies || kid.goals || kid.bio || kid.birthday) && (
+                  <div style={{ marginBottom: 16, padding: 14, background: C.soft, borderRadius: 14, borderLeft: `4px solid ${kid.color}` }}>
+                    <div className="body-f" style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: C.mute, marginBottom: 8 }}>👤 {t('profileLabel')}</div>
+                    {kid.birthday && <div className="body-f" style={{ fontSize: 12, marginBottom: 4 }}><strong>🎂 {t('birthday')}:</strong> {kid.birthday}</div>}
+                    {kid.school && <div className="body-f" style={{ fontSize: 12, marginBottom: 4 }}><strong>🏫 {t('school')}:</strong> {kid.school}</div>}
+                    {kid.favoriteSubject && <div className="body-f" style={{ fontSize: 12, marginBottom: 4 }}><strong>📚 {t('favoriteSubject')}:</strong> {kid.favoriteSubject}</div>}
+                    {kid.hobbies && <div className="body-f" style={{ fontSize: 12, marginBottom: 4 }}><strong>🎨 {t('hobbies')}:</strong> {kid.hobbies}</div>}
+                    {kid.goals && <div className="body-f" style={{ fontSize: 12, marginBottom: 4 }}><strong>🎯 {t('goals')}:</strong> {kid.goals}</div>}
+                    {kid.bio && <div className="body-f" style={{ fontSize: 12, fontStyle: 'italic', color: C.sub, marginTop: 6 }}>"{kid.bio}"</div>}
+                  </div>
+                )}
 
                 <div style={{ marginBottom: 16 }}>
                   <div className="body-f" style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: C.mute, marginBottom: 10 }}>{L('Tiến độ từng năm', 'Progress per year')}</div>
@@ -2251,7 +2354,7 @@ function EvalModal({ evalKid, evalQuarter, evalText, setEvalText, evalRating, se
   );
 }
 
-function LoginModal({ kids, pinAttempt, setPinAttempt, tryLogin, setShowLogin, t }) {
+function LoginModal({ kids, pinAttempt, setPinAttempt, tryLogin, setShowLogin, setActiveKidId, t, L }) {
   const [error, setError] = React.useState(false);
 
   const tryIt = (kidId, val) => {
@@ -2261,6 +2364,8 @@ function LoginModal({ kids, pinAttempt, setPinAttempt, tryLogin, setShowLogin, t
     }
   };
 
+  const goParent = () => { setActiveKidId(null); setShowLogin(false); };
+
   return (
     <div onClick={() => setShowLogin(false)} style={{
       position: 'fixed', inset: 0, background: 'rgba(45,27,78,0.6)', backdropFilter: 'blur(8px)',
@@ -2269,22 +2374,45 @@ function LoginModal({ kids, pinAttempt, setPinAttempt, tryLogin, setShowLogin, t
       <div onClick={e => e.stopPropagation()} className="pop-in" style={{
         background: '#fff', borderRadius: 24, padding: 28, maxWidth: 480, width: '100%',
         boxShadow: '0 20px 60px rgba(132,94,194,0.4)',
+        maxHeight: '90vh', overflowY: 'auto',
       }}>
         <h3 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: 8 }}>🔐 {t('selectKid')}</h3>
-        <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 18 }}>{t('enterPin')}</div>
+        <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>{t('enterPin')}</div>
+
+        {/* PIN hints */}
+        {!pinAttempt.kidId && (
+          <div style={{ background: '#FFF4D1', borderRadius: 12, padding: 12, marginBottom: 16, border: '2px dashed #FFB800' }}>
+            <div className="body-f" style={{ fontSize: 12, fontWeight: 700, color: '#9B6800', marginBottom: 6 }}>💡 {t('pinHintTitle')}</div>
+            <div className="body-f" style={{ fontSize: 12, color: C.ink, display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+              {kids.map(k => (
+                <span key={k.id}><strong>{k.emoji} {k.name}</strong>: {k.pin}</span>
+              ))}
+            </div>
+            <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 6 }}>
+              {L('Đổi PIN trong tab "Học viên" → click 🔒', 'Change PIN in "Students" tab → click 🔒')}
+            </div>
+          </div>
+        )}
 
         {!pinAttempt.kidId ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10 }}>
-            {kids.map(k => (
-              <button key={k.id} onClick={() => setPinAttempt({ kidId: k.id, value: '' })} className="btn-bounce" style={{
-                background: '#fff', border: `2px solid ${k.color}`, padding: 18, borderRadius: 18, cursor: 'pointer',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-              }}>
-                <div style={{ fontSize: 40 }}>{k.emoji}</div>
-                <div className="display" style={{ fontSize: 16, fontWeight: 700, color: k.color }}>{k.name}</div>
-              </button>
-            ))}
-          </div>
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10, marginBottom: 14 }}>
+              {kids.map(k => (
+                <button key={k.id} onClick={() => setPinAttempt({ kidId: k.id, value: '' })} className="btn-bounce" style={{
+                  background: '#fff', border: `2px solid ${k.color}`, padding: 18, borderRadius: 18, cursor: 'pointer',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                }}>
+                  <div style={{ fontSize: 40 }}>{k.emoji}</div>
+                  <div className="display" style={{ fontSize: 16, fontWeight: 700, color: k.color }}>{k.name}</div>
+                </button>
+              ))}
+            </div>
+            <div style={{ paddingTop: 14, borderTop: `1px dashed ${C.border}` }}>
+              <Btn onClick={goParent} color={C.purple} variant="outline" icon={Users} style={{ width: '100%', justifyContent: 'center' }}>
+                👨‍👩‍👧 {t('loginParent')}
+              </Btn>
+            </div>
+          </>
         ) : (
           <div>
             {(() => {
