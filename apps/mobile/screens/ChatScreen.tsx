@@ -15,7 +15,7 @@ import { KidSelector } from '../components/KidSelector';
 import { DEFAULT_KIDS, Kid } from '../lib/kids';
 import { I18N, Lang, L } from '../lib/i18n';
 import { C, RADIUS, SP } from '../lib/design';
-import { sendChat, ChatMessage } from '../lib/api';
+import { sendChat, ChatTurn } from '../lib/api';
 import { load } from '../lib/storage';
 
 interface ChatScreenProps {
@@ -26,7 +26,7 @@ export function ChatScreen({ lang }: ChatScreenProps) {
   const t = I18N[lang];
   const [kids, setKids] = useState<Kid[]>(DEFAULT_KIDS);
   const [activeKidId, setActiveKidId] = useState<string>(DEFAULT_KIDS[0].id);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatTurn[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,14 +43,16 @@ export function ChatScreen({ lang }: ChatScreenProps) {
 
   const send = async () => {
     if (!input.trim() || loading) return;
-    const userMsg: ChatMessage = { role: 'user', content: input.trim() };
+    const userMsgText = input.trim();
+    const userMsg: ChatTurn = { role: 'user', content: userMsgText };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput('');
     setLoading(true);
     setError(null);
 
-    const result = await sendChat(newMessages, {
+    // API expects: { ctx, history (excluding current user message), message: userMsg.content }
+    const result = await sendChat(userMsgText, messages, {
       kidId: activeKidId,
       kidName: kid?.name || null,
       kidAge: kid?.age || null,

@@ -60,7 +60,7 @@ export function DiscoveryScreen({ lang }: DiscoveryScreenProps) {
     const updated = { ...riasecAnswers, [activeKidId]: { ...kidAnswers, [qId]: score } };
     setRiasecAnswers(updated);
     await persist('riasecAnswers', updated);
-    if (step < questions.length) setTimeout(() => setStep((s) => s + 1), 250);
+    setTimeout(() => setStep((s) => s + 1), 250);
   };
 
   const finishQuiz = async () => {
@@ -68,6 +68,7 @@ export function DiscoveryScreen({ lang }: DiscoveryScreenProps) {
     const updated = { ...riasecCompleted, [activeKidId]: { date: new Date().toISOString(), results } };
     setRiasecCompleted(updated);
     await persist('riasecCompleted', updated);
+    setStep(0);
     setShowResults(true);
   };
 

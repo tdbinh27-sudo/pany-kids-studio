@@ -3858,15 +3858,14 @@ function SelfDiscoveryTab({ kids, moodLog, setMoodP, riasecAnswers, setRiasecAns
   const answerRiasec = (qId, score) => {
     const updated = { ...riasecAnswers, [selectedKid]: { ...kidAnswers, [qId]: score } };
     setRiasecAnsP(updated);
-    if (riasecStep < questions.length) {
-      setTimeout(() => setRiasecStep(s => s + 1), 300);
-    }
+    setTimeout(() => setRiasecStep(s => s + 1), 300);
   };
 
   const finishRiasec = () => {
     const results = scoreRiasec(kidAnswers, questions);
     const updated = { ...riasecCompleted, [selectedKid]: { date: new Date().toISOString(), results } };
     setRiasecDoneP(updated);
+    setRiasecStep(0);
     setShowResults(true);
     fireConfetti();
   };
