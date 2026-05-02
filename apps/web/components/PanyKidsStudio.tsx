@@ -16,6 +16,11 @@ import VietnamMap from '@/components/VietnamMap';
 import AISearchTab from '@/components/AISearch';
 import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
 import { QUIZ_BANK } from '@/lib/quiz';
+import { RIASEC_TYPES, RIASEC_JUNIOR_8_12, RIASEC_JUNIOR_13_15, MOOD_OPTIONS, CREATIVE_PROMPTS, EXERCISE_CHALLENGES, scoreRiasec } from '@/lib/riasec-junior';
+import type { RiasecType } from '@/lib/riasec-junior';
+import { CAREERS, getCareerOfDay, getProjectForType, getCareersByType } from '@/lib/careers-v2';
+import type { Career } from '@/lib/careers-v2';
+import { ASK_PARENT_PROMPTS, WEEKLY_REVIEW_PROMPTS, SHOW_TELL_IDEAS, FAMILY_ACTIVITIES } from '@/lib/family-prompts';
 
 // ============================================================
 // PANY KIDS STUDIO v3 — ANIME/FUNNY · BILINGUAL · ALL TIERS
@@ -72,6 +77,8 @@ const I18N = {
     debate: 'Tranh luận', mentor: 'Cố vấn', resourceLib: 'Thư viện tài nguyên',
     books: 'Sách', videos: 'Video', tools: 'Công cụ', websites: 'Website',
     weekFocus: 'Tâm điểm tuần', daily: 'Hằng ngày', weekly: 'Hằng tuần',
+    studioCreative: 'Sáng tạo', bodyMovement: 'Vận động', selfDiscovery: 'Tự khám phá',
+    careerCompass: 'La bàn nghề', familyBridge: 'Gia đình',
   },
   en: {
     appTitle: 'Pany Kids Studio', appSubtitle: '5-Year Family Learning System · For kids 6-16 · 2026—2031',
@@ -122,6 +129,8 @@ const I18N = {
     debate: 'Debate', mentor: 'Mentor', resourceLib: 'Resource library',
     books: 'Books', videos: 'Videos', tools: 'Tools', websites: 'Websites',
     weekFocus: 'Week focus', daily: 'Daily', weekly: 'Weekly',
+    studioCreative: 'Creative Studio', bodyMovement: 'Body & Movement', selfDiscovery: 'Self Discovery',
+    careerCompass: 'Career Compass', familyBridge: 'Family Bridge',
   },
 };
 
@@ -563,13 +572,23 @@ export default function PanyKidsStudio() {
   const [quizState, setQuizState] = useState({ kidId: null, qIdx: 0, score: 0, answered: null, pillar: null, age: null });
   const [showLogin, setShowLogin] = useState(false);
 
+  // === New pillar states ===
+  const [creativeWorks, setCreativeWorks] = useState({}); // {kidId: [{date, prompt, dataUrl}]}
+  const [exerciseLog, setExerciseLog] = useState({}); // {kidId: [{date, exercise, duration, emoji}]}
+  const [moodLog, setMoodLog] = useState({}); // {kidId-date: {mood, note}}
+  const [riasecAnswers, setRiasecAnswers] = useState({}); // {kidId: {questionId: score}}
+  const [riasecCompleted, setRiasecCompleted] = useState({}); // {kidId: {date, results}}
+  const [savedCareers, setSavedCareers] = useState({}); // {kidId: [careerId]}
+  const [familyJournal, setFamilyJournal] = useState([]); // [{date, author, kidId, content, type}]
+  const [weeklyReviews, setWeeklyReviews] = useState({}); // {kidId-weekKey: {answers: [], date}}
+
   const t = (key, fallback) => (I18N[lang] && I18N[lang][key]) || fallback || key;
   const L = (vi, en) => (lang === 'vi' ? vi : en);
 
   // ============== STORAGE ==============
   useEffect(() => {
     const load = async () => {
-      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges', 'parentPin', 'parentLocked'];
+      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges', 'parentPin', 'parentLocked', 'creativeWorks', 'exerciseLog', 'moodLog', 'riasecAnswers', 'riasecCompleted', 'savedCareers', 'familyJournal', 'weeklyReviews'];
       for (const k of keys) {
         try {
           const r = await storage.get(`pks3-${k}`);
@@ -589,6 +608,14 @@ export default function PanyKidsStudio() {
               setParentLocked(v);
               if (v) setParentUnlocked(false);
             }
+            if (k === 'creativeWorks') setCreativeWorks(v);
+            if (k === 'exerciseLog') setExerciseLog(v);
+            if (k === 'moodLog') setMoodLog(v);
+            if (k === 'riasecAnswers') setRiasecAnswers(v);
+            if (k === 'riasecCompleted') setRiasecCompleted(v);
+            if (k === 'savedCareers') setSavedCareers(v);
+            if (k === 'familyJournal') setFamilyJournal(v);
+            if (k === 'weeklyReviews') setWeeklyReviews(v);
           }
         } catch (e) {}
       }
@@ -609,6 +636,14 @@ export default function PanyKidsStudio() {
   const setBadgesP = (v) => { setUnlockedBadges(v); persist('badges', v); };
   const setParentPinP = (v) => { setParentPin(v); persist('parentPin', v); };
   const setParentLockedP = (v) => { setParentLocked(v); persist('parentLocked', v); if (v && !activeKidId) setParentUnlocked(false); };
+  const setCreativeP = (v) => { setCreativeWorks(v); persist('creativeWorks', v); };
+  const setExerciseP = (v) => { setExerciseLog(v); persist('exerciseLog', v); };
+  const setMoodP = (v) => { setMoodLog(v); persist('moodLog', v); };
+  const setRiasecAnsP = (v) => { setRiasecAnswers(v); persist('riasecAnswers', v); };
+  const setRiasecDoneP = (v) => { setRiasecCompleted(v); persist('riasecCompleted', v); };
+  const setSavedCareersP = (v) => { setSavedCareers(v); persist('savedCareers', v); };
+  const setFamilyJournalP = (v) => { setFamilyJournal(v); persist('familyJournal', v); };
+  const setWeeklyReviewsP = (v) => { setWeeklyReviews(v); persist('weeklyReviews', v); };
 
   const tryParentLogin = (val) => {
     if (val === parentPin) {
@@ -879,6 +914,11 @@ export default function PanyKidsStudio() {
         {activeTab === 'quiz'        && <QuizTab         kids={kids} quizState={quizState} setQuizState={setQuizState} t={t} L={L} lang={lang} />}
         {activeTab === 'report'      && <ReportTab       kids={kids} getOverall={getOverall} streaks={streaks} unlockedBadges={unlockedBadges} getPillarProgress={getPillarProgress} exportReport={exportReport} exportData={exportData} t={t} L={L} />}
         {activeTab === 'settings'    && <SettingsTab     lang={lang} setLangP={setLangP} exportData={exportData} importData={importData} t={t} L={L} parentPin={parentPin} setParentPinP={setParentPinP} parentLocked={parentLocked} setParentLockedP={setParentLockedP} />}
+        {activeTab === 'creative'    && <StudioCreativeTab kids={kids} creativeWorks={creativeWorks} setCreativeP={setCreativeP} activeKidId={activeKidId} t={t} L={L} lang={lang} />}
+        {activeTab === 'movement'    && <BodyMovementTab   kids={kids} exerciseLog={exerciseLog} setExerciseP={setExerciseP} activeKidId={activeKidId} t={t} L={L} lang={lang} />}
+        {activeTab === 'discovery'   && <SelfDiscoveryTab  kids={kids} moodLog={moodLog} setMoodP={setMoodP} riasecAnswers={riasecAnswers} setRiasecAnsP={setRiasecAnsP} riasecCompleted={riasecCompleted} setRiasecDoneP={setRiasecDoneP} activeKidId={activeKidId} t={t} L={L} lang={lang} fireConfetti={fireConfetti} />}
+        {activeTab === 'career-v2'   && <CareerCompassTab  kids={kids} savedCareers={savedCareers} setSavedCareersP={setSavedCareersP} riasecCompleted={riasecCompleted} activeKidId={activeKidId} t={t} L={L} lang={lang} />}
+        {activeTab === 'family'      && <FamilyBridgeTab    kids={kids} familyJournal={familyJournal} setFamilyJournalP={setFamilyJournalP} weeklyReviews={weeklyReviews} setWeeklyReviewsP={setWeeklyReviewsP} activeKidId={activeKidId} isParentAuthed={isParentAuthed} t={t} L={L} lang={lang} weekKey={weekKey} />}
       </main>
 
       {evalKid && evalQuarter && (
@@ -1098,6 +1138,11 @@ function MobileTabBar({ activeTab, setActiveTab, t }) {
     { id: 'english',     label: t('english'),     em: '🌍' },
     { id: 'finance',     label: t('finance'),     em: '💰' },
     { id: 'thinking',    label: t('thinking'),    em: '🧠' },
+    { id: 'creative',    label: t('studioCreative'), em: '🎨' },
+    { id: 'movement',    label: t('bodyMovement'),   em: '🤸' },
+    { id: 'discovery',   label: t('selfDiscovery'),  em: '🔮' },
+    { id: 'career-v2',   label: t('careerCompass'),  em: '🧭' },
+    { id: 'family',      label: t('familyBridge'),   em: '👨‍👩‍👧' },
     { id: 'rewards',     label: t('rewards'),     em: '🎁' },
     { id: 'experiences', label: t('experiences'), em: '🌳' },
     { id: 'publish',     label: t('publish'),     em: '📤' },
@@ -1161,6 +1206,13 @@ function TabNav({ activeTab, setActiveTab, t, sidebarOpen, setSidebarOpen, L }) 
       { id: 'english',     label: t('english'),     em: '🌍' },
       { id: 'finance',     label: t('finance'),     em: '💰' },
       { id: 'thinking',    label: t('thinking'),    em: '🧠' },
+    ]},
+    { vi: 'Phát triển', en: 'Development', items: [
+      { id: 'creative',    label: t('studioCreative'), em: '🎨' },
+      { id: 'movement',    label: t('bodyMovement'),   em: '🤸' },
+      { id: 'discovery',   label: t('selfDiscovery'),  em: '🔮' },
+      { id: 'career-v2',   label: t('careerCompass'),  em: '🧭' },
+      { id: 'family',      label: t('familyBridge'),   em: '👨‍👩‍👧' },
     ]},
     { vi: 'Hoạt động', en: 'Activities', items: [
       { id: 'rewards',     label: t('rewards'),     em: '🎁' },
@@ -3422,6 +3474,1091 @@ function CalendarTab({ kids, weeklyTasks, setTasksP, streaks, checkInToday, t, L
           )}
         </Card>
       </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PILLAR: STUDIO SÁNG TẠO
+// ============================================================
+function StudioCreativeTab({ kids, creativeWorks, setCreativeP, activeKidId, t, L, lang }) {
+  const canvasRef = React.useRef(null);
+  const [isDrawing, setIsDrawing] = React.useState(false);
+  const [brushColor, setBrushColor] = React.useState('#845EC2');
+  const [brushSize, setBrushSize] = React.useState(4);
+  const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
+
+  const todayPrompt = React.useMemo(() => {
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+    return CREATIVE_PROMPTS[dayOfYear % CREATIVE_PROMPTS.length];
+  }, []);
+
+  const colors = ['#2D1B4E', '#845EC2', '#FF6B9D', '#4DABF7', '#51CF66', '#FFD43B', '#FF8787', '#FFB800', '#FFFFFF'];
+
+  const getPos = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  };
+
+  const startDraw = (e) => {
+    e.preventDefault();
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx) return;
+    setIsDrawing(true);
+    const { x, y } = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  };
+
+  const draw = (e) => {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx) return;
+    const { x, y } = getPos(e);
+    ctx.strokeStyle = brushColor;
+    ctx.lineWidth = brushSize;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const stopDraw = () => setIsDrawing(false);
+
+  const clearCanvas = () => {
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx) return;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+  };
+
+  const saveDrawing = () => {
+    const dataUrl = canvasRef.current?.toDataURL('image/png');
+    if (!dataUrl || !selectedKid) return;
+    const kidWorks = creativeWorks[selectedKid] || [];
+    const updated = { ...creativeWorks, [selectedKid]: [...kidWorks, { date: new Date().toISOString(), prompt: lang === 'vi' ? todayPrompt.vi : todayPrompt.en, dataUrl }] };
+    setCreativeP(updated);
+  };
+
+  const kidWorks = (creativeWorks[selectedKid] || []).slice().reverse();
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 360;
+      const ctx = canvas.getContext('2d');
+      if (ctx) { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+    }
+  }, []);
+
+  return (
+    <div className="fade-in">
+      <SectionHeader title={t('studioCreative')} subtitle={L('Canvas vẽ, prompt sáng tạo hằng ngày', 'Drawing canvas, daily creative prompts')} emoji="🎨" />
+
+      <Card accent={C.pink} padding={20}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <Sparkles size={20} color={C.pink} />
+          <div>
+            <div className="display" style={{ fontSize: 14, fontWeight: 700, color: C.pink }}>{L('Thử thách sáng tạo hôm nay', 'Today\'s Creative Challenge')}</div>
+            <div className="body-f" style={{ fontSize: 16, fontWeight: 700, color: C.ink, marginTop: 4 }}>{L(todayPrompt.vi, todayPrompt.en)}</div>
+          </div>
+        </div>
+      </Card>
+
+      <div style={{ display: 'flex', gap: 8, margin: '16px 0', flexWrap: 'wrap' }}>
+        {kids.map(k => (
+          <button key={k.id} onClick={() => setSelectedKid(k.id)} className="btn-bounce body-f" style={{
+            background: selectedKid === k.id ? k.color : '#fff', color: selectedKid === k.id ? '#fff' : k.color,
+            border: `2px solid ${k.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{k.emoji} {k.name}</button>
+        ))}
+      </div>
+
+      <Card accent={C.purple}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          {colors.map(c => (
+            <button key={c} onClick={() => setBrushColor(c)} className="btn-bounce" style={{
+              width: 28, height: 28, borderRadius: '50%', background: c, cursor: 'pointer',
+              border: brushColor === c ? '3px solid #2D1B4E' : '2px solid #F0E6FF',
+              boxShadow: brushColor === c ? '0 0 0 2px #fff, 0 0 0 4px #845EC2' : 'none',
+            }} />
+          ))}
+          <span className="body-f" style={{ fontSize: 11, color: C.mute, marginLeft: 8 }}>{L('Cỡ cọ', 'Brush')}:</span>
+          {[2, 4, 8, 14].map(s => (
+            <button key={s} onClick={() => setBrushSize(s)} className="btn-bounce" style={{
+              width: s + 16, height: s + 16, borderRadius: '50%', background: brushSize === s ? C.purple : C.soft,
+              border: `2px solid ${brushSize === s ? C.purple : C.border}`, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <div style={{ width: s, height: s, borderRadius: '50%', background: brushSize === s ? '#fff' : C.mute }} />
+            </button>
+          ))}
+        </div>
+
+        <canvas
+          ref={canvasRef}
+          onMouseDown={startDraw} onMouseMove={draw} onMouseUp={stopDraw} onMouseLeave={stopDraw}
+          onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={stopDraw}
+          style={{ width: '100%', height: 360, borderRadius: 16, border: `2px solid ${C.border}`, cursor: 'crosshair', touchAction: 'none' }}
+        />
+
+        <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+          <Btn onClick={saveDrawing} color={C.mint} icon={Save}>{L('Lưu tác phẩm', 'Save artwork')}</Btn>
+          <Btn onClick={clearCanvas} color={C.coral} variant="outline" icon={RotateCw}>{L('Xoá canvas', 'Clear')}</Btn>
+        </div>
+      </Card>
+
+      {kidWorks.length > 0 && (
+        <Card accent={C.sky} style={{ marginTop: 16 }}>
+          <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px' }}>🖼️ {L('Tác phẩm đã lưu', 'Saved artworks')} ({kidWorks.length})</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
+            {kidWorks.slice(0, 12).map((w, i) => (
+              <div key={i} style={{ borderRadius: 12, overflow: 'hidden', border: `2px solid ${C.border}`, background: '#fff' }}>
+                <img src={w.dataUrl} alt={w.prompt} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }} />
+                <div style={{ padding: 8 }}>
+                  <div className="body-f" style={{ fontSize: 11, color: C.sub, fontWeight: 600 }}>{w.prompt}</div>
+                  <div className="body-f" style={{ fontSize: 10, color: C.mute, marginTop: 2 }}>{new Date(w.date).toLocaleDateString()}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// PILLAR: CƠ THỂ & VẬN ĐỘNG
+// ============================================================
+function BodyMovementTab({ kids, exerciseLog, setExerciseP, activeKidId, t, L, lang }) {
+  const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
+  const [timerActive, setTimerActive] = React.useState(false);
+  const [timerSeconds, setTimerSeconds] = React.useState(0);
+  const [timerTarget, setTimerTarget] = React.useState(60);
+  const [currentChallenge, setCurrentChallenge] = React.useState(null);
+  const [breathPhase, setBreathPhase] = React.useState(null); // 'in' | 'out' | null
+  const [breathCount, setBreathCount] = React.useState(0);
+  const timerRef = React.useRef(null);
+  const breathRef = React.useRef(null);
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const kidLog = (exerciseLog[selectedKid] || []);
+  const todayExercises = kidLog.filter(e => e.date.startsWith(todayStr));
+  const todayMinutes = todayExercises.reduce((s, e) => s + (e.duration || 0), 0);
+
+  const pickChallenge = () => {
+    const idx = Math.floor(Math.random() * EXERCISE_CHALLENGES.length);
+    const ch = EXERCISE_CHALLENGES[idx];
+    setCurrentChallenge(ch);
+    setTimerTarget(ch.duration * 60);
+    setTimerSeconds(0);
+  };
+
+  const startTimer = () => { setTimerActive(true); setTimerSeconds(0); };
+  const stopTimer = () => {
+    setTimerActive(false);
+    if (currentChallenge && timerSeconds > 0) {
+      const entry = { date: new Date().toISOString(), exercise: lang === 'vi' ? currentChallenge.vi : currentChallenge.en, duration: Math.ceil(timerSeconds / 60), emoji: currentChallenge.emoji };
+      const updated = { ...exerciseLog, [selectedKid]: [...kidLog, entry] };
+      setExerciseP(updated);
+    }
+    setTimerSeconds(0);
+  };
+
+  React.useEffect(() => {
+    if (timerActive) {
+      timerRef.current = setInterval(() => setTimerSeconds(s => s + 1), 1000);
+    } else {
+      clearInterval(timerRef.current);
+    }
+    return () => clearInterval(timerRef.current);
+  }, [timerActive]);
+
+  const startBreathing = () => {
+    setBreathPhase('in');
+    setBreathCount(0);
+    let count = 0;
+    breathRef.current = setInterval(() => {
+      count++;
+      if (count >= 15) { clearInterval(breathRef.current); setBreathPhase(null); return; }
+      setBreathPhase(p => p === 'in' ? 'out' : 'in');
+      setBreathCount(count);
+    }, 4000);
+  };
+
+  React.useEffect(() => () => clearInterval(breathRef.current), []);
+
+  const fmtTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const pct = timerTarget > 0 ? Math.min(100, Math.round((timerSeconds / timerTarget) * 100)) : 0;
+
+  const last7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0, 10);
+    const mins = kidLog.filter(e => e.date.startsWith(ds)).reduce((s, e) => s + (e.duration || 0), 0);
+    last7.push({ date: ds, mins, day: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][d.getDay()] });
+  }
+  const maxMins = Math.max(30, ...last7.map(d => d.mins));
+
+  return (
+    <div className="fade-in">
+      <SectionHeader title={t('bodyMovement')} subtitle={L('Thể dục, thử thách vận động, thở chánh niệm', 'Exercise, movement challenges, mindful breathing')} emoji="🤸" />
+
+      <div style={{ display: 'flex', gap: 8, margin: '0 0 16px', flexWrap: 'wrap' }}>
+        {kids.map(k => (
+          <button key={k.id} onClick={() => setSelectedKid(k.id)} className="btn-bounce body-f" style={{
+            background: selectedKid === k.id ? k.color : '#fff', color: selectedKid === k.id ? '#fff' : k.color,
+            border: `2px solid ${k.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{k.emoji} {k.name}</button>
+        ))}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+        {/* Challenge card */}
+        <Card accent={C.coral}>
+          <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+            🎯 {L('Thử thách vận động', 'Movement Challenge')}
+          </h3>
+          {currentChallenge ? (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 48, marginBottom: 8 }}>{currentChallenge.emoji}</div>
+              <div className="display" style={{ fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 12 }}>
+                {L(currentChallenge.vi, currentChallenge.en)}
+              </div>
+              <div style={{ position: 'relative', width: 140, height: 140, margin: '0 auto 16px', borderRadius: '50%', background: C.soft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="140" height="140" style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
+                  <circle cx="70" cy="70" r="60" fill="none" stroke={C.border} strokeWidth="8" />
+                  <circle cx="70" cy="70" r="60" fill="none" stroke={timerActive ? C.coral : C.mint} strokeWidth="8" strokeDasharray={`${pct * 3.77} 377`} strokeLinecap="round" />
+                </svg>
+                <div className="display" style={{ fontSize: 28, fontWeight: 700, color: timerActive ? C.coral : C.ink }}>{fmtTime(timerSeconds)}</div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                {!timerActive ? (
+                  <Btn onClick={startTimer} color={C.mint} icon={Zap}>{L('Bắt đầu', 'Start')}</Btn>
+                ) : (
+                  <Btn onClick={stopTimer} color={C.coral} icon={Check}>{L('Xong!', 'Done!')}</Btn>
+                )}
+                <Btn onClick={pickChallenge} color={C.sky} variant="outline" icon={RotateCw}>{L('Đổi', 'Change')}</Btn>
+              </div>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: 20 }}>
+              <div style={{ fontSize: 56, marginBottom: 12 }}>💪</div>
+              <Btn onClick={pickChallenge} color={C.coral} icon={Zap}>{L('Bốc thử thách!', 'Pick a challenge!')}</Btn>
+            </div>
+          )}
+        </Card>
+
+        {/* Mindful breathing */}
+        <Card accent={C.purple}>
+          <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+            🧘 {L('Thở chánh niệm 1 phút', '1-Minute Mindful Breathing')}
+          </h3>
+          <div style={{ textAlign: 'center', padding: 16 }}>
+            {breathPhase ? (
+              <>
+                <div style={{
+                  width: 120, height: 120, borderRadius: '50%', margin: '0 auto 16px',
+                  background: breathPhase === 'in' ? 'linear-gradient(135deg, #845EC2, #FF6B9D)' : 'linear-gradient(135deg, #4DABF7, #51CF66)',
+                  transform: breathPhase === 'in' ? 'scale(1.3)' : 'scale(0.8)',
+                  transition: 'all 3.5s ease-in-out',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <span style={{ fontSize: 24, color: '#fff', fontWeight: 700 }}>
+                    {breathPhase === 'in' ? L('Hít vào', 'Breathe in') : L('Thở ra', 'Breathe out')}
+                  </span>
+                </div>
+                <div className="body-f" style={{ fontSize: 13, color: C.sub }}>{Math.ceil((15 - breathCount) * 4 / 60)} {L('phút còn lại', 'min left')}</div>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: 56, marginBottom: 12 }}>🫧</div>
+                <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 16 }}>
+                  {L('Ngồi thoải mái, nhắm mắt, theo hướng dẫn hít thở 4 giây', 'Sit comfortably, close your eyes, follow the 4-second breathing guide')}
+                </div>
+                <Btn onClick={startBreathing} color={C.purple} icon={Heart}>{L('Bắt đầu thở', 'Start breathing')}</Btn>
+              </>
+            )}
+          </div>
+        </Card>
+      </div>
+
+      {/* Today summary */}
+      <Card accent={C.mint} style={{ marginTop: 16 }}>
+        <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          📊 {L('Hôm nay', 'Today')} — {todayMinutes} {L('phút vận động', 'min of movement')}
+        </h3>
+        {todayExercises.length === 0 ? (
+          <div className="body-f" style={{ fontSize: 13, color: C.mute, fontStyle: 'italic', textAlign: 'center', padding: 12 }}>
+            {L('Chưa có hoạt động hôm nay. Bốc thử thách đi con!', 'No activities today. Pick a challenge!')}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {todayExercises.map((e, i) => (
+              <Pill key={i} color={C.mint}>{e.emoji} {e.exercise} · {e.duration}m</Pill>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      {/* 7-day chart */}
+      <Card accent={C.sky} style={{ marginTop: 16 }}>
+        <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px' }}>📈 {L('7 ngày gần nhất', 'Last 7 days')}</h3>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 120 }}>
+          {last7.map((d, i) => (
+            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+              <div className="body-f" style={{ fontSize: 10, fontWeight: 700, color: C.sub }}>{d.mins}m</div>
+              <div style={{
+                width: '100%', maxWidth: 36, borderRadius: 8,
+                height: Math.max(4, (d.mins / maxMins) * 80),
+                background: d.date === todayStr ? `linear-gradient(135deg, ${C.coral}, ${C.pink})` : C.sky,
+                transition: 'height 0.3s',
+              }} />
+              <div className="body-f" style={{ fontSize: 10, fontWeight: 700, color: d.date === todayStr ? C.coral : C.mute }}>{d.day}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+// ============================================================
+// PILLAR: TỰ KHÁM PHÁ
+// ============================================================
+function SelfDiscoveryTab({ kids, moodLog, setMoodP, riasecAnswers, setRiasecAnsP, riasecCompleted, setRiasecDoneP, activeKidId, t, L, lang, fireConfetti }) {
+  const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
+  const [moodNote, setMoodNote] = React.useState('');
+  const [riasecStep, setRiasecStep] = React.useState(0); // 0 = not started
+  const [showResults, setShowResults] = React.useState(false);
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const moodKey = `${selectedKid}-${todayStr}`;
+  const todayMood = moodLog[moodKey];
+  const kid = kids.find(k => k.id === selectedKid);
+  const kidAge = kid?.age || 10;
+  const questions = kidAge <= 12 ? RIASEC_JUNIOR_8_12 : RIASEC_JUNIOR_13_15;
+  const kidAnswers = riasecAnswers[selectedKid] || {};
+  const kidResult = riasecCompleted[selectedKid];
+  const answeredCount = Object.keys(kidAnswers).length;
+
+  const saveMood = (value) => {
+    const updated = { ...moodLog, [moodKey]: { mood: value, note: moodNote, date: new Date().toISOString() } };
+    setMoodP(updated);
+    setMoodNote('');
+  };
+
+  const answerRiasec = (qId, score) => {
+    const updated = { ...riasecAnswers, [selectedKid]: { ...kidAnswers, [qId]: score } };
+    setRiasecAnsP(updated);
+    if (riasecStep < questions.length) {
+      setTimeout(() => setRiasecStep(s => s + 1), 300);
+    }
+  };
+
+  const finishRiasec = () => {
+    const results = scoreRiasec(kidAnswers, questions);
+    const updated = { ...riasecCompleted, [selectedKid]: { date: new Date().toISOString(), results } };
+    setRiasecDoneP(updated);
+    setShowResults(true);
+    fireConfetti();
+  };
+
+  const resetRiasec = () => {
+    const updatedAns = { ...riasecAnswers }; delete updatedAns[selectedKid];
+    const updatedDone = { ...riasecCompleted }; delete updatedDone[selectedKid];
+    setRiasecAnsP(updatedAns);
+    setRiasecDoneP(updatedDone);
+    setRiasecStep(0);
+    setShowResults(false);
+  };
+
+  // Mood history (last 7 days)
+  const moodHistory = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0, 10);
+    const m = moodLog[`${selectedKid}-${ds}`];
+    moodHistory.push({ date: ds, mood: m, day: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][d.getDay()] });
+  }
+
+  return (
+    <div className="fade-in">
+      <SectionHeader title={t('selfDiscovery')} subtitle={L('Nhật ký cảm xúc, khám phá bản thân qua RIASEC', 'Mood journal, self-discovery via RIASEC quiz')} emoji="🔮" />
+
+      <div style={{ display: 'flex', gap: 8, margin: '0 0 16px', flexWrap: 'wrap' }}>
+        {kids.map(k => (
+          <button key={k.id} onClick={() => { setSelectedKid(k.id); setRiasecStep(0); setShowResults(false); }} className="btn-bounce body-f" style={{
+            background: selectedKid === k.id ? k.color : '#fff', color: selectedKid === k.id ? '#fff' : k.color,
+            border: `2px solid ${k.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{k.emoji} {k.name}</button>
+        ))}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+        {/* Mood Journal */}
+        <Card accent={C.sunny}>
+          <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+            {todayMood ? '✅' : '☁️'} {L('Cảm xúc hôm nay', 'Today\'s Mood')}
+          </h3>
+          {todayMood ? (
+            <div style={{ textAlign: 'center', padding: 12 }}>
+              <div style={{ fontSize: 48 }}>{MOOD_OPTIONS.find(m => m.value === todayMood.mood)?.emoji || '⛅'}</div>
+              <div className="body-f" style={{ fontSize: 14, fontWeight: 700, color: C.ink, marginTop: 8 }}>
+                {L(MOOD_OPTIONS.find(m => m.value === todayMood.mood)?.vi, MOOD_OPTIONS.find(m => m.value === todayMood.mood)?.en)}
+              </div>
+              {todayMood.note && <div className="body-f" style={{ fontSize: 13, color: C.sub, marginTop: 6, fontStyle: 'italic' }}>"{todayMood.note}"</div>}
+              <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 8 }}>✅ {L('Đã ghi nhận!', 'Recorded!')}</div>
+            </div>
+          ) : (
+            <>
+              <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>
+                {L('Hôm nay con thấy thế nào?', 'How are you feeling today?')}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 14 }}>
+                {MOOD_OPTIONS.map(m => (
+                  <button key={m.value} onClick={() => saveMood(m.value)} className="btn-bounce" style={{
+                    background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'center', padding: 8,
+                  }}>
+                    <div style={{ fontSize: 32 }}>{m.emoji}</div>
+                    <div className="body-f" style={{ fontSize: 10, fontWeight: 700, color: C.sub, marginTop: 4 }}>{L(m.vi, m.en)}</div>
+                  </button>
+                ))}
+              </div>
+              <input value={moodNote} onChange={e => setMoodNote(e.target.value)} placeholder={L('Ghi chú thêm (tuỳ chọn)...', 'Optional note...')}
+                style={{ width: '100%', padding: '10px 14px', border: `2px solid ${C.border}`, borderRadius: 999, fontSize: 13, outline: 'none', boxSizing: 'border-box' }} />
+            </>
+          )}
+        </Card>
+
+        {/* Mood 7-day */}
+        <Card accent={C.pink}>
+          <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px' }}>📅 {L('Cảm xúc 7 ngày', '7-Day Mood')}</h3>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+            {moodHistory.map((d, i) => (
+              <div key={i} style={{ textAlign: 'center', flex: 1 }}>
+                <div style={{ fontSize: 24 }}>{d.mood ? (MOOD_OPTIONS.find(m => m.value === d.mood.mood)?.emoji || '⛅') : '·'}</div>
+                <div className="body-f" style={{ fontSize: 10, fontWeight: 700, color: d.date === todayStr ? C.pink : C.mute, marginTop: 4 }}>{d.day}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* RIASEC Quiz */}
+      <Card accent={C.purple} style={{ marginTop: 16 }}>
+        <h3 className="display" style={{ fontSize: 20, margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          🧭 {L('Khám phá RIASEC Junior', 'RIASEC Junior Discovery')}
+        </h3>
+        <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 16 }}>
+          {L(
+            `${questions.length} câu hỏi giúp con hiểu mình thích gì — không có đúng sai!`,
+            `${questions.length} questions to help you understand what you enjoy — no right or wrong!`
+          )}
+          {kidAge <= 12 ? ` (8-12 ${L('tuổi', 'years')})` : ` (13-15 ${L('tuổi', 'years')})`}
+        </div>
+
+        {(showResults || kidResult) && !riasecStep ? (
+          /* Results view */
+          (() => {
+            const results = kidResult?.results || scoreRiasec(kidAnswers, questions);
+            const top3 = results.slice(0, 3);
+            return (
+              <div>
+                <div className="body-f" style={{ fontSize: 12, color: C.mute, marginBottom: 12 }}>
+                  {kidResult?.date && `${L('Làm ngày', 'Taken on')}: ${new Date(kidResult.date).toLocaleDateString()}`}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
+                  {top3.map((r, i) => {
+                    const info = RIASEC_TYPES.find(t => t.type === r.type);
+                    if (!info) return null;
+                    return (
+                      <div key={r.type} style={{ background: i === 0 ? `linear-gradient(135deg, ${info.color}15, ${info.color}30)` : C.soft, borderRadius: 16, padding: 16, border: i === 0 ? `2px solid ${info.color}` : 'none' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                          <span style={{ fontSize: 28 }}>{info.emoji}</span>
+                          <div>
+                            <div className="display" style={{ fontSize: 15, fontWeight: 700, color: info.color }}>#{i + 1} {L(info.vi_name, info.en_name)}</div>
+                            <div className="body-f" style={{ fontSize: 11, color: C.sub }}>{L(`Điểm: ${r.score}`, `Score: ${r.score}`)}</div>
+                          </div>
+                        </div>
+                        <div className="body-f" style={{ fontSize: 12, color: C.sub, marginBottom: 8 }}>{L(info.vi_desc, info.en_desc)}</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                          {(L(info.vi_careers, info.en_careers)).slice(0, 5).map(c => <Pill key={c} color={info.color}>{c}</Pill>)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* All 6 types bar chart */}
+                <div style={{ marginTop: 16 }}>
+                  {results.map(r => {
+                    const info = RIASEC_TYPES.find(t => t.type === r.type);
+                    const maxScore = questions.length / 6 * 5;
+                    return (
+                      <div key={r.type} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                        <span style={{ width: 24, textAlign: 'center', fontSize: 16 }}>{info?.emoji}</span>
+                        <span className="body-f" style={{ width: 80, fontSize: 12, fontWeight: 700, color: C.ink }}>{L(info?.vi_name, info?.en_name)}</span>
+                        <div style={{ flex: 1, height: 14, background: C.soft, borderRadius: 99, overflow: 'hidden' }}>
+                          <div style={{ width: `${(r.score / maxScore) * 100}%`, height: '100%', background: info?.color, borderRadius: 99, transition: 'width 0.5s' }} />
+                        </div>
+                        <span className="body-f" style={{ width: 30, fontSize: 12, fontWeight: 700, color: C.sub, textAlign: 'right' }}>{r.score}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+                  <Btn onClick={resetRiasec} color={C.coral} variant="outline" icon={RotateCw}>{L('Làm lại', 'Retake')}</Btn>
+                </div>
+              </div>
+            );
+          })()
+        ) : riasecStep > 0 ? (
+          /* Quiz in progress */
+          (() => {
+            const q = questions[riasecStep - 1];
+            if (!q) {
+              return (
+                <div style={{ textAlign: 'center', padding: 20 }}>
+                  <div style={{ fontSize: 48, marginBottom: 12 }}>🎉</div>
+                  <div className="display" style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>{L('Hoàn thành!', 'Complete!')}</div>
+                  <Btn onClick={finishRiasec} color={C.purple} icon={Award}>{L('Xem kết quả', 'See results')}</Btn>
+                </div>
+              );
+            }
+            return (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <Pill color={C.purple}>{riasecStep} / {questions.length}</Pill>
+                  <div style={{ flex: 1, height: 6, background: C.soft, borderRadius: 99, margin: '0 12px', overflow: 'hidden' }}>
+                    <div style={{ width: `${(riasecStep / questions.length) * 100}%`, height: '100%', background: `linear-gradient(90deg, ${C.purple}, ${C.pink})`, borderRadius: 99, transition: 'width 0.3s' }} />
+                  </div>
+                </div>
+                <div className="display" style={{ fontSize: 17, fontWeight: 700, color: C.ink, marginBottom: 16, lineHeight: 1.5 }}>
+                  {L(q.vi, q.en)}
+                </div>
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+                  {[
+                    { score: 1, vi: 'Không thích', en: 'Dislike', bg: '#FFE5E5' },
+                    { score: 2, vi: 'Bình thường', en: 'Neutral', bg: '#FFF4D1' },
+                    { score: 3, vi: 'Hơi thích', en: 'Somewhat', bg: '#E5F3FF' },
+                    { score: 4, vi: 'Thích', en: 'Like', bg: '#E5FAEB' },
+                    { score: 5, vi: 'Rất thích!', en: 'Love it!', bg: '#F3E5FF' },
+                  ].map(opt => {
+                    const selected = kidAnswers[q.id] === opt.score;
+                    return (
+                      <button key={opt.score} onClick={() => answerRiasec(q.id, opt.score)} className="btn-bounce body-f" style={{
+                        background: selected ? C.purple : opt.bg, color: selected ? '#fff' : C.ink,
+                        border: `2px solid ${selected ? C.purple : 'transparent'}`,
+                        padding: '10px 16px', borderRadius: 14, cursor: 'pointer', fontWeight: 700, fontSize: 13,
+                        minWidth: 90, transition: 'all 0.15s',
+                      }}>
+                        {L(opt.vi, opt.en)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()
+        ) : (
+          /* Not started */
+          <div style={{ textAlign: 'center', padding: 20 }}>
+            <div style={{ fontSize: 56, marginBottom: 12 }}>🧭</div>
+            {kidResult ? (
+              <>
+                <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>
+                  {L('Con đã làm quiz rồi! Xem kết quả hoặc làm lại.', 'You already took the quiz! View results or retake.')}
+                </div>
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                  <Btn onClick={() => setShowResults(true)} color={C.purple} icon={Award}>{L('Xem kết quả', 'View results')}</Btn>
+                  <Btn onClick={resetRiasec} color={C.coral} variant="outline" icon={RotateCw}>{L('Làm lại', 'Retake')}</Btn>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 16 }}>
+                  {L('Trả lời từng câu để tìm hiểu con thích gì nhất!', 'Answer each question to discover what you enjoy most!')}
+                </div>
+                <Btn onClick={() => setRiasecStep(1)} color={C.purple} icon={Sparkles}>{L('Bắt đầu khám phá!', 'Start exploring!')}</Btn>
+              </>
+            )}
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+// ============================================================
+// PILLAR: LA BÀN NGHỀ NGHIỆP (Career Compass)
+// ============================================================
+function CareerCompassTab({ kids, savedCareers, setSavedCareersP, riasecCompleted, activeKidId, t, L, lang }) {
+  const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
+  const [filterType, setFilterType] = React.useState(null); // null | 'R'|'I'|'A'|'S'|'E'|'C'
+  const [filterAge, setFilterAge] = React.useState(null);
+  const [openCareer, setOpenCareer] = React.useState(null); // career object for modal
+  const [view, setView] = React.useState('explore'); // 'explore' | 'saved' | 'recommended'
+
+  const kid = kids.find(k => k.id === selectedKid);
+  const kidAge = kid?.age || 10;
+  const kidSaved = savedCareers[selectedKid] || [];
+  const riasecResult = riasecCompleted[selectedKid];
+
+  const careerOfDay = React.useMemo(() => getCareerOfDay(), []);
+
+  const todayProject = React.useMemo(() => {
+    if (!riasecResult?.results) return null;
+    const topType = riasecResult.results[0].type;
+    return getProjectForType(topType);
+  }, [riasecResult]);
+
+  const recommended = React.useMemo(() => {
+    if (!riasecResult?.results) return [];
+    const top3Types = riasecResult.results.slice(0, 3).map(r => r.type);
+    return CAREERS.filter(c => top3Types.includes(c.type)).slice(0, 12);
+  }, [riasecResult]);
+
+  let filtered = CAREERS;
+  if (filterType) filtered = filtered.filter(c => c.type === filterType);
+  if (filterAge) filtered = filtered.filter(c => c.min_age <= filterAge);
+
+  const list = view === 'saved'
+    ? CAREERS.filter(c => kidSaved.includes(c.id))
+    : view === 'recommended' ? recommended : filtered;
+
+  const toggleSave = (careerId) => {
+    const current = savedCareers[selectedKid] || [];
+    const updated = current.includes(careerId)
+      ? current.filter(id => id !== careerId)
+      : [...current, careerId];
+    setSavedCareersP({ ...savedCareers, [selectedKid]: updated });
+  };
+
+  const isSaved = (careerId) => kidSaved.includes(careerId);
+
+  const typeColors = { R: '#4DABF7', I: '#845EC2', A: '#FF6B9D', S: '#51CF66', E: '#FFD43B', C: '#FF8787' };
+
+  return (
+    <div className="fade-in">
+      <SectionHeader title={t('careerCompass')} subtitle={L('60 nghề nghiệp với góc nhìn Việt Nam', '60 careers with Vietnam perspective')} emoji="🧭" />
+
+      <div style={{ display: 'flex', gap: 8, margin: '0 0 16px', flexWrap: 'wrap' }}>
+        {kids.map(k => (
+          <button key={k.id} onClick={() => setSelectedKid(k.id)} className="btn-bounce body-f" style={{
+            background: selectedKid === k.id ? k.color : '#fff', color: selectedKid === k.id ? '#fff' : k.color,
+            border: `2px solid ${k.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{k.emoji} {k.name}</button>
+        ))}
+      </div>
+
+      {/* Career of the Day + Today Project */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16, marginBottom: 16 }}>
+        <Card accent={typeColors[careerOfDay.type]}>
+          <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: typeColors[careerOfDay.type], textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+            ⭐ {L('Nghề nghiệp hôm nay', 'Career of the Day')}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+            <span style={{ fontSize: 40 }}>{careerOfDay.emoji}</span>
+            <div>
+              <div className="display" style={{ fontSize: 17, fontWeight: 700, color: C.ink }}>{L(careerOfDay.vi_name, careerOfDay.en_name)}</div>
+              <div className="body-f" style={{ fontSize: 12, color: C.sub }}>{L(careerOfDay.vi_desc, careerOfDay.en_desc)}</div>
+            </div>
+          </div>
+          <Btn onClick={() => setOpenCareer(careerOfDay)} color={typeColors[careerOfDay.type]} size="sm">{L('Xem chi tiết', 'View details')}</Btn>
+        </Card>
+
+        {todayProject ? (
+          <Card accent={C.coral}>
+            <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.coral, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+              🎯 {L('Ngày làm 1 nghề (gợi ý)', 'Day-in-the-life mini-project')}
+            </div>
+            <div className="body-f" style={{ fontSize: 14, fontWeight: 600, color: C.ink, lineHeight: 1.5 }}>
+              {L(todayProject.vi, todayProject.en)}
+            </div>
+            <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 8, fontStyle: 'italic' }}>
+              {L('Dựa trên kết quả RIASEC của con', 'Based on your RIASEC results')}
+            </div>
+          </Card>
+        ) : (
+          <Card accent={C.purple}>
+            <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.purple, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+              🔮 {L('Làm RIASEC quiz để có gợi ý', 'Take RIASEC quiz for suggestions')}
+            </div>
+            <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 8 }}>
+              {L('Sau khi làm xong, em sẽ gợi ý nghề + project mỗi ngày dựa trên tính cách của con.', 'After completing, I\'ll suggest careers + daily projects based on your personality.')}
+            </div>
+            <div className="body-f" style={{ fontSize: 11, color: C.mute, fontStyle: 'italic' }}>
+              {L('Vào tab Tự khám phá 🔮 để bắt đầu', 'Go to Self Discovery 🔮 tab to start')}
+            </div>
+          </Card>
+        )}
+      </div>
+
+      {/* View tabs */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+        <button onClick={() => setView('explore')} className="btn-bounce body-f" style={{
+          background: view === 'explore' ? C.purple : '#fff', color: view === 'explore' ? '#fff' : C.purple,
+          border: `2px solid ${C.purple}`, padding: '8px 16px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 13,
+        }}>🔍 {L('Khám phá', 'Explore')} ({CAREERS.length})</button>
+        <button onClick={() => setView('recommended')} disabled={!riasecResult} className="btn-bounce body-f" style={{
+          background: view === 'recommended' ? C.pink : '#fff', color: view === 'recommended' ? '#fff' : (riasecResult ? C.pink : C.mute),
+          border: `2px solid ${riasecResult ? C.pink : C.border}`, padding: '8px 16px', borderRadius: 999,
+          cursor: riasecResult ? 'pointer' : 'not-allowed', fontWeight: 700, fontSize: 13, opacity: riasecResult ? 1 : 0.5,
+        }}>⭐ {L('Đề xuất cho con', 'Recommended')} ({recommended.length})</button>
+        <button onClick={() => setView('saved')} className="btn-bounce body-f" style={{
+          background: view === 'saved' ? C.gold : '#fff', color: view === 'saved' ? '#fff' : C.gold,
+          border: `2px solid ${C.gold}`, padding: '8px 16px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 13,
+        }}>❤️ {L('Đã lưu', 'Saved')} ({kidSaved.length})</button>
+      </div>
+
+      {/* RIASEC type filter (only in explore view) */}
+      {view === 'explore' && (
+        <Card accent={C.sky} padding={16} style={{ marginBottom: 16 }}>
+          <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+            {L('Lọc theo loại tính cách', 'Filter by personality type')}
+          </div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <button onClick={() => setFilterType(null)} className="btn-bounce body-f" style={{
+              background: !filterType ? C.ink : '#fff', color: !filterType ? '#fff' : C.ink,
+              border: `2px solid ${C.ink}`, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 11,
+            }}>{L('Tất cả', 'All')}</button>
+            {RIASEC_TYPES.map(rt => (
+              <button key={rt.type} onClick={() => setFilterType(filterType === rt.type ? null : rt.type)} className="btn-bounce body-f" style={{
+                background: filterType === rt.type ? rt.color : '#fff', color: filterType === rt.type ? '#fff' : rt.color,
+                border: `2px solid ${rt.color}`, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 11,
+              }}>{rt.emoji} {L(rt.vi_name, rt.en_name)}</button>
+            ))}
+          </div>
+          <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginTop: 12, marginBottom: 8 }}>
+            {L('Tuổi phù hợp', 'Age-appropriate')}
+          </div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <button onClick={() => setFilterAge(null)} className="btn-bounce body-f" style={{
+              background: !filterAge ? C.ink : '#fff', color: !filterAge ? '#fff' : C.ink,
+              border: `2px solid ${C.ink}`, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 11,
+            }}>{L('Mọi tuổi', 'Any age')}</button>
+            <button onClick={() => setFilterAge(kidAge)} className="btn-bounce body-f" style={{
+              background: filterAge === kidAge ? C.pink : '#fff', color: filterAge === kidAge ? '#fff' : C.pink,
+              border: `2px solid ${C.pink}`, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 11,
+            }}>{L(`Phù hợp ${kid?.name} (${kidAge}t)`, `For ${kid?.name} (${kidAge}yo)`)}</button>
+          </div>
+        </Card>
+      )}
+
+      {/* Career cards grid */}
+      {list.length === 0 ? (
+        <Card accent={C.mute}>
+          <div className="body-f" style={{ fontSize: 13, color: C.mute, fontStyle: 'italic', textAlign: 'center', padding: 20 }}>
+            {view === 'saved'
+              ? L('Chưa có nghề nghiệp nào lưu. Khám phá và bấm ❤️ để lưu!', 'No saved careers yet. Explore and tap ❤️ to save!')
+              : L('Không có nghề nghiệp khớp với bộ lọc.', 'No careers match your filter.')}
+          </div>
+        </Card>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+          {list.map(c => {
+            const typeInfo = RIASEC_TYPES.find(t => t.type === c.type);
+            return (
+              <div key={c.id} style={{ background: '#fff', borderRadius: 16, padding: 16, border: `2px solid ${C.border}`, position: 'relative', cursor: 'pointer' }}
+                onClick={() => setOpenCareer(c)}>
+                <div style={{ position: 'absolute', top: 10, right: 10 }}>
+                  <button onClick={(e) => { e.stopPropagation(); toggleSave(c.id); }} className="btn-bounce" style={{
+                    background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 22,
+                  }} aria-label={isSaved(c.id) ? 'Unsave' : 'Save'}>
+                    {isSaved(c.id) ? '❤️' : '🤍'}
+                  </button>
+                </div>
+                <div style={{ fontSize: 36, marginBottom: 8 }}>{c.emoji}</div>
+                <div className="display" style={{ fontSize: 15, fontWeight: 700, color: C.ink, marginBottom: 4 }}>
+                  {L(c.vi_name, c.en_name)}
+                </div>
+                <Pill color={typeColors[c.type]}>{typeInfo?.emoji} {L(typeInfo?.vi_name, typeInfo?.en_name)}</Pill>
+                <div className="body-f" style={{ fontSize: 12, color: C.sub, marginTop: 8, lineHeight: 1.5 }}>
+                  {L(c.vi_desc, c.en_desc)}
+                </div>
+                <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 8 }}>
+                  {L(`Bắt đầu từ ${c.min_age} tuổi`, `Start age ${c.min_age}`)} · {c.vn_salary && L(`Lương ${c.vn_salary}`, `Salary ${c.vn_salary}`)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Career detail modal */}
+      {openCareer && (
+        <div onClick={() => setOpenCareer(null)} style={{
+          position: 'fixed', inset: 0, background: 'rgba(45,27,78,0.6)', zIndex: 100,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backdropFilter: 'blur(4px)',
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            background: '#fff', borderRadius: 24, maxWidth: 600, width: '100%', maxHeight: '90vh', overflowY: 'auto',
+            padding: 28, boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+              <div>
+                <div style={{ fontSize: 56 }}>{openCareer.emoji}</div>
+                <div className="display" style={{ fontSize: 22, fontWeight: 700, color: C.ink, marginTop: 4 }}>
+                  {L(openCareer.vi_name, openCareer.en_name)}
+                </div>
+                <Pill color={typeColors[openCareer.type]}>
+                  {RIASEC_TYPES.find(t => t.type === openCareer.type)?.emoji} {L(RIASEC_TYPES.find(t => t.type === openCareer.type)?.vi_name, RIASEC_TYPES.find(t => t.type === openCareer.type)?.en_name)}
+                </Pill>
+              </div>
+              <button onClick={() => setOpenCareer(null)} className="btn-bounce" style={{
+                background: C.soft, border: 'none', borderRadius: '50%', width: 36, height: 36, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}><X size={18} /></button>
+            </div>
+
+            <div className="body-f" style={{ fontSize: 14, color: C.ink, lineHeight: 1.6, marginBottom: 16 }}>
+              {L(openCareer.vi_desc, openCareer.en_desc)}
+            </div>
+
+            <div style={{ display: 'grid', gap: 12 }}>
+              <div>
+                <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
+                  💪 {L('Kỹ năng cần thiết', 'Key skills')}
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {(L(openCareer.vi_skills, openCareer.en_skills) || []).map(s => <Pill key={s} color={C.sky}>{s}</Pill>)}
+                </div>
+              </div>
+
+              <div>
+                <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
+                  🛤️ {L('Lộ trình bắt đầu', 'How to start')}
+                </div>
+                <div className="body-f" style={{ fontSize: 13, color: C.sub, lineHeight: 1.6, background: C.soft, padding: 12, borderRadius: 12 }}>
+                  {L(openCareer.vi_path, openCareer.en_path)}
+                </div>
+              </div>
+
+              <div>
+                <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
+                  🇻🇳 {L('Bối cảnh Việt Nam', 'Vietnam context')}
+                </div>
+                <div className="body-f" style={{ fontSize: 13, color: C.sub, lineHeight: 1.6, background: '#FFF4D1', padding: 12, borderRadius: 12 }}>
+                  {openCareer.vn_context}
+                </div>
+                {openCareer.vn_example && (
+                  <div className="body-f" style={{ fontSize: 12, color: C.mute, marginTop: 6, fontStyle: 'italic' }}>
+                    💡 {L('Ví dụ:', 'Example:')} {openCareer.vn_example}
+                  </div>
+                )}
+                {openCareer.vn_salary && (
+                  <div className="body-f" style={{ fontSize: 12, color: C.mint, marginTop: 6, fontWeight: 700 }}>
+                    💰 {L('Mức lương:', 'Salary:')} {openCareer.vn_salary}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
+              <Btn onClick={() => toggleSave(openCareer.id)} color={isSaved(openCareer.id) ? C.coral : C.gold} icon={Heart}>
+                {isSaved(openCareer.id) ? L('Bỏ lưu', 'Unsave') : L('Lưu nghề này', 'Save career')}
+              </Btn>
+              <Btn onClick={() => setOpenCareer(null)} color={C.mute} variant="outline">{L('Đóng', 'Close')}</Btn>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// PILLAR: CẦU NỐI GIA ĐÌNH (Family Bridge)
+// ============================================================
+function FamilyBridgeTab({ kids, familyJournal, setFamilyJournalP, weeklyReviews, setWeeklyReviewsP, activeKidId, isParentAuthed, t, L, lang, weekKey }) {
+  const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
+  const [newEntry, setNewEntry] = React.useState('');
+  const [reviewAnswers, setReviewAnswers] = React.useState({});
+
+  const askPrompt = React.useMemo(() => {
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+    return ASK_PARENT_PROMPTS[dayOfYear % ASK_PARENT_PROMPTS.length];
+  }, []);
+
+  const showTellOfWeek = React.useMemo(() => {
+    const wk = new Date().getUTCDay() + Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+    return SHOW_TELL_IDEAS[wk % SHOW_TELL_IDEAS.length];
+  }, []);
+
+  const activityOfWeek = React.useMemo(() => {
+    const wk = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+    return FAMILY_ACTIVITIES[wk % FAMILY_ACTIVITIES.length];
+  }, []);
+
+  const currentWeek = weekKey ? weekKey() : '';
+  const reviewKey = `${selectedKid}-${currentWeek}`;
+  const thisWeekReview = weeklyReviews[reviewKey];
+  const reviewPrompts = WEEKLY_REVIEW_PROMPTS[lang === 'vi' ? 'vi' : 'en'];
+
+  const addJournalEntry = () => {
+    if (!newEntry.trim()) return;
+    const author = isParentAuthed ? 'parent' : selectedKid;
+    const entry = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      author,
+      kidId: selectedKid,
+      authorName: isParentAuthed ? L('Bố/Mẹ', 'Parent') : (kids.find(k => k.id === selectedKid)?.name || 'Kid'),
+      authorEmoji: isParentAuthed ? '👨‍👩‍👧' : (kids.find(k => k.id === selectedKid)?.emoji || '🌟'),
+      content: newEntry,
+    };
+    setFamilyJournalP([entry, ...familyJournal]);
+    setNewEntry('');
+  };
+
+  const submitReview = () => {
+    const answers = reviewPrompts.map((p, i) => ({ q: p.q, a: reviewAnswers[i] || '' }));
+    setWeeklyReviewsP({ ...weeklyReviews, [reviewKey]: { answers, date: new Date().toISOString() } });
+    setReviewAnswers({});
+  };
+
+  const recentEntries = familyJournal.slice(0, 20);
+
+  return (
+    <div className="fade-in">
+      <SectionHeader title={t('familyBridge')} subtitle={L('Sổ tay chung, review tuần, hỏi bố cha', 'Shared notebook, weekly review, ask parent')} emoji="👨‍👩‍👧" />
+
+      <div style={{ display: 'flex', gap: 8, margin: '0 0 16px', flexWrap: 'wrap' }}>
+        {kids.map(k => (
+          <button key={k.id} onClick={() => setSelectedKid(k.id)} className="btn-bounce body-f" style={{
+            background: selectedKid === k.id ? k.color : '#fff', color: selectedKid === k.id ? '#fff' : k.color,
+            border: `2px solid ${k.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{k.emoji} {k.name}</button>
+        ))}
+      </div>
+
+      {/* 3 inspiration cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12, marginBottom: 16 }}>
+        <Card accent={C.purple} padding={16}>
+          <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.purple, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
+            🤔 {L('Hỏi bố cha hôm nay', 'Ask parent today')}
+          </div>
+          <div className="body-f" style={{ fontSize: 14, fontWeight: 600, color: C.ink, lineHeight: 1.5 }}>
+            "{L(askPrompt.vi, askPrompt.en)}"
+          </div>
+        </Card>
+
+        <Card accent={C.pink} padding={16}>
+          <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.pink, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
+            {showTellOfWeek.emoji} {L('Show & Tell tuần này', 'This week\'s Show & Tell')}
+          </div>
+          <div className="body-f" style={{ fontSize: 14, fontWeight: 600, color: C.ink, lineHeight: 1.5 }}>
+            {L(showTellOfWeek.vi, showTellOfWeek.en)}
+          </div>
+        </Card>
+
+        <Card accent={C.mint} padding={16}>
+          <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mint, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
+            🎉 {L('Hoạt động cả nhà tuần này', 'Family activity this week')}
+          </div>
+          <div className="body-f" style={{ fontSize: 14, fontWeight: 600, color: C.ink, lineHeight: 1.5 }}>
+            {L(activityOfWeek.vi, activityOfWeek.en)}
+          </div>
+          <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 6 }}>
+            ⏱️ ~{activityOfWeek.minutes} {L('phút', 'min')} · {activityOfWeek.energy === 'high' ? '🔥' : activityOfWeek.energy === 'medium' ? '⚡' : '🍃'} {L(activityOfWeek.energy === 'high' ? 'Năng lượng cao' : activityOfWeek.energy === 'medium' ? 'Vừa phải' : 'Thư giãn', activityOfWeek.energy)}
+          </div>
+        </Card>
+      </div>
+
+      {/* Family shared journal */}
+      <Card accent={C.sky}>
+        <h3 className="display" style={{ fontSize: 18, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          📔 {L('Sổ tay gia đình', 'Family Notebook')}
+        </h3>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+          <textarea value={newEntry} onChange={e => setNewEntry(e.target.value)}
+            placeholder={isParentAuthed
+              ? L('Bố/Mẹ ghi điều con đã làm tốt, lời khuyên, cảm xúc...', 'Parent: write something kid did well, advice, feelings...')
+              : L('Con ghi cảm xúc, ý tưởng, câu hỏi cho bố mẹ...', 'Kid: write feelings, ideas, questions for parents...')}
+            rows={3}
+            style={{ flex: 1, padding: '10px 14px', border: `2px solid ${C.border}`, borderRadius: 16, fontSize: 13, outline: 'none', fontFamily: 'inherit', resize: 'vertical' }} />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+          <Pill color={isParentAuthed ? C.purple : kids.find(k => k.id === selectedKid)?.color || C.pink}>
+            {isParentAuthed ? '👨‍👩‍👧' : kids.find(k => k.id === selectedKid)?.emoji || '🌟'} {L('Đang viết với tư cách', 'Writing as')}: {isParentAuthed ? L('Bố/Mẹ', 'Parent') : kids.find(k => k.id === selectedKid)?.name}
+          </Pill>
+          <Btn onClick={addJournalEntry} color={C.sky} icon={Plus} disabled={!newEntry.trim()}>{L('Ghi vào sổ', 'Add entry')}</Btn>
+        </div>
+
+        {recentEntries.length === 0 ? (
+          <div className="body-f" style={{ fontSize: 13, color: C.mute, fontStyle: 'italic', textAlign: 'center', padding: 16 }}>
+            {L('Sổ trống. Cùng viết entry đầu tiên!', 'Empty notebook. Write the first entry!')}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {recentEntries.map(entry => (
+              <div key={entry.id} style={{
+                background: entry.author === 'parent' ? '#F3E5FF' : C.soft,
+                borderRadius: 14, padding: 12, borderLeft: `4px solid ${entry.author === 'parent' ? C.purple : C.pink}`,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: 18 }}>{entry.authorEmoji}</span>
+                  <span className="body-f" style={{ fontSize: 12, fontWeight: 700, color: C.ink }}>{entry.authorName}</span>
+                  <span className="body-f" style={{ fontSize: 11, color: C.mute, marginLeft: 'auto' }}>
+                    {new Date(entry.date).toLocaleDateString()} {new Date(entry.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+                <div className="body-f" style={{ fontSize: 13, color: C.ink, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+                  {entry.content}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      {/* Weekly review */}
+      <Card accent={C.coral} style={{ marginTop: 16 }}>
+        <h3 className="display" style={{ fontSize: 18, margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          📅 {L('Review tuần này', 'This Week\'s Review')}
+        </h3>
+        <div className="body-f" style={{ fontSize: 12, color: C.sub, marginBottom: 14 }}>
+          {L('Mỗi Chủ Nhật, cùng nhìn lại 1 tuần qua.', 'Every Sunday, reflect on the past week together.')} · Week: {currentWeek}
+        </div>
+
+        {thisWeekReview ? (
+          <div>
+            <div className="body-f" style={{ fontSize: 12, color: C.mint, marginBottom: 12, fontWeight: 700 }}>
+              ✅ {L('Đã hoàn thành review tuần này', 'Review completed this week')} · {new Date(thisWeekReview.date).toLocaleDateString()}
+            </div>
+            {thisWeekReview.answers.map((a, i) => (
+              <div key={i} style={{ marginBottom: 12, padding: 12, background: C.soft, borderRadius: 12 }}>
+                <div className="body-f" style={{ fontSize: 12, fontWeight: 700, color: C.coral, marginBottom: 4 }}>{a.q}</div>
+                <div className="body-f" style={{ fontSize: 13, color: C.ink, lineHeight: 1.5 }}>{a.a || L('(không trả lời)', '(no answer)')}</div>
+              </div>
+            ))}
+            <Btn onClick={() => { const k = { ...weeklyReviews }; delete k[reviewKey]; setWeeklyReviewsP(k); }} color={C.mute} variant="outline" size="sm" icon={RotateCw}>
+              {L('Làm lại review tuần này', 'Redo this week\'s review')}
+            </Btn>
+          </div>
+        ) : (
+          <div>
+            {reviewPrompts.map((p, i) => (
+              <div key={i} style={{ marginBottom: 12 }}>
+                <label className="body-f" style={{ fontSize: 13, fontWeight: 700, color: C.ink, display: 'block', marginBottom: 6 }}>
+                  {p.q}
+                </label>
+                <textarea value={reviewAnswers[i] || ''} onChange={e => setReviewAnswers({ ...reviewAnswers, [i]: e.target.value })}
+                  placeholder={p.placeholder} rows={2}
+                  style={{ width: '100%', padding: '8px 12px', border: `2px solid ${C.border}`, borderRadius: 12, fontSize: 13, outline: 'none', fontFamily: 'inherit', resize: 'vertical', boxSizing: 'border-box' }} />
+              </div>
+            ))}
+            <Btn onClick={submitReview} color={C.coral} icon={Save}>{L('Lưu review tuần này', 'Save this week\'s review')}</Btn>
+          </div>
+        )}
+      </Card>
     </div>
   );
 }

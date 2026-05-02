@@ -11,6 +11,7 @@ node_modules
 # Editor
 .vscode
 .idea
+.claude/
 
 # OS
 Thumbs.db
