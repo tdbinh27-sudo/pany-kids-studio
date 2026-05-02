@@ -1,147 +1,180 @@
 # Handoff — Pany Kids Studio
 
-**Last session:** 2026-04-30 (extended multi-chapter session)
-**Current chapter:** v3.1-BCD shipped to prod, English skills deferred
+**Last session:** Session 9 — 2026-05-02
+**Current chapter:** v3.2-A LIVE (strategy v2 pivot complete)
+**Next session:** Sprint 1 Day 2 — Build 6 new pillars
 
-## What was accomplished this session (chronological)
+---
 
-### Build phase (Phase 0-3)
-1. Read existing v2 JSX + researched 8 GitHub LMS projects
-2. Built v3 dashboard: 22 tabs, bilingual VN+EN, anime/funny style — 2748 lines
-3. Set up Project OS at Projects/pany-kids-studio/
-4. Anh approved 5 questions (name, hosting, chatbot "Đại Ka", API key now, Vercel-only)
-5. Init Next.js 16 + TS + Tailwind + Anthropic SDK
-6. Built Đại Ka chatbot widget + /api/chat route with COPPA-compliant prompt
-7. Created public GitHub repo, deployed to Vercel
-8. Verified Đại Ka working (Socratic mode, bilingual, 80-word limit)
+## 🎯 RESUME COMMAND for next session
 
-### v3.1-A phase (login + profiles)
-9. Anh requested 9 v3.1 features
-10. Em classified Sprint A/B/C/D, executed Sprint A:
-    - Login UX: PIN hint card + parent mode button
-    - Profile: 7 new fields (birthday, school, hobbies, goals, bio, fav subject, emoji)
+Type to Claude Code:
+```
+Continue pany-kids-studio Sprint 1 Day 2 — build 6 new pillars (Sáng tạo / Vận động / Tự khám phá first)
+```
 
-### v3.1-BCD phase (content + map + cron)
-11. Sprint B: Wrote `lib/curated.ts` with 60 hand-picked resources from authoritative sources
-12. Library tab rewritten with pillar/age/type filters + reflection prompts
-13. Sprint C1: Built `components/VietnamMap.tsx` with Leaflet + Geolocation + 5 pin categories, integrated into ExperiencesTab
-14. Sprint C2: Added Import data feature (file picker + confirm dialog + state restore)
-15. Sprint D: Built `/api/refresh-content` cron route + `vercel.json` config + CRON_SECRET env
-16. Deployed v3.1-BCD to production, verified live
+Claude Code will:
+1. Read `strategy-v2.md` (canonical source-of-truth, ~10K)
+2. Read `decisions.md` (12 decisions including D-011 Hybrid + D-012 Đại Ka boost)
+3. Read this `handoff.md` (current snapshot)
+4. Read `tasks.md` for active queue
+5. Begin Sprint 1 Day 2 implementation
 
-## To resume work
+---
 
-Type: `Continue pany-kids-studio English 4 skills` and Claude Code will:
-1. Read plan.md + status.md + handoff.md
-2. Build the English Listen/Speak/Read/Write feature (Phase 8)
-3. Use Web Speech API for speech recognition + speech synthesis
-4. Integrate with Đại Ka for grading
-5. Add file upload for kid recordings
+## 📦 What was accomplished Session 9 (2026-05-02)
 
-## Critical context (don't lose)
+### Strategy v2 pivot
+Anh approved 5 quyết định Q1-Q5 sau khi review 2 tài liệu:
+- `Downloads/files/PanyKidsStudio_DanhGia_ChienLuoc_VN.pdf` (17 trang)
+- `Downloads/files/PanyKids_EducationBot_Strategy.md` (636 lines)
 
-### Decisions made (10 total in decisions.md)
-- Project name: pany-kids-studio (NOT panyvn.app — that's business)
-- Hosting: Vercel free tier → buy panykids.io at end of project
-- Chatbot: "Đại Ka" (Vietnamese mentor vibe)
-- AI model: Haiku 4.5 default + Sonnet 4.6 fallback
-- Storage: localStorage only (no DB), JSON export/import
-- Safety: COPPA prompt + keyword filter + 30 msg/hr rate limit
-- Bilingual: native VN+EN (no translation API)
-- Visual: anime/funny pastel
-- Repo: PUBLIC open-source MIT
-- Age range: 6-16
-- Cron: review-then-merge model (NOT auto-write to repo)
+**Q1 — Hybrid web + mobile**
+**Q2 — Đại Ka GIỮ** (NOT renamed Cô Pany), bố Bình representative, boost API budget $5→$15
+**Q3 — Web + App song song**, App Store + CH Play target 8/2026
+**Q4 — Map cũ→mới**: 6 old pillars + 6 new pillars = 12 total
+**Q5 — Timeline**: 1 week internal → 2 months iterate → 1 month submit → 8/2026 launch
+**Q6 — Trademark/domain** mua sau 1 tuần test
 
-### Kids
-- Phúc (age 8, 🌟, PIN 1111)
-- An (age 10, 🚀, PIN 2222)
-- Y (age 12, 🎨, PIN 3333)
-- Profile fields: birthday, school, fav subject, hobbies, goals, bio
-- Editable in Kids tab Edit form
+### v3.2-A shipped (commit `dcf9b25`)
+- ✅ `strategy-v2.md` saved (full pivot doc, 10K chars)
+- ✅ `decisions.md` +D-011 (hybrid), +D-012 (Đại Ka boost)
+- ✅ `status.md` pivot summary
+- ✅ Đại Ka boost in `lib/claude.ts`:
+  - Default Haiku 4.5 → **Sonnet 4.6** (3× more intelligent)
+  - max_tokens 400 → **800**
+  - History 10 → **20 turns**
+  - Rate limit 30 → **100/hour/kid**
+- ✅ Knowledge expansion (~170 lines):
+  - Child psychology — 8 common issues handling pattern
+  - RIASEC Junior 8-10/11-12/13-15 with table mapping
+  - Escalation hotlines (111 + Bệnh viện Nhi Đồng + vapcl.org.vn)
+  - GDPT 2018 subjects coverage
+  - VN cultural context guidelines
+  - 7 hard stop rules
+- ✅ Dual deploy: Vercel + VPS LIVE
+- ✅ Verified live: 2 test queries (psychology + RIASEC) — Sonnet 4.6 active
+
+---
+
+## 🚧 Sprint 1 — 7 days plan (5/1 - 5/8/2026)
+
+### ✅ Day 1 done (5/1, Session 9)
+Strategy + Đại Ka boost + Project OS docs
+
+### 🎯 Day 2-3 (Session 10) — 6 new pillars data
+Build data structures + UI for 6 new pillars from strategy-v2.md:
+
+1. **Studio Sáng tạo** (canvas vẽ, video upload, prompt sáng tạo daily)
+2. **Cơ thể & Vận động** (timer thử thách, exercise log, mindfulness 1-min)
+3. **Tự khám phá** (mood journal expanded, RIASEC Junior 36-question quiz)
+
+**Files to create/modify:**
+- `apps/web/lib/pillars-v2.ts` — new pillars data structure
+- `apps/web/components/pillars/StudioCreative.tsx` (canvas + prompt)
+- `apps/web/components/pillars/BodyMovement.tsx` (timer + log)
+- `apps/web/components/pillars/SelfDiscovery.tsx` (RIASEC Junior + mood)
+- `apps/web/lib/riasec-junior.ts` — 36 questions adapted for 8-12 + 48 for 13-15
+- Update `PanyKidsStudio.tsx` sidebar: 12 pillars grouped 2 categories
+
+### Day 4-5 (Session 11)
+- **La bàn Nghề nghiệp** (60 career cards with VN context)
+- **Cầu nối Gia đình** (sổ tay chung, weekly review template)
+- Map cũ→mới migration logic
+
+**Files:**
+- `apps/web/lib/careers-v2.ts` — 60 career cards
+- `apps/web/components/pillars/CareerCompass.tsx`
+- `apps/web/components/pillars/FamilyBridge.tsx`
+
+### Day 6-7 (Session 12) — Internal Sprint 1 wrap
+- React Native + Expo project scaffold (parallel branch)
+- Initial mobile app rendering shared components
+- Internal usage feedback từ 3 con tuần đầu
+- Bug fixes + UX iterate
+
+---
+
+## ⚠️ Critical context for next session
+
+### Identity
+- **Đại Ka** stays (NOT Cô Pany) — bố Bình's AI representative
+- Calls kids "con" (NOT "anh/chị")
+- Now uses **Sonnet 4.6** by default
+- 3 kids: Hạnh Phúc 8 (Phúc, 🌟), Bình An 10 (An, 🚀), Như Ý 12 (Y, 🎨)
 
 ### URLs
-- Live: https://pany-kids-studio.vercel.app
-- Repo: https://github.com/tdbinh27-sudo/pany-kids-studio (public, MIT)
+- **Web Vercel**: https://pany-kids-studio.vercel.app (HTTP 200)
+- **VPS 24/7**: http://61.14.233.122/ (HTTP 200, 0.07s)
+- **GitHub public**: https://github.com/tdbinh27-sudo/pany-kids-studio
+- **Domain panykids.app**: NOT bought yet (anh defer to after 1-week internal test)
 
-### Vercel env vars (set)
-- `ANTHROPIC_API_KEY` — for Đại Ka chatbot + cron content refresh
-- `CRON_SECRET` — 64-char hex for Vercel Cron auth
+### Architecture (current v3.2-A)
+- Frontend: Next.js 16 + React 19 + Tailwind + TypeScript
+- Backend API: Next.js API routes on both Vercel + VPS
+- Storage: localStorage (kids data), no DB
+- Bot stack: `lib/claude.ts` + `app/api/chat/route.ts` + `components/ChatBot.tsx`
+- Deploy: Vercel auto-deploy on push, VPS manual via `scripts/deploy-vps.py`
 
-### Cron schedule
-- Path: `/api/refresh-content`
-- Schedule: `0 3 1 * *` (03:00 UTC on 1st of each month)
-- Output: JSON suggestions only — bố reviews + commits manually
+### Decisions chốt
+- D-011: Hybrid web (current backbone) + mobile (RN+Expo, target 8/2026)
+- D-012: Đại Ka boost Sonnet 4.6 + $15/mo cap
+- D-010: Repo public MIT
+- D-009: API key one-time setup (anh chưa rotate, risk kéo dài)
 
-## ⚠️ ACTION ITEMS for anh (urgent)
+### Known issues / Risks
+- 🔴 **API key STILL exposed** in session log (anh chưa rotate after 9 sessions)
+- 🟡 Sonnet 4.6 cost 3× Haiku — monitor billing weekly
+- 🟡 Compliance: Đại Ka chats with kids directly. Anh accepts strict-COPPA risk for family use case.
+- 🟢 Stack stable, dual deploy working
 
-1. **🔐 ROTATE API key** — `sk-ant-api03-WRBcVGmqg0SauCnxYU2XfYApkTkvKxKN1TbckhgLJHH9uKBAXRGa-...` đã expose trong chat. Vào https://console.anthropic.com/settings/keys, delete + create new, paste back để em update both ANTHROPIC_API_KEY and CRON_SECRET in Vercel.
-2. **💰 Set billing limit** at https://console.anthropic.com/settings/billing → $10-20/month spend cap
-3. **🧪 Test với các bạn thật**:
-   - Phúc, An, Y mở https://pany-kids-studio.vercel.app
-   - Library tab → filter theo trụ cột → click open links
-   - Trải nghiệm tab → click "Use GPS" → pin nơi đang ở
-   - Settings → Import/Export backup JSON test
-4. **📅 (Optional) Test cron NOW** — GET `https://pany-kids-studio.vercel.app/api/refresh-content?secret=<CRON_SECRET>` to force-run without waiting
+### Cost tracking
+- Vercel: free tier (sufficient for 3 kids + 5-15 family beta)
+- VPS: 6GB RAM, 40GB SSD, active đến 2026-07-25 (paid)
+- Anthropic: $15/month cap (Sonnet 4.6 default)
 
-## Session 8 priorities (anh's new requests 2026-04-30 end of session)
+---
 
-### 🔴 P0 — Tone shift: Đại Ka = bố Bình (request 1)
-- Update `lib/claude.ts` HARD_RULES_VI + HARD_RULES_EN
-- Old identity: "Đại Ka — anh cả AI mentor" calling kid "em"
-- NEW identity: "Đại Ka — bố Bình của các bạn nhỏ" calling kid "con"
-- Replace all "em" → "con" in system prompt
-- Update opening greeting: "Chào con!" instead of "Chào em!"
-- Sample new tone: "Con đang học gì hôm nay? Bố ngồi cùng con này"
-- Update ChatBot.tsx greeting strings
-- This is a meaningful identity shift — Đại Ka now speaks as DAD, not big brother
+## 📋 Reference files
 
-### 🔴 P1 — Profile photo + greeting (request 3)
-- Profile fields: add `avatarUrl` (image URL) — file upload OR paste URL
-- Profile display: show avatar circle + greeting based on time-of-day
-- Greeting examples (use full name, not nickname):
-  - 5-11h: "Chào buổi sáng Hạnh Phúc!" / "Good morning Hạnh Phúc!"
-  - 11-13h: "Chào buổi trưa An!" / "Good noon An!"
-  - 13-18h: "Chào buổi chiều Như Ý!" / "Good afternoon Như Ý!"
-  - 18-22h: "Chào buổi tối Hạnh Phúc!" / "Good evening Hạnh Phúc!"
-  - 22-5h: "Khuya rồi An ơi, đi ngủ nhé!" / "It's late An, go to sleep!"
-- Add `fullName` field to kid schema (default = name) for the Vietnamese full names
-- Default fullNames: Phúc → Hạnh Phúc, An → Bình An, Y → Như Ý
-- Greeting shows on Overview tab AND when kid logs in (toast/banner)
+### Source code
+- `apps/web/components/PanyKidsStudio.tsx` — main dashboard (~3500 lines)
+- `apps/web/components/ChatBot.tsx` — Đại Ka floating widget (draggable)
+- `apps/web/components/VietnamMap.tsx` — Leaflet GPS map
+- `apps/web/components/AISearch.tsx` — Perplexity/ChatGPT/Claude/Gemini portal
+- `apps/web/lib/claude.ts` — Đại Ka system prompt + model picker (HAIKU/SONNET/OPUS)
+- `apps/web/lib/curated.ts` — 81 curated resources
+- `apps/web/lib/quiz.ts` — 70 quiz questions
+- `apps/web/app/api/chat/route.ts` — Đại Ka API endpoint (rate limit 100/hr)
+- `apps/web/app/api/refresh-content/route.ts` — Vercel Cron monthly content gen
+- `apps/web/vercel.json` — Cron schedule
 
-### 🔴 P1 — Journal photo folder, max 300MB (request 2)
-**Storage challenge**: 300MB exceeds localStorage (5-10MB). Options:
-1. **IndexedDB** — supports ~50% of disk. Best for offline. Use `idb` library or native API.
-2. **Vercel Blob** — backend storage, requires API token. Persistent across devices.
-3. **Cloudinary free tier** — 25GB free + transformations.
-4. **Compressed inline** — compress to <5MB then store base64 in localStorage.
+### Project OS
+- `strategy-v2.md` — ⭐ source-of-truth for v3.2+
+- `decisions.md` — 12 decisions logged
+- `status.md` — pivot summary + Sprint 1 progress
+- `plan.md` — original architecture
+- `tasks.md` — task queue
+- `knowledge.md` — schema + design tokens
+- `README.md` — public-facing repo intro
 
-**Recommendation**: IndexedDB for v1 (zero backend cost, works offline). Migrate to Vercel Blob later if multi-device sync needed.
+### Scripts
+- `scripts/deploy-vps.py` — paramiko SSH automated VPS deploy
+- `scripts/fix-vps-env.py` — env corruption fixer (used once 5/1)
 
-Implementation:
-- New `lib/imageStorage.ts` using IndexedDB (`idb` library — `pnpm add idb`)
-- Per-kid quota: 100MB each (3 kids × 100MB = 300MB total)
-- Show usage bar: "Phúc: 45MB / 100MB used"
-- Upload UI: drag-drop or file picker, validates size + format (jpg/png/webp)
-- Auto-resize: max 1920px wide via canvas before storing (saves space)
-- Display: gallery view per journal entry with thumbnails
-- Delete button per image
-- Total quota warning at 80%, hard block at 100%
+---
 
-### Session 8 implementation order
-1. Đại Ka tone (10 min — small prompt edit)
-2. Greeting + avatar (1-2h — Overview banner + profile field + time-of-day logic)
-3. Journal photo folder (3-4h — IndexedDB integration + upload UI + gallery)
+## 🎬 Quick-start checklist for Session 10
 
-Also still deferred from earlier:
-4. English Listen/Speak/Read/Write — req 5 (Web Speech API)
+When anh resumes:
 
-## Reference files
-- Source: apps/web/components/PanyKidsStudio.tsx (~3500 lines now)
-- Chatbot: apps/web/components/ChatBot.tsx
-- Map: apps/web/components/VietnamMap.tsx
-- AI Search: apps/web/components/AISearch.tsx (NEW v3.1-E)
-- Curated data: apps/web/lib/curated.ts (81 resources after v3.1-E)
-- API: apps/web/app/api/chat/route.ts + apps/web/app/api/refresh-content/route.ts
-- Đại Ka prompt: apps/web/lib/claude.ts ← MAJOR EDIT next session
-- Cron config: apps/web/vercel.json
+1. ☐ Read this handoff.md first
+2. ☐ Check `strategy-v2.md` Section "6 Pillars Mới" for spec
+3. ☐ Verify Vercel + VPS are still HTTP 200 (curl test)
+4. ☐ Check Anthropic billing (anh review weekly)
+5. ☐ Begin Day 2-3 work: build StudioCreative + BodyMovement + SelfDiscovery components
+
+Bootstrap command:
+```
+Continue pany-kids-studio Sprint 1 Day 2
+```
