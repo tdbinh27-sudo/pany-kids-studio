@@ -1,7 +1,24 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-04-30 (end of Session 6 extended)
-**Current state:** v3.1-E LIVE in production (8 commits total)
+**Last updated:** 2026-05-01 (Session 9 — strategy v2 pivot)
+**Current state:** v3.2-A in development — Đại Ka boosted, strategy-v2.md saved, 6 new pillars planned
+
+## ⭐ MAJOR PIVOT — Strategy v2 (5/1/2026)
+
+Anh approved 5 quyết định Q1-Q5 (xem `strategy-v2.md`):
+- **Q1** Hybrid web (xương sống) + mobile RN+Expo (public launch)
+- **Q2** Đại Ka GIỮ (NOT Cô Pany) — boosted Sonnet 4.6 + $15/mo + expanded knowledge
+- **Q3** Web + App song song, mục tiêu App Store + CH Play
+- **Q4** Map cũ→mới: 6 pillars cũ + 6 pillars mới = 12 total (skills + holistic dev)
+- **Q5** Timeline: 1 tuần nội bộ → 2 tháng iterate → 1 tháng submit → 8/2026 public launch
+- **Q6** Trademark + domain mua sau 1 tuần test nội bộ
+
+## v3.2-A shipped this session (Session 9)
+
+- ✅ `strategy-v2.md` saved with full Q1-Q5 decisions + 6 new pillars + timeline
+- ✅ Đại Ka boosted: default Sonnet 4.6, max_tokens 800, history 20 turns, rate 100/hr
+- ✅ Knowledge expanded: child psychology (Piaget/Erikson/Dweck), parenting frameworks, RIASEC junior 8-15, escalation hotlines (111), GDPT 2018 subjects, VN cultural context
+- ✅ decisions.md D-011 + D-012 added
 
 ## URLs
 - 🌐 Production: https://pany-kids-studio.vercel.app

@@ -32,6 +32,24 @@
 - **Impact**: Phase 1 + Phase 3 merge thành 1 sprint
 - **Action item**: Anh input ANTHROPIC_API_KEY khi em prompt vào cuối Phase 1
 
+### D-011: Strategy v2 — Hybrid Web + Mobile (2026-05-01) ✅ FINAL
+- Source: anh's review of `PanyKidsStudio_DanhGia_ChienLuoc_VN.pdf` (17p) + `PanyKids_EducationBot_Strategy.md` (636 lines)
+- See `strategy-v2.md` for full Q1-Q5 decisions
+- Web v3.1-I keeps as internal backbone for 3 kids
+- Mobile RN+Expo build for App Store + CH Play (target 8/2026)
+- Đại Ka stays (NOT renamed to Cô Pany) — boosted to Sonnet 4.6 + $15/mo cap
+- 6 old pillars + 6 new pillars = 12 total (categorized 2 dimensions)
+- Timeline: 1 week internal → 2 months iterate → 1 month app store submission → public launch 8/2026
+
+### D-012: Đại Ka boost (v3.2) ✅ FINAL
+- Default model: Haiku 4.5 → **Sonnet 4.6** (3× more expensive but smarter)
+- Max tokens: 400 → **800**
+- Rate limit: 30/hr → **100/hr** per kid
+- History context: 10 → **20 turns**
+- Budget cap: $5/mo → **$15/mo**
+- Knowledge expansion: psychology developmental, parenting frameworks, RIASEC junior, escalation hotlines (111 + Hội Tâm lý LS VN), VN GDPT 2018 subjects, cultural context
+- Compliance: anh accepts strict-COPPA risk for family use case (parental supervision)
+
 ### D-010: Repo = Public open-source ✅ FINAL
 - **Decision**: GitHub repo `pany-kids-studio` PUBLIC
 - **Why**: Mục tiêu giáo dục — chia sẻ với cộng đồng phụ huynh khác cũng muốn build cho con

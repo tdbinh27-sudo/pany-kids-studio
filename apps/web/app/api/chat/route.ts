@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { chat, ChatContext, ChatTurn } from "@/lib/claude";
 
-// In-memory rate limiter (per kidId): 30 messages / hour.
-const RATE_LIMIT = 30;
+// v3.2: bumped 30→100 messages/hour per kidId (anh approved $15/month cap)
+const RATE_LIMIT = 100;
 const WINDOW_MS = 60 * 60 * 1000;
 const buckets = new Map<string, number[]>();
 
