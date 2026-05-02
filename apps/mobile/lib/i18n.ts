@@ -1,0 +1,68 @@
+// Bilingual helper — Vietnamese first, English fallback
+
+export type Lang = 'vi' | 'en';
+
+export function L(lang: Lang, vi: string, en: string): string {
+  return lang === 'vi' ? vi : en;
+}
+
+export const I18N = {
+  vi: {
+    appTitle: 'Pany Kids Studio',
+    appSubtitle: 'Hệ thống học tập gia đình',
+    home: 'Trang chủ',
+    discovery: 'Khám phá',
+    chat: 'Đại Ka',
+    settings: 'Cài đặt',
+    welcome: 'Xin chào',
+    students: 'học viên',
+    streak: 'Chuỗi ngày',
+    days: 'ngày',
+    today: 'Hôm nay',
+    selectKid: 'Chọn học viên',
+    askDaiKa: 'Hỏi Đại Ka...',
+    send: 'Gửi',
+    typing: 'Đại Ka đang trả lời...',
+    networkError: 'Lỗi mạng — thử lại',
+    language: 'Ngôn ngữ',
+    about: 'Về ứng dụng',
+    privacyNote: 'Dữ liệu chỉ lưu trên thiết bị này. Không upload server.',
+    moodToday: 'Cảm xúc hôm nay',
+    howFeel: 'Hôm nay con thấy thế nào?',
+    riasecQuiz: 'Trắc nghiệm RIASEC',
+    riasecDesc: 'Tìm hiểu nghề phù hợp với con',
+    startQuiz: 'Bắt đầu',
+    seeResults: 'Xem kết quả',
+    retake: 'Làm lại',
+    saved: 'Đã lưu',
+  },
+  en: {
+    appTitle: 'Pany Kids Studio',
+    appSubtitle: 'Family learning system',
+    home: 'Home',
+    discovery: 'Discover',
+    chat: 'Đại Ka',
+    settings: 'Settings',
+    welcome: 'Hello',
+    students: 'students',
+    streak: 'Streak',
+    days: 'days',
+    today: 'Today',
+    selectKid: 'Choose student',
+    askDaiKa: 'Ask Đại Ka...',
+    send: 'Send',
+    typing: 'Đại Ka is replying...',
+    networkError: 'Network error — try again',
+    language: 'Language',
+    about: 'About',
+    privacyNote: 'Data stays on this device. No server upload.',
+    moodToday: 'Today\'s mood',
+    howFeel: 'How are you feeling today?',
+    riasecQuiz: 'RIASEC Quiz',
+    riasecDesc: 'Discover careers that fit you',
+    startQuiz: 'Start',
+    seeResults: 'See results',
+    retake: 'Retake',
+    saved: 'Saved',
+  },
+} as const;
