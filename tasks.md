@@ -1,46 +1,120 @@
 # Pany Kids Studio — Tasks
 
-## NOW
-- [x] Anh approved 5 open questions ✅
-- [ ] Phase 1A: Check environment (Node, pnpm, git, gh)
-- [ ] Phase 1B: Init Next.js 16 + TS + Tailwind in apps/web
-- [ ] Phase 1C: Install lucide-react + @anthropic-ai/sdk
-- [ ] Phase 1D: Convert v3 JSX → TSX
-- [ ] Phase 1E: Add localStorage shim
-- [ ] Phase 1F: Add Google Fonts (Fredoka, Quicksand, Caveat)
-- [ ] Phase 1G: Test dev server → verify all 22 tabs render
+## NOW (Sprint 2 starts 5/8/2026)
 
-## NEXT (Phase 3 — Chatbot, in same sprint)
-- [ ] Build `<ChatBot />` floating widget (bottom-right, 60→380×600)
-- [ ] Build `/api/chat` route with Anthropic SDK
-- [ ] System prompt for "Đại Ka" character + safety rules
-- [ ] Context injection (kid, tab, progress, lang)
-- [ ] Tool calls: unlock_badge, generate_quiz, add_journal_prompt
-- [ ] Pre/post filters + rate limit 30/hour/kid
-- [ ] Anh inputs ANTHROPIC_API_KEY → `.env.local`
-- [ ] Test 5 sample conversations VN + EN
+### Internal usage feedback (Phúc/An/Y)
+- [ ] Onboarding session — anh giới thiệu 12 pillars to 3 kids
+- [ ] Mỗi con setup PIN + profile (school, hobbies, goals, bio, emoji)
+- [ ] Daily streak tracking — bao nhiêu ngày liên tiếp 3 con check-in
+- [ ] Đại Ka chat usage logs — query patterns + hot topics
+- [ ] Bố note bugs trong `artifacts/feedback-week-1.md` (chưa tạo)
 
-## NEXT (Phase 2 — Deploy)
-- [ ] Init git + .gitignore (exclude .env.local)
-- [ ] Create LICENSE (MIT) + README (bilingual)
-- [ ] `gh repo create pany-kids-studio --public`
-- [ ] Push initial commit
-- [ ] Connect Vercel
-- [ ] Setup ANTHROPIC_API_KEY in Vercel env vars
-- [ ] Deploy → verify `pany-kids-studio.vercel.app`
-- [ ] Share URL with các bạn
+### Mobile app first run
+- [ ] `cd apps/mobile && pnpm install`
+- [ ] Add placeholder PNG assets (icon/splash/adaptive-icon/favicon)
+- [ ] `pnpm start` → scan QR with Expo Go on phone
+- [ ] Test 4 starter screens trên thiết bị thật của anh
+- [ ] Verify Đại Ka chat works calling Vercel `/api/chat`
+
+## NEXT (Sprint 2 weeks 1-4)
+
+### Content seeding
+- [ ] Quest hằng ngày: 500+ (12 pillars × 4 ages × 7 days) — current 0
+- [ ] Voucher phần thưởng: 30+ designs in-house
+- [ ] Truyện song ngữ thư viện: 50 entries
+- [ ] Quiz Toán: 1000 questions × 4 cấp (currently has QUIZ_BANK with smaller set)
+
+### UX iteration based on feedback
+- [ ] Top 3 features per kid request
+- [ ] Mobile screen expansion: Calendar, Library, Career Compass screens
+- [ ] Dark mode (anh's request from earlier)
+- [ ] Voice input for Phúc (8t chưa gõ nhanh) via Web Speech API or Whisper
+
+### Mobile asset production (via Claude Design)
+- [ ] Logo PNG 1024×1024 (cherry blossom + Pany Kids wordmark)
+- [ ] Splash 1284×2778 with gradient + tagline
+- [ ] Adaptive icon (Android, 25% padding)
+- [ ] Favicon 48×48
+
+## NEXT (Sprint 2 month 2)
+
+### Mid-sprint gate (6/15/2026)
+- [ ] Decision: Continue → Sprint 3 mobile mature, OR Pivot → UX redesign
+- [ ] If Continue: begin packages/shared/ extraction
+
+### Domain decision (after 1-week confidence)
+- [ ] Buy `panykids.io` ($15/year via Vercel registrar)
+- [ ] DNS setup: app.panykids.io for web, optional api.panykids.io for VPS
+- [ ] Update mobile app.json with custom api base URL
+- [ ] Trademark research (low priority pre-launch)
 
 ## BLOCKED
-- [ ] Phase 4 (panykids.io domain) — when project completion locked, mua $15/năm
 
-## IMPROVE (after launch)
-- [ ] Voice input (Whisper API) cho Phúc 8 chưa gõ nhanh
-- [ ] Daily summary email to bố
-- [ ] Sibling messaging
-- [ ] Generate weekly progress PDF auto
-- [ ] PWA install icon
+- [ ] **API key rotation** — anh chưa rotate after 10 sessions, current key still active. Block: anh's manual action at https://console.anthropic.com/settings/keys
+- [ ] Mobile EAS init — needs anh's Apple Developer account ($99/year) + Google Play Console ($25 once) before first build
+
+## IMPROVE (after Sprint 2)
+
+- [ ] Sync data web ↔ mobile via Supabase (replaces JSON export/import)
+- [ ] Voice input with Whisper API for younger kids
+- [ ] Daily summary email to bố Bình
+- [ ] Sibling messaging in family notebook
+- [ ] Generate weekly progress PDF auto via /api/refresh-content extension
+- [ ] PWA install icon for web
+- [ ] Studio Sáng tạo on mobile via `react-native-skia`
+- [ ] Body Movement timer with `expo-haptics` for tick feedback
+- [ ] Telegram bot integration for Đại Ka (after pilot Q3/2026)
 
 ## RECURRING
-- Mỗi tuần: review usage data + adjust difficulty
-- Mỗi tháng: backup localStorage → JSON
-- Mỗi quý: family Demo Day
+
+- Weekly: 3 con review usage data + adjust pillar focus + content gaps
+- Weekly: bố Bình review Anthropic billing dashboard
+- Monthly: backup localStorage → JSON via Settings tab
+- Monthly: Vercel cron `/api/refresh-content` already running (day 1, 03:00 UTC)
+- Quarterly: family Demo Day — mỗi con show what they made
+
+## DONE — Sprint 1 (5/1 - 5/2/2026)
+
+### Day 1 — `dcf9b25` (Session 9)
+- [x] Strategy v2 pivot — strategy-v2.md saved with Q1-Q5 decisions
+- [x] Đại Ka boost — Sonnet 4.6 default, 800 tokens, 100/hr, 20-turn history
+- [x] Knowledge expansion — child psych, parenting, RIASEC junior, escalation hotlines, GDPT subjects
+- [x] decisions.md +D-011 (hybrid) +D-012 (Đại Ka boost)
+
+### Days 2-5 — `b58fbb3` (Session 10)
+- [x] `lib/riasec-junior.ts` — 36+48 questions, 6 types, scoring
+- [x] `lib/careers-v2.ts` — 60 careers + 18 mini-projects
+- [x] `lib/family-prompts.ts` — 30 ask-parent + 6 weekly review + 15 show-tell + 15 activities
+- [x] `StudioCreativeTab` — HTML5 canvas + 21 prompts + gallery
+- [x] `BodyMovementTab` — 12 challenges + timer + breathing + 7-day chart
+- [x] `SelfDiscoveryTab` — mood + RIASEC quiz + results
+- [x] `CareerCompassTab` — 60 cards + 3 views + filters + modal
+- [x] `FamilyBridgeTab` — notebook + weekly review + ask-parent prompts
+- [x] Sidebar PHÁT TRIỂN group — 5 new tabs
+- [x] 8 new pks3-* localStorage keys + persistence
+- [x] MobileTabBar + i18n vi+en
+
+### Days 6-7 — `85cb863` (Session 10)
+- [x] `apps/mobile/` Expo SDK 53 scaffold (package.json, app.json, tsconfig, babel, metro)
+- [x] `lib/design.ts` — color tokens mirroring web
+- [x] `lib/storage.ts` — AsyncStorage with web-compatible API
+- [x] `lib/api.ts` — `/api/chat` fetch helper
+- [x] `lib/i18n.ts` — vi/en translations
+- [x] `lib/kids.ts` — Kid type + DEFAULT_KIDS
+- [x] Copy 3 pure-data lib files from web
+- [x] 4 atom components: Card / Btn / Pill / KidSelector
+- [x] HomeScreen — welcome + kid selector + streak + mood + tip
+- [x] DiscoveryScreen — mood + full RIASEC quiz + results
+- [x] ChatScreen — Đại Ka with KeyboardAvoidingView + live API
+- [x] SettingsScreen — lang toggle + privacy + about
+- [x] App.tsx — NavigationContainer + 4-tab bar with emoji icons
+- [x] README + assets/README documenting setup + Sprint 2 TODOs
+
+### Deployment (Session 10)
+- [x] Push 2 commits to GitHub `main`
+- [x] Vercel production deploy → https://pany-kids-studio.vercel.app HTTP 200
+- [x] VPS deploy via `scripts/deploy-vps.py` → http://61.14.233.122/ HTTP 200
+- [x] Verify new pillar code in Vercel JS bundle
+- [x] decisions.md +D-013 +D-014 +D-015
+- [x] status.md, handoff.md, tasks.md updated
+- [x] MemPalace checkpoints (3 entries: diary + drawer + KG triples)

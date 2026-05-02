@@ -1,8 +1,8 @@
 # Handoff — Pany Kids Studio
 
-**Last session:** Session 9 — 2026-05-02
-**Current chapter:** v3.2-A LIVE (strategy v2 pivot complete)
-**Next session:** Sprint 1 Day 2 — Build 6 new pillars
+**Last session:** Session 10 — 2026-05-02 (Sprint 1 COMPLETE + deployed)
+**Current chapter:** v3.2-C LIVE on Vercel + VPS, mobile scaffold ready for `pnpm install`
+**Next session:** Sprint 2 (5/8 - 7/8/2026) — Phúc/An/Y daily usage feedback
 
 ---
 
@@ -10,127 +10,95 @@
 
 Type to Claude Code:
 ```
-Continue pany-kids-studio Sprint 1 Day 2 — build 6 new pillars (Sáng tạo / Vận động / Tự khám phá first)
+Continue pany-kids-studio Sprint 2 — Phúc/An/Y daily usage feedback
 ```
 
 Claude Code will:
-1. Read `strategy-v2.md` (canonical source-of-truth, ~10K)
-2. Read `decisions.md` (12 decisions including D-011 Hybrid + D-012 Đại Ka boost)
+1. Read `strategy-v2.md` (canonical source-of-truth)
+2. Read `decisions.md` (15 decisions including D-013 12-pillar + D-014 mobile stack + D-015 chat endpoint)
 3. Read this `handoff.md` (current snapshot)
-4. Read `tasks.md` for active queue
-5. Begin Sprint 1 Day 2 implementation
+4. Read `tasks.md` for Sprint 2 backlog
+5. Open feedback collection for the 3 kids
 
 ---
 
-## 📦 What was accomplished Session 9 (2026-05-02)
+## 📦 What was accomplished Session 10 (2026-05-02)
 
-### Strategy v2 pivot
-Anh approved 5 quyết định Q1-Q5 sau khi review 2 tài liệu:
-- `Downloads/files/PanyKidsStudio_DanhGia_ChienLuoc_VN.pdf` (17 trang)
-- `Downloads/files/PanyKids_EducationBot_Strategy.md` (636 lines)
+Sprint 1 fully delivered in one mega-session:
 
-**Q1 — Hybrid web + mobile**
-**Q2 — Đại Ka GIỮ** (NOT renamed Cô Pany), bố Bình representative, boost API budget $5→$15
-**Q3 — Web + App song song**, App Store + CH Play target 8/2026
-**Q4 — Map cũ→mới**: 6 old pillars + 6 new pillars = 12 total
-**Q5 — Timeline**: 1 week internal → 2 months iterate → 1 month submit → 8/2026 launch
-**Q6 — Trademark/domain** mua sau 1 tuần test
+### Day 1 (already done in Session 9, 5/1)
+v3.2-A: strategy-v2.md saved + Đại Ka boost (Sonnet 4.6 + 800 tokens + 100/hr + 20-turn history) + child psych/parenting/RIASEC/escalation knowledge expansion. Commit `dcf9b25`.
 
-### v3.2-A shipped (commit `dcf9b25`)
-- ✅ `strategy-v2.md` saved (full pivot doc, 10K chars)
-- ✅ `decisions.md` +D-011 (hybrid), +D-012 (Đại Ka boost)
-- ✅ `status.md` pivot summary
-- ✅ Đại Ka boost in `lib/claude.ts`:
-  - Default Haiku 4.5 → **Sonnet 4.6** (3× more intelligent)
-  - max_tokens 400 → **800**
-  - History 10 → **20 turns**
-  - Rate limit 30 → **100/hour/kid**
-- ✅ Knowledge expansion (~170 lines):
-  - Child psychology — 8 common issues handling pattern
-  - RIASEC Junior 8-10/11-12/13-15 with table mapping
-  - Escalation hotlines (111 + Bệnh viện Nhi Đồng + vapcl.org.vn)
-  - GDPT 2018 subjects coverage
-  - VN cultural context guidelines
-  - 7 hard stop rules
-- ✅ Dual deploy: Vercel + VPS LIVE
-- ✅ Verified live: 2 test queries (psychology + RIASEC) — Sonnet 4.6 active
+### Days 2-5 (this session, 5/2)
+v3.2-B: 5 new development pillars on web (commit `b58fbb3`):
+- **Studio Sáng tạo** — HTML5 canvas drawing + 21 daily creative prompts + per-kid artwork gallery
+- **Cơ thể & Vận động** — 12 exercise challenges with circular timer + 1-min mindful breathing animation + 7-day bar chart
+- **Tự khám phá** — mood journal (5 weather emojis + 7-day history) + RIASEC Junior quiz (36q ages 8-12, 48q ages 13-15) + results view with top-3 + bar chart
+- **La bàn nghề** — 60 careers (10 per RIASEC type) with VN context (salary/example/path) + Career-of-Day rotation + 3 views (Explore/Recommended/Saved) + age & RIASEC filters + full detail modal
+- **Cầu nối Gia đình** — daily ask-parent prompt (30 questions) + weekly Show & Tell + weekly family activity + shared notebook with parent/kid author distinction + 6-question Sunday weekly review
 
----
+3 new lib files: `riasec-junior.ts` (84 questions + 6 RIASEC types), `careers-v2.ts` (60 careers + 18 mini-projects), `family-prompts.ts` (30+15+15+6 prompts).
 
-## 🚧 Sprint 1 — 7 days plan (5/1 - 5/8/2026)
+### Days 6-7 (this session, 5/2)
+v3.2-C: Mobile app scaffold (commit `85cb863`):
+- **22 files, ~2300 lines** under `apps/mobile/`
+- **Stack**: Expo SDK 53 + RN 0.79 + React 19 + TypeScript strict + React Navigation v7 bottom-tabs + AsyncStorage
+- **4 starter screens**: Home (welcome + kid selector + streak + mood + tip), Discovery (mood + full RIASEC quiz), Chat (Đại Ka with KeyboardAvoidingView calling live `/api/chat`), Settings (lang toggle + privacy + about)
+- **4 atom components**: Card / Btn / Pill / KidSelector
+- **AsyncStorage parity**: identical `pks3-*` keys with web → JSON export/import cross-platform
+- **Bundle ID**: `io.panykids.app` (iOS + Android)
+- Pure-data libs (riasec-junior, careers-v2, family-prompts) **copied** from web → extract to `packages/shared/` in v0.2
 
-### ✅ Day 1 done (5/1, Session 9)
-Strategy + Đại Ka boost + Project OS docs
+### Deployment (this session)
+- ✅ Web pushed to GitHub `main` (2 commits: `b58fbb3` + `85cb863`)
+- ✅ Vercel production deploy — `https://pany-kids-studio-jrm7y2dpe-tdbinh27-3978s-projects.vercel.app` aliased to `pany-kids-studio.vercel.app` (HTTP 200, 990ms)
+- ✅ JS bundle verified contains new pillar code (`studioCreative` found in chunk)
+- ✅ VPS deploy via `scripts/deploy-vps.py` (HTTP 200, 38ms)
 
-### 🎯 Day 2-3 (Session 10) — 6 new pillars data
-Build data structures + UI for 6 new pillars from strategy-v2.md:
-
-1. **Studio Sáng tạo** (canvas vẽ, video upload, prompt sáng tạo daily)
-2. **Cơ thể & Vận động** (timer thử thách, exercise log, mindfulness 1-min)
-3. **Tự khám phá** (mood journal expanded, RIASEC Junior 36-question quiz)
-
-**Files to create/modify:**
-- `apps/web/lib/pillars-v2.ts` — new pillars data structure
-- `apps/web/components/pillars/StudioCreative.tsx` (canvas + prompt)
-- `apps/web/components/pillars/BodyMovement.tsx` (timer + log)
-- `apps/web/components/pillars/SelfDiscovery.tsx` (RIASEC Junior + mood)
-- `apps/web/lib/riasec-junior.ts` — 36 questions adapted for 8-12 + 48 for 13-15
-- Update `PanyKidsStudio.tsx` sidebar: 12 pillars grouped 2 categories
-
-### Day 4-5 (Session 11)
-- **La bàn Nghề nghiệp** (60 career cards with VN context)
-- **Cầu nối Gia đình** (sổ tay chung, weekly review template)
-- Map cũ→mới migration logic
-
-**Files:**
-- `apps/web/lib/careers-v2.ts` — 60 career cards
-- `apps/web/components/pillars/CareerCompass.tsx`
-- `apps/web/components/pillars/FamilyBridge.tsx`
-
-### Day 6-7 (Session 12) — Internal Sprint 1 wrap
-- React Native + Expo project scaffold (parallel branch)
-- Initial mobile app rendering shared components
-- Internal usage feedback từ 3 con tuần đầu
-- Bug fixes + UX iterate
+### Project OS docs updated
+- ✅ `decisions.md` +D-013 (12-pillar architecture) +D-014 (mobile stack Expo SDK 53) +D-015 (chat endpoint single source)
+- ✅ `status.md` rewritten — Sprint 1 complete inventory + 4 next-session resume options
+- ✅ `handoff.md` (this file) — full Session 10 record
 
 ---
 
 ## ⚠️ Critical context for next session
 
 ### Identity
-- **Đại Ka** stays (NOT Cô Pany) — bố Bình's AI representative
-- Calls kids "con" (NOT "anh/chị")
-- Now uses **Sonnet 4.6** by default
-- 3 kids: Hạnh Phúc 8 (Phúc, 🌟), Bình An 10 (An, 🚀), Như Ý 12 (Y, 🎨)
+- **Đại Ka** stays — bố Bình's AI representative, calls kids "con", uses Sonnet 4.6 by default
+- 3 kids: Phúc 8 (🌟), An 10 (🚀), Y 12 (🎨)
 
-### URLs
-- **Web Vercel**: https://pany-kids-studio.vercel.app (HTTP 200)
-- **VPS 24/7**: http://61.14.233.122/ (HTTP 200, 0.07s)
+### URLs (all verified live)
+- **Web Vercel**: https://pany-kids-studio.vercel.app (HTTP 200, ~1s)
+- **VPS 24/7**: http://61.14.233.122/ (HTTP 200, ~40ms)
 - **GitHub public**: https://github.com/tdbinh27-sudo/pany-kids-studio
-- **Domain panykids.app**: NOT bought yet (anh defer to after 1-week internal test)
+- **Domain panykids.app**: NOT bought yet (defer until 1-week internal test confirms 12-pillar UX works)
 
-### Architecture (current v3.2-A)
-- Frontend: Next.js 16 + React 19 + Tailwind + TypeScript
-- Backend API: Next.js API routes on both Vercel + VPS
-- Storage: localStorage (kids data), no DB
-- Bot stack: `lib/claude.ts` + `app/api/chat/route.ts` + `components/ChatBot.tsx`
-- Deploy: Vercel auto-deploy on push, VPS manual via `scripts/deploy-vps.py`
+### Architecture (current v3.2-C)
+- **Web**: Next.js 16 + React 19 + Tailwind + TypeScript on Vercel + VPS
+- **Mobile** (new): Expo SDK 53 + RN 0.79 + React Navigation v7 + AsyncStorage
+- **Storage**: localStorage (web) ↔ AsyncStorage (mobile), SAME `pks3-*` keys, JSON cross-compat
+- **Đại Ka API**: Single `/api/chat` endpoint at Vercel + VPS, called by both web + mobile + future Telegram
 
-### Decisions chốt
-- D-011: Hybrid web (current backbone) + mobile (RN+Expo, target 8/2026)
-- D-012: Đại Ka boost Sonnet 4.6 + $15/mo cap
+### Decisions chốt (15 total)
+- D-001 to D-009: project name, hosting, chatbot name, AI model, etc.
 - D-010: Repo public MIT
-- D-009: API key one-time setup (anh chưa rotate, risk kéo dài)
+- D-011: Hybrid web + mobile (Q1 strategy v2)
+- D-012: Đại Ka boost Sonnet 4.6 + $15/mo cap
+- D-013 NEW: 12-pillar architecture (6 skills + 6 development)
+- D-014 NEW: Mobile stack = Expo SDK 53 + RN 0.79 + RN Navigation v7
+- D-015 NEW: Đại Ka single endpoint serving all clients (web + mobile + future)
 
 ### Known issues / Risks
-- 🔴 **API key STILL exposed** in session log (anh chưa rotate after 9 sessions)
-- 🟡 Sonnet 4.6 cost 3× Haiku — monitor billing weekly
-- 🟡 Compliance: Đại Ka chats with kids directly. Anh accepts strict-COPPA risk for family use case.
-- 🟢 Stack stable, dual deploy working
+- 🔴 **API key STILL exposed** in old session logs — anh chưa rotate after 10 sessions
+- 🟡 **Sonnet 4.6 cost** — capped $15/month, monitor weekly
+- 🟡 **Mobile not pnpm-installed yet** — anh cần `cd apps/mobile && pnpm install && pnpm start` to test on Expo Go
+- 🟡 **Mobile assets missing** — placeholder PNG required (icon/splash/adaptive-icon/favicon) before EAS build
+- 🟢 Both web deploys clean and serving the new pillars
 
 ### Cost tracking
 - Vercel: free tier (sufficient for 3 kids + 5-15 family beta)
-- VPS: 6GB RAM, 40GB SSD, active đến 2026-07-25 (paid)
+- VPS: 6GB RAM, 40GB SSD, paid through 2026-07-25
 - Anthropic: $15/month cap (Sonnet 4.6 default)
 
 ---
@@ -138,43 +106,69 @@ Build data structures + UI for 6 new pillars from strategy-v2.md:
 ## 📋 Reference files
 
 ### Source code
-- `apps/web/components/PanyKidsStudio.tsx` — main dashboard (~3500 lines)
-- `apps/web/components/ChatBot.tsx` — Đại Ka floating widget (draggable)
-- `apps/web/components/VietnamMap.tsx` — Leaflet GPS map
-- `apps/web/components/AISearch.tsx` — Perplexity/ChatGPT/Claude/Gemini portal
-- `apps/web/lib/claude.ts` — Đại Ka system prompt + model picker (HAIKU/SONNET/OPUS)
-- `apps/web/lib/curated.ts` — 81 curated resources
-- `apps/web/lib/quiz.ts` — 70 quiz questions
-- `apps/web/app/api/chat/route.ts` — Đại Ka API endpoint (rate limit 100/hr)
-- `apps/web/app/api/refresh-content/route.ts` — Vercel Cron monthly content gen
-- `apps/web/vercel.json` — Cron schedule
+- `apps/web/components/PanyKidsStudio.tsx` — main dashboard (~4200 lines, 17 tabs)
+- `apps/web/lib/riasec-junior.ts` — 84 RIASEC questions + scoring + 6 types
+- `apps/web/lib/careers-v2.ts` — 60 careers + 18 day-in-life mini-projects
+- `apps/web/lib/family-prompts.ts` — 30 ask-parent + 6 weekly review + 15 show-tell + 15 family activities
+- `apps/mobile/App.tsx` — 4-tab navigator
+- `apps/mobile/screens/*.tsx` — 4 starter screens
+- `apps/mobile/lib/*.ts` — design/storage/api/i18n/kids + 3 copied data files
 
 ### Project OS
 - `strategy-v2.md` — ⭐ source-of-truth for v3.2+
-- `decisions.md` — 12 decisions logged
-- `status.md` — pivot summary + Sprint 1 progress
-- `plan.md` — original architecture
-- `tasks.md` — task queue
+- `decisions.md` — 15 decisions logged (D-001 through D-015)
+- `status.md` — Sprint 1 complete inventory
+- `plan.md` — original architecture (still relevant)
+- `tasks.md` — Sprint 2 backlog
 - `knowledge.md` — schema + design tokens
 - `README.md` — public-facing repo intro
 
 ### Scripts
-- `scripts/deploy-vps.py` — paramiko SSH automated VPS deploy
-- `scripts/fix-vps-env.py` — env corruption fixer (used once 5/1)
+- `scripts/deploy-vps.py` — paramiko SSH automated VPS deploy (used this session)
+- `scripts/fix-vps-env.py` — env corruption fixer
 
 ---
 
-## 🎬 Quick-start checklist for Session 10
+## 🎬 Sprint 2 plan (5/8 - 7/8/2026, 2 months)
+
+**Goal**: 3 kids use the dashboard daily. Bố Bình collects UX bugs + feature gaps + content gaps. Iterate without adding new pillars.
+
+### Week 1-2 (5/8 - 5/22)
+- [ ] Phúc/An/Y onboarding session — anh giới thiệu 12 pillars, mỗi con login + setup PIN/profile
+- [ ] Daily usage tracking via streak counter + Đại Ka chat logs
+- [ ] Bố note bugs trong `feedback-week-X.md` files dưới `artifacts/`
+- [ ] Mid-week sync: 30-min family demo → mỗi con show 1 thing they made
+
+### Week 3-4 (5/22 - 6/5)
+- [ ] First feature ask round — mỗi con request 1 feature
+- [ ] Implement top 3 requests (whoever's request lands first gets dev priority)
+- [ ] Mobile pnpm install + Expo Go testing trên phone của 3 con
+
+### Month 2 (6/5 - 7/8)
+- [ ] Content seeding: 300 quests, fill out remaining skills track quarters
+- [ ] Career mini-projects refinement based on which RIASEC types mỗi con drift toward
+- [ ] Begin mobile screen expansion: add Calendar, Library, Career Compass screens
+- [ ] Decide on shared package extraction (`packages/shared/`)
+- [ ] Domain `panykids.io` purchase decision after 1-week confidence
+
+### Mid-sprint gate (6/15)
+Either:
+- (A) Continue → Sprint 3 mobile mature → App Store submission target 7/2026
+- (B) Pivot → if 3 kids don't engage, redesign UX before scaling
+
+---
+
+## 🎬 Quick-start checklist for Session 11+
 
 When anh resumes:
 
 1. ☐ Read this handoff.md first
-2. ☐ Check `strategy-v2.md` Section "6 Pillars Mới" for spec
-3. ☐ Verify Vercel + VPS are still HTTP 200 (curl test)
-4. ☐ Check Anthropic billing (anh review weekly)
-5. ☐ Begin Day 2-3 work: build StudioCreative + BodyMovement + SelfDiscovery components
+2. ☐ Check live URLs still HTTP 200 (Vercel + VPS)
+3. ☐ Open `pany-kids-studio.vercel.app` and walk through PHÁT TRIỂN sidebar group with 3 kids
+4. ☐ Note any UX issue immediately into `artifacts/feedback-week-1.md`
+5. ☐ Mobile install + Expo Go test (deferred but available)
 
 Bootstrap command:
 ```
-Continue pany-kids-studio Sprint 1 Day 2
+Continue pany-kids-studio Sprint 2
 ```

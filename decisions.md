@@ -85,3 +85,35 @@
 - **Decision**: Fredoka + Quicksand + Caveat fonts, pastel palette, emoji-rich, animations
 - **Why**: Audience là kids 6-16 (mở rộng 2026-04-30 — Year 1 phù hợp 6 tuổi với content đơn giản hơn), anime style attract follow; v2 editorial cho adults
 - **Tradeoff**: Less "professional looking" cho người lớn nhìn → giải pháp: bố mode có thể toggle styles trong v4 nếu cần
+
+## 2026-05-02
+
+### D-013: 12-Pillar Architecture = 6 Skills + 6 Development (Sprint 1) ✅ FINAL
+- **Decision**: Sidebar có 2 nhóm pillars song song
+  - **Skills track** (6 trụ cũ): Tech · English · Finance · Thinking · Business · Life
+  - **Development track** (6 trụ mới): Theo dõi · Sáng tạo · Vận động · Tự khám phá · La bàn nghề · Gia đình
+- **Why**: Strategy-v2.md Q4 chốt — kỹ năng (cognitive/skill-based) tách khỏi phát triển con người (whole-child)
+- **Implementation**: Sprint 1 build 5/6 trụ mới (Theo dõi đã có sẵn trong skills track). Tất cả tích hợp vào sidebar PHÁT TRIỂN group.
+- **Data**: 60 careers (10 per RIASEC type), 84 RIASEC questions (36 + 48), 30 ask-parent prompts, 21 creative prompts, 12 exercise challenges
+- **Storage**: 8 new pks3-* keys (creativeWorks/exerciseLog/moodLog/riasecAnswers/riasecCompleted/savedCareers/familyJournal/weeklyReviews)
+
+### D-014: Mobile stack = Expo SDK 53 + RN 0.79 + RN Navigation v7 ✅ FINAL
+- **Decision**: Mobile app = Expo managed workflow, NOT bare React Native
+- **Why**: 
+  - Expo Go cho QR-scan testing instant trên phone của 3 con — zero device setup
+  - EAS Build handles iOS code signing + Play AAB → less ops cost cho solo dev
+  - Same TypeScript codebase as web (~80% lib code is portable)
+  - Expo SDK 53 stable, mature, supported through 2026
+- **Sharing strategy**: 
+  - Phase 1 (now): COPY pure-data lib files (riasec-junior, careers-v2, family-prompts) between apps/web/lib và apps/mobile/lib
+  - Phase 2 (Sprint 2-3): Extract to packages/shared/ pnpm workspace
+- **Storage parity**: AsyncStorage keys IDENTICAL to web localStorage (pks3-*) → JSON export/import cross-platform
+- **API parity**: Mobile calls existing /api/chat (Vercel) — no new backend code
+- **Bundle ID**: io.panykids.app (iOS + Android)
+- **Submission target**: 8/2026 per strategy-v2.md Q5
+
+### D-015: Đại Ka chat — same endpoint, different clients ✅ FINAL
+- **Decision**: Web + Mobile + future Telegram bot all hit `https://pany-kids-studio.vercel.app/api/chat`
+- **Why**: Single source of truth for system prompt + safety rules + rate limit + model selection — no drift across clients
+- **Trade-off**: Vercel cron + edge function costs scale with users; if costs spike post-launch, move /api/chat to VPS (already running)
+- **Override**: `apiBaseUrl` in mobile app.json `extra` allows local dev / staging deploys
