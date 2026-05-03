@@ -1,7 +1,7 @@
 # Handoff — Pany Kids Studio
 
-**Last session:** Session 10 — 2026-05-02 (Sprint 1 COMPLETE + deployed)
-**Current chapter:** v3.2-C LIVE on Vercel + VPS, mobile scaffold ready for `pnpm install`
+**Last session:** Session 11 — 2026-05-03 (Phase 8 English 4 skills LIVE)
+**Current chapter:** v3.2-E LIVE — Listen/Speak/Read/Write fully interactive with Đại Ka grading
 **Next session:** Sprint 2 (5/8 - 7/8/2026) — Phúc/An/Y daily usage feedback
 
 ---

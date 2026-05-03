@@ -1,7 +1,7 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-05-02 (Session 10 — Sprint 1 COMPLETE)
-**Current state:** v3.2-C deployed — Sprint 1 done (5 new pillars web + mobile scaffold). Internal usage phase begins.
+**Last updated:** 2026-05-03 (Session 11 — Phase 8 English 4 skills LIVE)
+**Current state:** v3.2-E deployed — long-deferred English Listen/Speak/Read/Write tab now LIVE. Web Speech API + Sonnet 4.6 grading.
 
 ## ⭐ SPRINT 1 COMPLETE (5/1 - 5/2/2026)
 
@@ -25,14 +25,41 @@ All 7 days delivered in 2 sessions:
 - 🛠️ Vercel project: tdbinh27-3978s-projects/pany-kids-studio
 - 📱 Mobile: not yet on App Store / Play (target 8/2026)
 
-## Git history (latest 5)
+## Git history (latest 7)
 ```
-85cb863  feat(v3.2-C): Expo + RN mobile app scaffold (Sprint 1 Days 6-7)         ← latest
+5176e32  feat(v3.2-E): English 4 skills — Listen / Speak / Read / Write (Phase 8)   ← latest
+4ae145c  docs: Sprint 2 prep — onboarding script, feedback template, README polish
+e0d0823  fix(v3.2-D): 3 bugs found via post-deploy bug-hunt
+de8fde0  chore: Project OS docs for Sprint 1 completion (Session 10)
+85cb863  feat(v3.2-C): Expo + RN mobile app scaffold (Sprint 1 Days 6-7)
 b58fbb3  feat(v3.2-B): 5 new development pillars (Sprint 1 Days 2-5)
-706caab  chore: handoff + status update for Session 9 → 10 transition
 dcf9b25  feat(v3.2-A): strategy v2 pivot — Đại Ka boost
-9876725  fix(v3.1-I): mobile UX — horizontal scrollable tab bar < 1024px
 ```
+
+## v3.2-E Phase 8 (Session 11, 2026-05-03) — `5176e32`
+
+### English 4 skills tab — `🎓 English 4 kỹ năng`
+
+Browser-native interactive English practice. CEFR-leveled (A1/A2/B1) auto-picked from kid age.
+
+| Mode | Tech | Content |
+|------|------|---------|
+| 🎧 **Nghe** (Listen) | `window.speechSynthesis` (TTS) | 68 vocab words A1/A2/B1 with phonetic + VN gloss. 4-option multiple choice, click to hear, replay button, feedback reveals all options' VN meaning |
+| 🗣️ **Nói** (Speak) | `SpeechRecognition` (ASR) | 17 sentences A1→B1. Hear Đại Ka → record kid voice → Levenshtein-based 0-100 pronunciation match score with encouragement |
+| 📖 **Đọc** (Read) | Pure data | 3 reading passages (cat/zoo/curiosity essay) + 3-4 multiple-choice questions each with VN explanations on submit |
+| ✍️ **Viết** (Write) | `/api/grade-english` (Sonnet 4.6) | 9 writing prompts. Đại Ka grades: score 0-100 + strengths + improvements + corrected version + encouragement. Live test verified 78/100 with 3 grammar fixes |
+
+**New files:**
+- `apps/web/lib/english-skills.ts` — 280 lines content bank + helpers (Levenshtein, pronunciationScore)
+- `apps/web/lib/speech.ts` — 140 lines Web Speech API wrappers with feature detection
+- `apps/web/app/api/grade-english/route.ts` — 120 lines grading endpoint, structured JSON, 30/hr rate limit
+- `apps/web/components/PanyKidsStudio.tsx` +600 lines (EnglishSkillsTab + 4 panel components)
+- New persist key: `pks3-englishProgress`
+
+**Browser compat handling:**
+- Chrome/Edge: full TTS+ASR works
+- Safari: TTS only (warning card if user clicks Speak)
+- Firefox: TTS only (same warning)
 
 ## Sprint 1 deliverables (full inventory)
 

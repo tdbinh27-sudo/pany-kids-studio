@@ -23,6 +23,10 @@
 - [ ] Voucher phần thưởng: 30+ designs in-house
 - [ ] Truyện song ngữ thư viện: 50 entries
 - [ ] Quiz Toán: 1000 questions × 4 cấp (currently has QUIZ_BANK with smaller set)
+- [ ] English vocab expansion: 68 → 200+ (more A2/B1 words)
+- [ ] English reading passages: 3 → 20+ (mix VN context + general)
+- [ ] English writing prompts: 9 → 30+ (per level)
+- [ ] English speaking sentences: 17 → 50+ (longer + dialogue)
 
 ### UX iteration based on feedback
 - [ ] Top 3 features per kid request
@@ -93,6 +97,18 @@
 - [x] Sidebar PHÁT TRIỂN group — 5 new tabs
 - [x] 8 new pks3-* localStorage keys + persistence
 - [x] MobileTabBar + i18n vi+en
+
+### Phase 8 — `5176e32` (Session 11, 2026-05-03) — English 4 skills
+- [x] `lib/english-skills.ts` — 68 vocab + 17 sentences + 3 passages + 9 writing prompts + scoring helpers
+- [x] `lib/speech.ts` — Web Speech API wrappers (speak/listen/feature detection)
+- [x] `app/api/grade-english/route.ts` — Sonnet 4.6 grading endpoint with structured JSON output
+- [x] `EnglishSkillsTab` + 4 sub-panels (ListenPanel/SpeakPanel/ReadPanel/WritePanel)
+- [x] Mode switcher (🎧 Nghe / 🗣️ Nói / 📖 Đọc / ✍️ Viết) + CEFR level picker (A1/A2/B1)
+- [x] Browser support warning cards for unsupported browsers
+- [x] Sidebar PHÁT TRIỂN... wait actually under "Công cụ học" group + MobileTabBar
+- [x] `pks3-englishProgress` persist with per-skill structure
+- [x] Live API verified: 78/100 grade for sample text with 3 grammar fixes + warm VN encouragement
+- [x] D-016 logged (Web Speech API + Đại Ka grading approach)
 
 ### Days 6-7 — `85cb863` (Session 10)
 - [x] `apps/mobile/` Expo SDK 53 scaffold (package.json, app.json, tsconfig, babel, metro)

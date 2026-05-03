@@ -117,3 +117,18 @@
 - **Why**: Single source of truth for system prompt + safety rules + rate limit + model selection — no drift across clients
 - **Trade-off**: Vercel cron + edge function costs scale with users; if costs spike post-launch, move /api/chat to VPS (already running)
 - **Override**: `apiBaseUrl` in mobile app.json `extra` allows local dev / staging deploys
+
+## 2026-05-03
+
+### D-016: English 4 skills = Web Speech API + Đại Ka grading (Phase 8) ✅ FINAL
+- **Decision**: Listen/Speak use browser-native `window.speechSynthesis` + `SpeechRecognition`; Write uses dedicated `/api/grade-english` endpoint with Sonnet 4.6 + structured JSON output
+- **Why**:
+  - Web Speech API = $0 cost, instant, no extra deps. Whisper API ($0.006/min) is overkill for kid-length sentences
+  - Server-side ASR would require audio upload → privacy concern. Browser ASR keeps audio local.
+  - Đại Ka grading uses same model as chat for tone consistency (warm Vietnamese feedback)
+- **Browser compat trade-off**: Firefox lacks SpeechRecognition. Acceptable since family uses Chrome/Edge by default. UI shows clear warning card if unsupported.
+- **Levels**: 3 CEFR levels (A1/A2/B1) auto-pick from kid age (6-8 → A1, 9-11 → A2, 12-15 → B1). Manual override available.
+- **Rate limit**: Separate bucket from `/api/chat` — 30 grades/hour/kid (writing is heavier than chat)
+- **Pronunciation scoring**: Levenshtein on lowercased normalized text → 0-100 match. Not phoneme-level (browser ASR doesn't expose phonemes), but good enough for kid practice motivation.
+- **Persist**: `pks3-englishProgress` with `{kidId: {listen: {right,total}, speak: [...], read: {passageId}, write: [...]}}` — cross-platform JSON export ready
+- **Content bank v1**: 68 vocab words + 17 sentences + 3 reading passages + 9 writing prompts. Sprint 2 expand to 200+ vocab + 20 passages + 30 prompts based on actual usage by Phúc/An/Y.
