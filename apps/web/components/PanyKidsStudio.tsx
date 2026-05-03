@@ -21,6 +21,9 @@ import type { RiasecType } from '@/lib/riasec-junior';
 import { CAREERS, getCareerOfDay, getProjectForType, getCareersByType } from '@/lib/careers-v2';
 import type { Career } from '@/lib/careers-v2';
 import { ASK_PARENT_PROMPTS, WEEKLY_REVIEW_PROMPTS, SHOW_TELL_IDEAS, FAMILY_ACTIVITIES } from '@/lib/family-prompts';
+import { LISTEN_WORDS, SPEAK_SENTENCES, READING_PASSAGES, WRITING_PROMPTS, getLevelForAge, pickRandomItems, pronunciationScore } from '@/lib/english-skills';
+import type { CEFRLevel } from '@/lib/english-skills';
+import { speak, stopSpeaking, listen, ttsSupported, asrSupported, loadVoices } from '@/lib/speech';
 
 // ============================================================
 // PANY KIDS STUDIO v3 — ANIME/FUNNY · BILINGUAL · ALL TIERS
@@ -79,6 +82,7 @@ const I18N = {
     weekFocus: 'Tâm điểm tuần', daily: 'Hằng ngày', weekly: 'Hằng tuần',
     studioCreative: 'Sáng tạo', bodyMovement: 'Vận động', selfDiscovery: 'Tự khám phá',
     careerCompass: 'La bàn nghề', familyBridge: 'Gia đình',
+    englishSkills: 'English 4 kỹ năng',
   },
   en: {
     appTitle: 'Pany Kids Studio', appSubtitle: '5-Year Family Learning System · For kids 6-16 · 2026—2031',
@@ -131,6 +135,7 @@ const I18N = {
     weekFocus: 'Week focus', daily: 'Daily', weekly: 'Weekly',
     studioCreative: 'Creative Studio', bodyMovement: 'Body & Movement', selfDiscovery: 'Self Discovery',
     careerCompass: 'Career Compass', familyBridge: 'Family Bridge',
+    englishSkills: 'English 4 skills',
   },
 };
 
@@ -581,6 +586,7 @@ export default function PanyKidsStudio() {
   const [savedCareers, setSavedCareers] = useState({}); // {kidId: [careerId]}
   const [familyJournal, setFamilyJournal] = useState([]); // [{date, author, kidId, content, type}]
   const [weeklyReviews, setWeeklyReviews] = useState({}); // {kidId-weekKey: {answers: [], date}}
+  const [englishProgress, setEnglishProgress] = useState({}); // {kidId: {listen: {right, total}, speak: [{date, score, target, spoken}], read: {passageId: {score, date}}, write: [{date, score, prompt, text, feedback}]}}
 
   const t = (key, fallback) => (I18N[lang] && I18N[lang][key]) || fallback || key;
   const L = (vi, en) => (lang === 'vi' ? vi : en);
@@ -588,7 +594,7 @@ export default function PanyKidsStudio() {
   // ============== STORAGE ==============
   useEffect(() => {
     const load = async () => {
-      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges', 'parentPin', 'parentLocked', 'creativeWorks', 'exerciseLog', 'moodLog', 'riasecAnswers', 'riasecCompleted', 'savedCareers', 'familyJournal', 'weeklyReviews'];
+      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges', 'parentPin', 'parentLocked', 'creativeWorks', 'exerciseLog', 'moodLog', 'riasecAnswers', 'riasecCompleted', 'savedCareers', 'familyJournal', 'weeklyReviews', 'englishProgress'];
       for (const k of keys) {
         try {
           const r = await storage.get(`pks3-${k}`);
@@ -616,6 +622,7 @@ export default function PanyKidsStudio() {
             if (k === 'savedCareers') setSavedCareers(v);
             if (k === 'familyJournal') setFamilyJournal(v);
             if (k === 'weeklyReviews') setWeeklyReviews(v);
+            if (k === 'englishProgress') setEnglishProgress(v);
           }
         } catch (e) {}
       }
@@ -644,6 +651,7 @@ export default function PanyKidsStudio() {
   const setSavedCareersP = (v) => { setSavedCareers(v); persist('savedCareers', v); };
   const setFamilyJournalP = (v) => { setFamilyJournal(v); persist('familyJournal', v); };
   const setWeeklyReviewsP = (v) => { setWeeklyReviews(v); persist('weeklyReviews', v); };
+  const setEnglishProgressP = (v) => { setEnglishProgress(v); persist('englishProgress', v); };
 
   const tryParentLogin = (val) => {
     if (val === parentPin) {
@@ -919,6 +927,7 @@ export default function PanyKidsStudio() {
         {activeTab === 'discovery'   && <SelfDiscoveryTab  kids={kids} moodLog={moodLog} setMoodP={setMoodP} riasecAnswers={riasecAnswers} setRiasecAnsP={setRiasecAnsP} riasecCompleted={riasecCompleted} setRiasecDoneP={setRiasecDoneP} activeKidId={activeKidId} t={t} L={L} lang={lang} fireConfetti={fireConfetti} />}
         {activeTab === 'career-v2'   && <CareerCompassTab  kids={kids} savedCareers={savedCareers} setSavedCareersP={setSavedCareersP} riasecCompleted={riasecCompleted} activeKidId={activeKidId} t={t} L={L} lang={lang} />}
         {activeTab === 'family'      && <FamilyBridgeTab    kids={kids} familyJournal={familyJournal} setFamilyJournalP={setFamilyJournalP} weeklyReviews={weeklyReviews} setWeeklyReviewsP={setWeeklyReviewsP} activeKidId={activeKidId} isParentAuthed={isParentAuthed} t={t} L={L} lang={lang} weekKey={weekKey} />}
+        {activeTab === 'english-skills' && <EnglishSkillsTab kids={kids} englishProgress={englishProgress} setEnglishProgressP={setEnglishProgressP} activeKidId={activeKidId} t={t} L={L} lang={lang} />}
       </main>
 
       {evalKid && evalQuarter && (
@@ -1136,6 +1145,7 @@ function MobileTabBar({ activeTab, setActiveTab, t }) {
     { id: 'hardware',    label: t('hardware'),    em: '💻' },
     { id: 'software',    label: t('software'),    em: '🤖' },
     { id: 'english',     label: t('english'),     em: '🌍' },
+    { id: 'english-skills', label: t('englishSkills'), em: '🎓' },
     { id: 'finance',     label: t('finance'),     em: '💰' },
     { id: 'thinking',    label: t('thinking'),    em: '🧠' },
     { id: 'creative',    label: t('studioCreative'), em: '🎨' },
@@ -1204,6 +1214,7 @@ function TabNav({ activeTab, setActiveTab, t, sidebarOpen, setSidebarOpen, L }) 
       { id: 'hardware',    label: t('hardware'),    em: '💻' },
       { id: 'software',    label: t('software'),    em: '🤖' },
       { id: 'english',     label: t('english'),     em: '🌍' },
+      { id: 'english-skills', label: t('englishSkills'), em: '🎓' },
       { id: 'finance',     label: t('finance'),     em: '💰' },
       { id: 'thinking',    label: t('thinking'),    em: '🧠' },
     ]},
@@ -4559,6 +4570,558 @@ function FamilyBridgeTab({ kids, familyJournal, setFamilyJournalP, weeklyReviews
         )}
       </Card>
     </div>
+  );
+}
+
+// ============================================================
+// SKILL: ENGLISH 4 SKILLS — Listen / Speak / Read / Write
+// ============================================================
+function EnglishSkillsTab({ kids, englishProgress, setEnglishProgressP, activeKidId, t, L, lang }) {
+  const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
+  const [mode, setMode] = React.useState('listen'); // listen | speak | read | write
+  const [level, setLevel] = React.useState<CEFRLevel>('A1');
+  const [browserCheck, setBrowserCheck] = React.useState({ tts: false, asr: false });
+
+  const kid = kids.find(k => k.id === selectedKid);
+
+  React.useEffect(() => {
+    if (kid) setLevel(getLevelForAge(kid.age));
+    setBrowserCheck({ tts: ttsSupported(), asr: asrSupported() });
+    loadVoices();
+  }, [selectedKid]);
+
+  const kidProg = englishProgress[selectedKid] || { listen: { right: 0, total: 0 }, speak: [], read: {}, write: [] };
+
+  const updateKidProg = (patch) => {
+    const next = { ...englishProgress, [selectedKid]: { ...kidProg, ...patch } };
+    setEnglishProgressP(next);
+  };
+
+  return (
+    <div className="fade-in">
+      <SectionHeader title={t('englishSkills')} subtitle={L('Nghe · Nói · Đọc · Viết — Đại Ka chấm', 'Listen · Speak · Read · Write — Đại Ka grades')} emoji="🎓" />
+
+      <div style={{ display: 'flex', gap: 8, margin: '0 0 12px', flexWrap: 'wrap' }}>
+        {kids.map(k => (
+          <button key={k.id} onClick={() => setSelectedKid(k.id)} className="btn-bounce body-f" style={{
+            background: selectedKid === k.id ? k.color : '#fff', color: selectedKid === k.id ? '#fff' : k.color,
+            border: `2px solid ${k.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{k.emoji} {k.name}</button>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, margin: '0 0 12px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <span className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1 }}>
+          {L('Cấp độ', 'Level')}:
+        </span>
+        {(['A1', 'A2', 'B1'] as CEFRLevel[]).map(lvl => (
+          <button key={lvl} onClick={() => setLevel(lvl)} className="btn-bounce body-f" style={{
+            background: level === lvl ? C.purple : '#fff', color: level === lvl ? '#fff' : C.purple,
+            border: `2px solid ${C.purple}`, padding: '4px 12px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{lvl}</button>
+        ))}
+        <span className="body-f" style={{ fontSize: 11, color: C.mute, marginLeft: 8 }}>
+          ({L(level === 'A1' ? '6-8t · vỡ lòng' : level === 'A2' ? '9-11t · sơ cấp' : '12-15t · trung cấp', level === 'A1' ? 'ages 6-8 · beginner' : level === 'A2' ? 'ages 9-11 · elementary' : 'ages 12-15 · intermediate')})
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, margin: '0 0 16px', flexWrap: 'wrap' }}>
+        {[
+          { id: 'listen', em: '🎧', vi: 'Nghe', en: 'Listen', color: C.sky },
+          { id: 'speak', em: '🗣️', vi: 'Nói', en: 'Speak', color: C.coral },
+          { id: 'read', em: '📖', vi: 'Đọc', en: 'Read', color: C.mint },
+          { id: 'write', em: '✍️', vi: 'Viết', en: 'Write', color: C.purple },
+        ].map(m => (
+          <button key={m.id} onClick={() => setMode(m.id)} className="btn-bounce body-f" style={{
+            background: mode === m.id ? m.color : '#fff', color: mode === m.id ? '#fff' : m.color,
+            border: `2px solid ${m.color}`, padding: '8px 14px', borderRadius: 14,
+            cursor: 'pointer', fontWeight: 700, fontSize: 13,
+          }}>{m.em} {L(m.vi, m.en)}</button>
+        ))}
+      </div>
+
+      {(mode === 'listen' || mode === 'speak') && !browserCheck.tts && (
+        <Card accent={C.coral}>
+          <div className="body-f" style={{ fontSize: 13, color: C.coral, fontWeight: 700 }}>
+            ⚠️ {L('Trình duyệt không hỗ trợ phát âm. Mở Chrome/Edge để dùng.', 'Browser does not support TTS. Use Chrome/Edge.')}
+          </div>
+        </Card>
+      )}
+      {mode === 'speak' && browserCheck.tts && !browserCheck.asr && (
+        <Card accent={C.coral}>
+          <div className="body-f" style={{ fontSize: 13, color: C.coral, fontWeight: 700 }}>
+            ⚠️ {L('Trình duyệt không hỗ trợ ghi giọng nói. Hãy dùng Chrome desktop hoặc Android Chrome.', 'No speech recognition. Use desktop Chrome or Android Chrome.')}
+          </div>
+        </Card>
+      )}
+
+      {mode === 'listen' && <ListenPanel level={level} kidProg={kidProg} updateKidProg={updateKidProg} L={L} lang={lang} />}
+      {mode === 'speak' && <SpeakPanel level={level} kidProg={kidProg} updateKidProg={updateKidProg} L={L} lang={lang} asrOk={browserCheck.asr} />}
+      {mode === 'read' && <ReadPanel level={level} kidProg={kidProg} updateKidProg={updateKidProg} L={L} lang={lang} />}
+      {mode === 'write' && <WritePanel level={level} kidProg={kidProg} updateKidProg={updateKidProg} kid={kid} L={L} lang={lang} />}
+    </div>
+  );
+}
+
+// ===== LISTEN PANEL =====
+function ListenPanel({ level, kidProg, updateKidProg, L, lang }) {
+  const [round, setRound] = React.useState(null);
+  const [feedback, setFeedback] = React.useState(null);
+
+  const startRound = () => {
+    const pool = LISTEN_WORDS[level];
+    const options = pickRandomItems(pool, 4);
+    const target = options[Math.floor(Math.random() * options.length)];
+    setRound({ target, options });
+    setFeedback(null);
+    setTimeout(() => speak(target.word, { lang: 'en-US' }), 200);
+  };
+
+  const replay = () => { if (round) speak(round.target.word, { lang: 'en-US' }); };
+
+  const choose = (word) => {
+    if (!round || feedback) return;
+    const correct = word === round.target.word;
+    setFeedback(correct ? 'correct' : 'wrong');
+    const stats = kidProg.listen || { right: 0, total: 0 };
+    updateKidProg({ listen: { right: stats.right + (correct ? 1 : 0), total: stats.total + 1 } });
+  };
+
+  const stats = kidProg.listen || { right: 0, total: 0 };
+  const pct = stats.total ? Math.round((stats.right / stats.total) * 100) : 0;
+
+  return (
+    <Card accent={C.sky}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 className="display" style={{ fontSize: 18, margin: 0 }}>🎧 {L('Nghe & chọn từ', 'Listen & pick the word')}</h3>
+        <Pill color={C.sky}>{stats.right} / {stats.total} ({pct}%)</Pill>
+      </div>
+
+      {!round ? (
+        <div style={{ textAlign: 'center', padding: 24 }}>
+          <div style={{ fontSize: 56, marginBottom: 12 }}>🎧</div>
+          <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 16 }}>
+            {L('Đại Ka đọc 1 từ — con click vào đúng từ con nghe được trong 4 lựa chọn.', 'Đại Ka says a word — click the matching one from 4 options.')}
+          </div>
+          <Btn onClick={startRound} color={C.sky} icon={Zap}>{L('Bắt đầu vòng 1', 'Start round 1')}</Btn>
+        </div>
+      ) : (
+        <>
+          <div style={{ textAlign: 'center', marginBottom: 16 }}>
+            <Btn onClick={replay} color={C.sky} variant="outline" icon={Music}>{L('Nghe lại', 'Replay')}</Btn>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, marginBottom: 16 }}>
+            {round.options.map(o => {
+              const isCorrect = feedback && o.word === round.target.word;
+              const isWrong = feedback === 'wrong' && o.word !== round.target.word;
+              return (
+                <button key={o.word} onClick={() => choose(o.word)} className="btn-bounce" style={{
+                  background: isCorrect ? '#E5FAEB' : '#fff',
+                  border: `2px solid ${isCorrect ? C.mint : isWrong ? C.border : C.sky}`,
+                  padding: '14px 12px', borderRadius: 14, cursor: feedback ? 'default' : 'pointer',
+                  textAlign: 'left',
+                }}>
+                  <div className="display" style={{ fontSize: 17, fontWeight: 700, color: C.ink }}>{o.word}</div>
+                  <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 2 }}>{o.phonetic}</div>
+                  {feedback && <div className="body-f" style={{ fontSize: 11, color: C.sub, marginTop: 4 }}>🇻🇳 {o.vi}</div>}
+                </button>
+              );
+            })}
+          </div>
+          {feedback && (
+            <div style={{ textAlign: 'center' }}>
+              <div className="display" style={{ fontSize: 16, fontWeight: 700, color: feedback === 'correct' ? C.mint : C.coral, marginBottom: 12 }}>
+                {feedback === 'correct' ? `🎉 ${L('Đúng rồi!', 'Correct!')}` : `${L('Chưa đúng. Đáp án:', 'Not quite. Answer:')} ${round.target.word}`}
+              </div>
+              <Btn onClick={startRound} color={C.sky} icon={RotateCw}>{L('Vòng tiếp theo', 'Next round')}</Btn>
+            </div>
+          )}
+        </>
+      )}
+    </Card>
+  );
+}
+
+// ===== SPEAK PANEL =====
+function SpeakPanel({ level, kidProg, updateKidProg, L, lang, asrOk }) {
+  const [target, setTarget] = React.useState(null);
+  const [transcript, setTranscript] = React.useState('');
+  const [score, setScore] = React.useState(null);
+  const [recording, setRecording] = React.useState(false);
+  const [error, setError] = React.useState(null);
+
+  const pickSentence = () => {
+    const pool = SPEAK_SENTENCES.filter(s => s.level === level);
+    const sentence = pool[Math.floor(Math.random() * pool.length)];
+    setTarget(sentence);
+    setTranscript('');
+    setScore(null);
+    setError(null);
+  };
+
+  const playTarget = () => { if (target) speak(target.text, { lang: 'en-US', rate: 0.85 }); };
+
+  const startRecording = async () => {
+    if (!target) return;
+    setRecording(true);
+    setError(null);
+    setTranscript('');
+    try {
+      const result = await listen({ lang: 'en-US', timeout: 10000 });
+      setTranscript(result.transcript);
+      const matchScore = pronunciationScore(target.text, result.transcript);
+      setScore(matchScore);
+      const log = kidProg.speak || [];
+      updateKidProg({ speak: [...log, { date: new Date().toISOString(), score: matchScore, target: target.text, spoken: result.transcript, level }] });
+    } catch (e: any) {
+      setError(e?.message || 'recognition_failed');
+    } finally {
+      setRecording(false);
+    }
+  };
+
+  const speakLog = kidProg.speak || [];
+  const recent = speakLog.slice(-5).reverse();
+  const avgScore = speakLog.length ? Math.round(speakLog.reduce((s, e) => s + e.score, 0) / speakLog.length) : 0;
+
+  return (
+    <Card accent={C.coral}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 className="display" style={{ fontSize: 18, margin: 0 }}>🗣️ {L('Đọc thành tiếng', 'Read aloud')}</h3>
+        <Pill color={C.coral}>{L('Trung bình:', 'Avg:')} {avgScore}%</Pill>
+      </div>
+
+      {!target ? (
+        <div style={{ textAlign: 'center', padding: 24 }}>
+          <div style={{ fontSize: 56, marginBottom: 12 }}>🗣️</div>
+          <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 16 }}>
+            {L('Bốc 1 câu → nghe Đại Ka đọc → con đọc lại → AI chấm độ chính xác.', 'Pick a sentence → hear Đại Ka → read it back → AI scores match.')}
+          </div>
+          <Btn onClick={pickSentence} color={C.coral} icon={Zap}>{L('Bốc câu', 'Pick a sentence')}</Btn>
+        </div>
+      ) : (
+        <>
+          <div style={{ background: C.soft, borderRadius: 14, padding: 16, marginBottom: 12 }}>
+            <div className="display" style={{ fontSize: 18, fontWeight: 700, color: C.ink, lineHeight: 1.5 }}>
+              "{target.text}"
+            </div>
+            <div className="body-f" style={{ fontSize: 12, color: C.sub, marginTop: 6, fontStyle: 'italic' }}>
+              🇻🇳 {target.vi}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+            <Btn onClick={playTarget} color={C.sky} variant="outline" icon={Music}>{L('Nghe Đại Ka', 'Hear Đại Ka')}</Btn>
+            <Btn onClick={startRecording} color={C.coral} disabled={!asrOk || recording} icon={Send}>
+              {recording ? L('Đang ghi…', 'Recording…') : L('Đọc lại', 'Read it back')}
+            </Btn>
+            <Btn onClick={pickSentence} color={C.mute} variant="outline" icon={RotateCw}>{L('Câu khác', 'Next')}</Btn>
+          </div>
+
+          {error && (
+            <div style={{ background: '#FFE5E5', borderRadius: 12, padding: 10 }}>
+              <div className="body-f" style={{ fontSize: 12, color: C.coral, fontWeight: 700 }}>
+                {error === 'no_speech_detected' ? L('Không nghe thấy con. Thử lại nhé!', 'Couldn\'t hear you. Try again!') : `⚠️ ${error}`}
+              </div>
+            </div>
+          )}
+
+          {transcript && (
+            <div style={{ background: score >= 80 ? '#E5FAEB' : score >= 50 ? '#FFF4D1' : '#FFE5E5', borderRadius: 12, padding: 12, marginTop: 8 }}>
+              <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1 }}>
+                {L('Con đã nói:', 'You said:')}
+              </div>
+              <div className="body-f" style={{ fontSize: 14, color: C.ink, marginTop: 4 }}>"{transcript}"</div>
+              <div className="display" style={{ fontSize: 24, fontWeight: 700, color: score >= 80 ? C.mint : score >= 50 ? C.gold : C.coral, marginTop: 8 }}>
+                {score}% {L('khớp', 'match')}
+              </div>
+              <div className="body-f" style={{ fontSize: 12, color: C.sub, marginTop: 4 }}>
+                {score >= 90 ? L('Tuyệt vời!', 'Excellent!') : score >= 70 ? L('Tốt lắm con!', 'Great!') : score >= 50 ? L('Khá rồi, thử lại nha.', 'Decent — try once more.') : L('Cùng nghe lại Đại Ka rồi đọc theo nhé.', 'Listen to Đại Ka again and copy.')}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {recent.length > 0 && (
+        <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px dashed ${C.border}` }}>
+          <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+            {L('Gần đây', 'Recent')}
+          </div>
+          {recent.map((r, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <Pill color={r.score >= 80 ? C.mint : r.score >= 50 ? C.gold : C.coral}>{r.score}%</Pill>
+              <span className="body-f" style={{ fontSize: 12, color: C.sub, flex: 1 }}>{r.target.slice(0, 60)}{r.target.length > 60 ? '…' : ''}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+// ===== READ PANEL =====
+function ReadPanel({ level, kidProg, updateKidProg, L, lang }) {
+  const [passage, setPassage] = React.useState(null);
+  const [answers, setAnswers] = React.useState({});
+  const [revealed, setRevealed] = React.useState(false);
+
+  const pickPassage = () => {
+    const pool = READING_PASSAGES.filter(p => p.level === level);
+    const p = pool[Math.floor(Math.random() * pool.length)];
+    setPassage(p);
+    setAnswers({});
+    setRevealed(false);
+  };
+
+  const submit = () => {
+    if (!passage) return;
+    const right = passage.questions.reduce((c, q, i) => c + (answers[i] === q.correctIdx ? 1 : 0), 0);
+    const total = passage.questions.length;
+    const score = Math.round((right / total) * 100);
+    setRevealed(true);
+    const passageId = `${passage.level}-${passage.title_en}`;
+    updateKidProg({ read: { ...(kidProg.read || {}), [passageId]: { score, date: new Date().toISOString(), right, total } } });
+  };
+
+  return (
+    <Card accent={C.mint}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 className="display" style={{ fontSize: 18, margin: 0 }}>📖 {L('Đọc hiểu', 'Reading comprehension')}</h3>
+        <Pill color={C.mint}>{Object.keys(kidProg.read || {}).length} {L('bài', 'passages')}</Pill>
+      </div>
+
+      {!passage ? (
+        <div style={{ textAlign: 'center', padding: 24 }}>
+          <div style={{ fontSize: 56, marginBottom: 12 }}>📖</div>
+          <Btn onClick={pickPassage} color={C.mint} icon={BookOpen}>{L('Bốc bài đọc', 'Pick a passage')}</Btn>
+        </div>
+      ) : (
+        <>
+          <div style={{ background: '#FFF9E5', borderRadius: 14, padding: 16, marginBottom: 16 }}>
+            <div className="display" style={{ fontSize: 17, fontWeight: 700, color: C.ink, marginBottom: 8 }}>
+              {passage.title_en}
+            </div>
+            <div className="body-f" style={{ fontSize: 11, color: C.sub, marginBottom: 10, fontStyle: 'italic' }}>
+              🇻🇳 {passage.title_vi}
+            </div>
+            <div className="body-f" style={{ fontSize: 14, color: C.ink, lineHeight: 1.7 }}>
+              {passage.passage}
+            </div>
+          </div>
+
+          {passage.questions.map((q, qi) => (
+            <div key={qi} style={{ marginBottom: 16, paddingBottom: 14, borderBottom: `1px dashed ${C.border}` }}>
+              <div className="body-f" style={{ fontSize: 14, fontWeight: 700, color: C.ink, marginBottom: 8 }}>
+                {qi + 1}. {q.q}
+              </div>
+              {q.options.map((opt, oi) => {
+                const selected = answers[qi] === oi;
+                const isCorrect = revealed && oi === q.correctIdx;
+                const isWrong = revealed && selected && oi !== q.correctIdx;
+                return (
+                  <button key={oi} onClick={() => !revealed && setAnswers({ ...answers, [qi]: oi })}
+                    className="btn-bounce body-f" style={{
+                      display: 'block', width: '100%', textAlign: 'left',
+                      background: isCorrect ? '#E5FAEB' : isWrong ? '#FFE5E5' : selected ? C.soft : '#fff',
+                      border: `2px solid ${isCorrect ? C.mint : isWrong ? C.coral : selected ? C.purple : C.border}`,
+                      padding: 10, borderRadius: 10, cursor: revealed ? 'default' : 'pointer',
+                      fontSize: 13, marginBottom: 6, color: C.ink, fontWeight: selected ? 700 : 500,
+                    }}>
+                    {String.fromCharCode(65 + oi)}. {opt}
+                  </button>
+                );
+              })}
+              {revealed && (
+                <div className="body-f" style={{ fontSize: 12, color: C.sub, marginTop: 6, fontStyle: 'italic', padding: 8, background: C.soft, borderRadius: 8 }}>
+                  💡 {q.explanation_vi}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {!revealed ? (
+            <Btn onClick={submit} color={C.mint} disabled={Object.keys(answers).length < passage.questions.length} icon={Check}>
+              {L('Nộp bài', 'Submit')}
+            </Btn>
+          ) : (
+            <Btn onClick={pickPassage} color={C.sky} icon={RotateCw}>{L('Bài khác', 'Another passage')}</Btn>
+          )}
+        </>
+      )}
+    </Card>
+  );
+}
+
+// ===== WRITE PANEL =====
+function WritePanel({ level, kidProg, updateKidProg, kid, L, lang }) {
+  const [prompt, setPrompt] = React.useState(null);
+  const [text, setText] = React.useState('');
+  const [grading, setGrading] = React.useState(false);
+  const [result, setResult] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  const pickPrompt = () => {
+    const pool = WRITING_PROMPTS.filter(p => p.level === level);
+    const p = pool[Math.floor(Math.random() * pool.length)];
+    setPrompt(p);
+    setText('');
+    setResult(null);
+    setError(null);
+  };
+
+  const submit = async () => {
+    if (!prompt || !text.trim() || grading) return;
+    setGrading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/grade-english', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: text.trim(),
+          prompt: prompt.prompt_en,
+          level,
+          kidName: kid?.name,
+          kidAge: kid?.age,
+          kidId: kid?.id,
+          lang,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || `HTTP ${res.status}`);
+      } else {
+        setResult(data);
+        const log = kidProg.write || [];
+        updateKidProg({ write: [...log, { date: new Date().toISOString(), score: data.score || 0, prompt: prompt.prompt_en, text: text.trim(), feedback: data, level }] });
+      }
+    } catch (e: any) {
+      setError(e?.message || 'network_error');
+    } finally {
+      setGrading(false);
+    }
+  };
+
+  const writeLog = kidProg.write || [];
+  const recent = writeLog.slice(-3).reverse();
+
+  return (
+    <Card accent={C.purple}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 className="display" style={{ fontSize: 18, margin: 0 }}>✍️ {L('Viết — Đại Ka chấm', 'Write — Đại Ka grades')}</h3>
+        <Pill color={C.purple}>{writeLog.length} {L('bài', 'submissions')}</Pill>
+      </div>
+
+      {!prompt ? (
+        <div style={{ textAlign: 'center', padding: 24 }}>
+          <div style={{ fontSize: 56, marginBottom: 12 }}>✍️</div>
+          <Btn onClick={pickPrompt} color={C.purple} icon={Edit3}>{L('Bốc đề viết', 'Pick a prompt')}</Btn>
+        </div>
+      ) : (
+        <>
+          <div style={{ background: C.soft, borderRadius: 14, padding: 14, marginBottom: 12 }}>
+            <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.purple, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
+              {L('Đề', 'Prompt')} ({level})
+            </div>
+            <div className="body-f" style={{ fontSize: 15, fontWeight: 600, color: C.ink, lineHeight: 1.5 }}>
+              {prompt.prompt_en}
+            </div>
+            <div className="body-f" style={{ fontSize: 12, color: C.sub, marginTop: 4, fontStyle: 'italic' }}>
+              🇻🇳 {prompt.prompt_vi}
+            </div>
+            <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 8 }}>
+              💡 {L('Gợi ý:', 'Hint:')} {prompt.example_starter}
+            </div>
+          </div>
+
+          <textarea value={text} onChange={e => setText(e.target.value)}
+            placeholder={L('Viết bằng tiếng Anh ở đây… (tối thiểu ' + prompt.min_sentences + ' câu)', 'Write in English here… (min ' + prompt.min_sentences + ' sentences)')}
+            rows={6} maxLength={2000}
+            disabled={grading || !!result}
+            style={{ width: '100%', padding: '10px 14px', border: `2px solid ${C.border}`, borderRadius: 14, fontSize: 14, outline: 'none', fontFamily: 'inherit', resize: 'vertical', boxSizing: 'border-box', color: C.ink }} />
+          <div className="body-f" style={{ fontSize: 11, color: C.mute, marginTop: 4, textAlign: 'right' }}>
+            {text.length} / 2000
+          </div>
+
+          <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+            {!result && (
+              <Btn onClick={submit} color={C.purple} disabled={!text.trim() || grading} icon={Send}>
+                {grading ? L('Đại Ka đang chấm…', 'Đại Ka grading…') : L('Nộp cho Đại Ka', 'Submit to Đại Ka')}
+              </Btn>
+            )}
+            <Btn onClick={pickPrompt} color={C.sky} variant="outline" icon={RotateCw}>{L('Đề khác', 'New prompt')}</Btn>
+          </div>
+
+          {error && (
+            <div style={{ background: '#FFE5E5', borderRadius: 12, padding: 10, marginTop: 10 }}>
+              <div className="body-f" style={{ fontSize: 12, color: C.coral, fontWeight: 700 }}>⚠️ {error}</div>
+            </div>
+          )}
+
+          {result && (
+            <div style={{ background: '#F3E5FF', borderRadius: 14, padding: 14, marginTop: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <span style={{ fontSize: 28 }}>👨‍🏫</span>
+                <div>
+                  <div className="display" style={{ fontSize: 16, fontWeight: 700, color: C.purple }}>{L('Đại Ka chấm', 'Đại Ka says')}</div>
+                  <div className="display" style={{ fontSize: 28, fontWeight: 800, color: result.score >= 80 ? C.mint : result.score >= 60 ? C.gold : C.coral }}>
+                    {result.score} / 100
+                  </div>
+                </div>
+              </div>
+              {result.strengths && (
+                <div style={{ marginBottom: 8 }}>
+                  <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mint, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>
+                    ✅ {L('Điểm mạnh', 'Strengths')}
+                  </div>
+                  <div className="body-f" style={{ fontSize: 13, color: C.ink, lineHeight: 1.5 }}>{result.strengths}</div>
+                </div>
+              )}
+              {result.improvements && (
+                <div style={{ marginBottom: 8 }}>
+                  <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.coral, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>
+                    🔧 {L('Cần cải thiện', 'Improvements')}
+                  </div>
+                  <div className="body-f" style={{ fontSize: 13, color: C.ink, lineHeight: 1.5 }}>{result.improvements}</div>
+                </div>
+              )}
+              {result.corrected && result.corrected !== text.trim() && (
+                <div style={{ marginBottom: 8 }}>
+                  <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.purple, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>
+                    📝 {L('Phiên bản chỉnh sửa', 'Corrected version')}
+                  </div>
+                  <div className="body-f" style={{ fontSize: 13, color: C.ink, lineHeight: 1.5, padding: 8, background: '#fff', borderRadius: 10, fontStyle: 'italic' }}>
+                    "{result.corrected}"
+                  </div>
+                </div>
+              )}
+              {result.encouragement && (
+                <div style={{ background: 'linear-gradient(135deg, #FFD43B22, #FF6B9D22)', borderRadius: 10, padding: 10, marginTop: 10 }}>
+                  <div className="body-f" style={{ fontSize: 12, color: C.ink, fontStyle: 'italic' }}>
+                    💖 {result.encouragement}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {recent.length > 0 && (
+        <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px dashed ${C.border}` }}>
+          <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+            {L('Bài gần đây', 'Recent submissions')}
+          </div>
+          {recent.map((r, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <Pill color={r.score >= 80 ? C.mint : r.score >= 60 ? C.gold : C.coral}>{r.score}/100</Pill>
+              <span className="body-f" style={{ fontSize: 12, color: C.sub, flex: 1 }}>{(r.prompt || '').slice(0, 60)}…</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </Card>
   );
 }
 
