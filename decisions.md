@@ -132,3 +132,56 @@
 - **Pronunciation scoring**: Levenshtein on lowercased normalized text → 0-100 match. Not phoneme-level (browser ASR doesn't expose phonemes), but good enough for kid practice motivation.
 - **Persist**: `pks3-englishProgress` with `{kidId: {listen: {right,total}, speak: [...], read: {passageId}, write: [...]}}` — cross-platform JSON export ready
 - **Content bank v1**: 68 vocab words + 17 sentences + 3 reading passages + 9 writing prompts. Sprint 2 expand to 200+ vocab + 20 passages + 30 prompts based on actual usage by Phúc/An/Y.
+
+## 2026-05-09
+
+### D-017: Kid info correction (Phúc 11/An 9/Y 5) ✅ FINAL
+- **Decision**: Hard-corrected kid ages and bios across DEFAULT_KIDS (web + mobile) + Đại Ka system prompt (VI + EN)
+  - Trần Hạnh Phúc: 11 tuổi → tháng 9/2026 lên lớp 6
+  - Trần Bình An: 9 tuổi → tháng 9/2026 lên lớp 4
+  - Trần Như Ý: 5 tuổi (sinh 28/02/2020) → tháng 9/2026 vào lớp lá (mầm non)
+- **Why**: Previous data hard-coded 8/10/12 was wrong (likely placeholder from Sprint 1). Corrected per anh's input on 2026-05-09.
+- **Impact** (large):
+  - Như Ý dropped from "12 tuổi capable RIASEC + advanced English B1" to "5 tuổi mầm non — needs picture-heavy K-level content + parent-supervised reading"
+  - 12-pillar architecture must accommodate 3 distinct cohorts: K (4-6) / P (7-11) / T (12-15)
+  - Đại Ka prompt now has explicit age-adapted language rules (basic/concrete for K, simple sentences for P, abstract reasoning for T)
+- **Files changed**:
+  - `apps/web/components/PanyKidsStudio.tsx` line 143-145
+  - `apps/mobile/lib/kids.ts` line 18-22
+  - `apps/web/lib/claude.ts` lines 29, 79, 237 (HARD_RULES_VI + HARD_RULES_EN intros)
+
+### D-018: Content data 4-bank expansion ✅ FINAL
+- **Decision**: Add 4 new lib files filling Sprint 2 content backlog (per `tasks.md` NEXT block):
+  - `lib/quests.ts` — 252 daily quests (12 pillars × 3 age groups × 7-day rotation), v1 foundation, anh extends to 500+
+  - `lib/english-skills.ts` — expanded to 205+ vocab / 55 speak sentences / 20 reading passages / 32 writing prompts; added new `K` CEFR level for Như Ý
+  - `lib/math-quiz.ts` — 210 curated + 850 generated = 1060 effective questions across L1 (lớp lá) / L2 (lớp 4) / L3 (lớp 6) / L4 (cấp 2)
+  - `lib/bilingual-stories.ts` — 50 VN↔EN stories paragraph-aligned across K/A1/A2/B1, with 8 genre tags + moral + vocab focus
+- **Why**: Sprint 2 internal use with 3 kids needs content depth > UX features. Without bank content, dashboard is 12 empty pillars.
+- **Design decisions**:
+  - Procedural generators (math) use seeded RNG for deterministic output → no client-side surprises
+  - Story-level localization is paragraph-aligned (parallel VI ↔ EN) so "show both" UI is trivial
+  - All 4 banks export `getStats()` helper for dashboard meta-display
+  - All 4 banks share `CEFRLevel` / age-group conventions so cross-bank queries (e.g., "give Như Ý 1 K-story + 5 K-vocab + 1 L1-math + 1 K-quest") are 1-line composes
+- **Trade-off**: Did NOT hand-write 1000 math questions (would burn 10+ hours). Used generators for arithmetic patterns, hand-curated 210 word-problems + edge cases. Each generated question is unique and deterministic.
+- **Total LOC added**: ~2300 lines across 4 files; estimated 2-3 weeks of active rotation content for 3 kids.
+
+
+### D-019: Expert Q&A Bank + 3-day cron auto-refresh ✅ FINAL
+- **Decision** (2026-05-09 Session 13): Build a verified expert Q&A subsystem feeding both library UI + Đại Ka chatbot context.
+- **Trigger**: VnExpress article "Con đường sự nghiệp từ ngành học đến ngành nghề" (Mỹ Hà / Fulbright) prompted anh to add expert-grade career-guidance content to the dashboard.
+- **Architecture**:
+  - Static seed: `lib/career-qna.ts` — 25 verified entries across 12 topics, 10+ named experts, real source URLs (Fulbright, Harvard, Stanford, UCLA, OECD, Vinschool, VAS, MindX, HOCMAI, VOV, AAVN, RIASEC research papers).
+  - Dynamic: `app/api/career-qna-refresh/route.ts` — Sonnet 4.6 endpoint. Picks 2 underrepresented topics per run, drafts 1-2 NEW Q&A entries with strict JSON output. Returns suggestions for human review.
+  - Cron: `0 3 */3 * *` in `vercel.json` (every 3 days at 03:00 UTC).
+  - UI: New "💬 Hỏi & Đáp Chuyên gia" card at top of LibraryTab — topic filter, click-to-open modal showing full bilingual answer + expert profile + verified source links + tags.
+  - Future: `getContextForChatbot(query, age, 3)` helper in same lib — when wired into `/api/chat`, lets Đại Ka cite the same expert opinions instead of generating from scratch.
+- **Why review-then-commit (not auto-merge)**:
+  - Education Q&A needs URL verification (no hallucinated experts).
+  - Human-in-loop preserves trust for kid-facing content.
+  - Audit trail in git.
+- **Trade-offs**:
+  - Vercel cron sends a Bearer token — endpoint also accepts `?secret=` query for manual runs.
+  - 3-day cycle = 10/month = ~$0.30/month at Sonnet 4.6 prices (well under $15 cap).
+  - Suggestions are non-persistent — anh must manually paste chosen entries into `SEED_QNA[]` after review. Future: GitHub Actions automation possible if anh wants.
+- **Companion deliverable**: `docs/career-philosophy.md` — 3-tier framework (Discovery 4-10t / Exploration 11-13t / Specialization 14-18t), Pany Kids Loop weekly workflow, 4 parenting trust pillars, 4-layer data organization, 5-year roadmap 2026-2031.
+

@@ -1,13 +1,22 @@
 # Pany Kids Studio — Tasks
 
-## NOW (Sprint 2 starts 5/8/2026)
+## NOW (Sprint 2 — week 1 of 8)
+
+### Verify Session 12 data (2026-05-09)
+- [ ] `pnpm dev` — check dashboard hiển thị Phúc 11/An 9/Y 5 đúng
+- [ ] Đại Ka chat thử với câu Vietnamese — verify nó adapt language theo tuổi 5/9/11
+- [ ] Wire `lib/quests.ts` vào tab "Hôm nay" — show 1 quest/pillar by age group
+- [ ] Wire `lib/math-quiz.ts` vào tab Quiz — getRandomMathQuiz(level, 10)
+- [ ] Wire `lib/bilingual-stories.ts` vào tab Thư viện — list by kid age
+- [ ] Build script: print getQuestStats() + getMathStats() + getStoryStats() + getEnglishStats() vào console once
 
 ### Internal usage feedback (Phúc/An/Y)
-- [ ] Onboarding session — anh giới thiệu 12 pillars to 3 kids
+- [ ] Onboarding session — anh giới thiệu 12 pillars + 4 banks mới to 3 kids
 - [ ] Mỗi con setup PIN + profile (school, hobbies, goals, bio, emoji)
 - [ ] Daily streak tracking — bao nhiêu ngày liên tiếp 3 con check-in
 - [ ] Đại Ka chat usage logs — query patterns + hot topics
 - [ ] Bố note bugs trong `artifacts/feedback-week-1.md` (chưa tạo)
+- [ ] Như Ý-specific: bố ngồi cùng review K-content, ghi 5 quest dễ nhất + 5 story Như Ý thích nhất
 
 ### Mobile app first run
 - [ ] `cd apps/mobile && pnpm install`

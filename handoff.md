@@ -1,174 +1,128 @@
 # Handoff — Pany Kids Studio
 
-**Last session:** Session 11 — 2026-05-03 (Phase 8 English 4 skills LIVE)
-**Current chapter:** v3.2-E LIVE — Listen/Speak/Read/Write fully interactive with Đại Ka grading
-**Next session:** Sprint 2 (5/8 - 7/8/2026) — Phúc/An/Y daily usage feedback
+**Last updated:** 2026-05-09 (Session 12 — extended with UI wiring)
+**Resume command:** `Continue pany-kids-studio Session 13`
 
----
+## Session 12 Phase 2 — UI WIRING (added 2026-05-09 evening)
 
-## 🎯 RESUME COMMAND for next session
+After initial data delivery, anh confirmed **Option A (wire 4 banks into UI)**.
 
-Type to Claude Code:
+### What got wired
+1. **Birthdays added**: Phúc 2015-06-26, An 2017-08-30 (web + mobile)
+2. **OverviewTab → Quest hôm nay**: New gold-tinted card after KPI cards. Per-kid daily quest by age + day-of-week. Deterministic pick (same kid + same date = same quest, no random reroll on refresh). Shows pillar pill, est minutes, parent-needed badge, full bilingual title/desc/reward.
+3. **QuizTab → Math mode toggle**: New 2-button toggle "📚 Quiz Trụ cột" vs "🔢 Quiz Toán". Math mode reveals 4-level filter (L1/L2/L3/L4 = Lớp lá / Lớp 4 / Lớp 6 / Cấp 2). All 1060 math questions accessible via existing question-render flow (used adapter to map `MathQuestion` → `QUIZ_BANK` shape, no rewrite of render code).
+4. **LibraryTab → Bilingual Stories**: New mint-tinted card at top of tab. 4-level filter, 12-card grid, click-to-open modal with full paragraph-aligned VI ↔ EN reading + moral + vocab focus chips.
+5. **English-skills**: Already wired pre-Session 12 — verified imports unchanged, K level should auto-show in CEFR pickers via `getLevelForAge(5) === 'K'`.
+
+### Verification done
+- `pnpm exec tsc --noEmit` → **exit 0** (no TypeScript errors).
+- Imports clean: `Quest`, `AgeGroup`, `MathQuestion`, `MathLevel`, `Story` all type-imported.
+
+### NOT done (anh's call)
+- Did NOT touch `pks3-completedQuests` localStorage — quests don't yet persist completed state. Currently re-rolls on page reload (deterministic, but no "✅ done" indicator). Add this when anh wants gamification on Quest section.
+- Did NOT migrate existing pillar-quiz `QUIZ_BANK` to use math bank as default. Both banks coexist; pillar mode still uses old `lib/quiz.ts` data.
+- Did NOT add story progress tracking (`pks3-storiesRead`). Modal opens/closes only.
+
+## What just happened (Session 12, 2026-05-09)
+
+Anh asked: *"Pany Kids Studio: em hãy mở lại session & tiếp tục bổ xung data"*.
+
+After clarifying age corrections, em delivered **5 file changes** in a single working block.
+
+### Kid info correction (CRITICAL — was wrong)
+
+Pre-session: `DEFAULT_KIDS = [Phúc 8, An 10, Y 12]` ← **wrong placeholder**
+Now correct:
+
+| Kid | Age | School (Sep 2026) | Birthday |
+|-----|-----|-------------------|----------|
+| Trần Hạnh Phúc | 11 | Lên lớp 6 | TBD (anh sẽ điền) |
+| Trần Bình An | 9 | Lên lớp 4 | TBD (anh sẽ điền) |
+| Trần Như Ý | 5 | Vào lớp lá (mầm non) | 2020-02-28 |
+
+Files patched:
+- `apps/web/components/PanyKidsStudio.tsx` line 143-145
+- `apps/mobile/lib/kids.ts` line 18-22
+- `apps/web/lib/claude.ts` HARD_RULES_VI (lines 29, 79) + HARD_RULES_EN (line 237) + new age-adapted language section
+
+⚠️ **Đại Ka prompt now treats Như Ý 5t as kindergarten** — uses very simple language, suggests parent reads along.
+
+### 4 new content banks (Sprint 2 backlog filled)
+
+| Bank | Path | Size | Notes |
+|------|------|------|-------|
+| Daily Quests | `apps/web/lib/quests.ts` | 252 quests, ~600 lines | 12 pillars × 3 ages × 7 days, bilingual |
+| English Skills | `apps/web/lib/english-skills.ts` | 205 vocab + 55 speak + 20 read + 32 write | NEW level "K" for Như Ý |
+| Math Quiz | `apps/web/lib/math-quiz.ts` | 210 curated + 850 generated = **1060** | L1/L2/L3/L4 = lớp lá → cấp 2 |
+| Bilingual Stories | `apps/web/lib/bilingual-stories.ts` | 50 stories, paragraph-aligned VI↔EN | 8 K + 14 A1 + 16 A2 + 12 B1 |
+
+All 4 banks share `getStats()` helper + age-group + CEFR conventions (cross-bank composition is 1-line).
+
+### Decisions logged
+- D-017: Kid info correction (decisions.md)
+- D-018: 4-bank content expansion (decisions.md)
+
+## What's NOT done (next session pickup)
+
+### High priority
+1. **Wire 4 banks into UI** (Sprint 2 use needs this) — currently the data files exist but Tab "Hôm nay", Tab Quiz, Tab Thư viện don't yet read from them. Need to:
+   - `import { getQuestsForDay, getQuestsByAge } from '@/lib/quests'` into the relevant tabs
+   - `import { getRandomMathQuiz, getMathLevelForKid } from '@/lib/math-quiz'` into Quiz tab
+   - `import { getStoriesForKid } from '@/lib/bilingual-stories'` into Library/Read tab
+   - English banks already wired (rewrote in place — should still work, but verify levels K/A1/A2/B1 picker shows K option)
+
+2. **Add `pks3-completedQuests` localStorage key** so kids don't repeat finished quests next day
+
+3. **First run with Phúc/An/Y** — onboarding session anh promised in Sprint 2 plan
+
+### Medium priority
+4. Anh điền birthday Phúc + An (current `birthday: ''` empty)
+5. Visual review: Như Ý 5t có khó nhìn dashboard 22 tabs không? Có thể cần "kid mode" simplified UI khi profile.age <= 6
+6. `pnpm install` mobile + scan QR Expo Go (still pending from Session 11)
+
+### Low priority / parking
+7. **Anh extend quests.ts từ 252 → 500+** — anh nói sẽ "bổ xung thêm 1 số nội dung khác". Current file structured nên dễ thêm: cứ append entries với schema đã có.
+8. Domain `panykids.io` purchase (deferred per Q6)
+9. **API key STILL not rotated** — `sk-ant-api03-WRBcVGm...` exposed in old logs. ROTATE NGAY at https://console.anthropic.com/settings/keys
+
+## Compatibility notes
+
+- `lib/english-skills.ts` type `CEFRLevel` was extended from `'A1'|'A2'|'B1'` to `'K'|'A1'|'A2'|'B1'`. **Any existing code that pattern-matched on level needs to handle 'K'**. Search for usages: `grep -rn "CEFRLevel\|level: 'A1'\|level: 'A2'\|level: 'B1'" apps/web/ apps/mobile/`
+- `getLevelForAge` boundaries shifted: now `<=6→K`, `<=8→A1`, `<=11→A2`, else B1 (was `<=8→A1`, `<=11→A2`, else B1).
+- `lib/bilingual-stories.ts` imports `CEFRLevel` from `english-skills.ts` — circular import risk if anh adds story types into english-skills. Keep them one-way.
+
+## Stats baseline (capture pre-Sprint 2 use)
+
 ```
-Continue pany-kids-studio Sprint 2 — Phúc/An/Y daily usage feedback
+Quests:    252 (target 500+ — anh extends)
+English:   205 vocab / 55 speak / 20 reading / 32 writing  
+Math:      1060 effective (210 curated + 850 generated)
+Stories:   50 bilingual stories
+TOTAL DATA: ~1567 user-facing items across 4 banks
 ```
 
-Claude Code will:
-1. Read `strategy-v2.md` (canonical source-of-truth)
-2. Read `decisions.md` (15 decisions including D-013 12-pillar + D-014 mobile stack + D-015 chat endpoint)
-3. Read this `handoff.md` (current snapshot)
-4. Read `tasks.md` for Sprint 2 backlog
-5. Open feedback collection for the 3 kids
+## Next session resume options
 
----
-
-## 📦 What was accomplished Session 10 (2026-05-02)
-
-Sprint 1 fully delivered in one mega-session:
-
-### Day 1 (already done in Session 9, 5/1)
-v3.2-A: strategy-v2.md saved + Đại Ka boost (Sonnet 4.6 + 800 tokens + 100/hr + 20-turn history) + child psych/parenting/RIASEC/escalation knowledge expansion. Commit `dcf9b25`.
-
-### Days 2-5 (this session, 5/2)
-v3.2-B: 5 new development pillars on web (commit `b58fbb3`):
-- **Studio Sáng tạo** — HTML5 canvas drawing + 21 daily creative prompts + per-kid artwork gallery
-- **Cơ thể & Vận động** — 12 exercise challenges with circular timer + 1-min mindful breathing animation + 7-day bar chart
-- **Tự khám phá** — mood journal (5 weather emojis + 7-day history) + RIASEC Junior quiz (36q ages 8-12, 48q ages 13-15) + results view with top-3 + bar chart
-- **La bàn nghề** — 60 careers (10 per RIASEC type) with VN context (salary/example/path) + Career-of-Day rotation + 3 views (Explore/Recommended/Saved) + age & RIASEC filters + full detail modal
-- **Cầu nối Gia đình** — daily ask-parent prompt (30 questions) + weekly Show & Tell + weekly family activity + shared notebook with parent/kid author distinction + 6-question Sunday weekly review
-
-3 new lib files: `riasec-junior.ts` (84 questions + 6 RIASEC types), `careers-v2.ts` (60 careers + 18 mini-projects), `family-prompts.ts` (30+15+15+6 prompts).
-
-### Days 6-7 (this session, 5/2)
-v3.2-C: Mobile app scaffold (commit `85cb863`):
-- **22 files, ~2300 lines** under `apps/mobile/`
-- **Stack**: Expo SDK 53 + RN 0.79 + React 19 + TypeScript strict + React Navigation v7 bottom-tabs + AsyncStorage
-- **4 starter screens**: Home (welcome + kid selector + streak + mood + tip), Discovery (mood + full RIASEC quiz), Chat (Đại Ka with KeyboardAvoidingView calling live `/api/chat`), Settings (lang toggle + privacy + about)
-- **4 atom components**: Card / Btn / Pill / KidSelector
-- **AsyncStorage parity**: identical `pks3-*` keys with web → JSON export/import cross-platform
-- **Bundle ID**: `io.panykids.app` (iOS + Android)
-- Pure-data libs (riasec-junior, careers-v2, family-prompts) **copied** from web → extract to `packages/shared/` in v0.2
-
-### Deployment (this session)
-- ✅ Web pushed to GitHub `main` (2 commits: `b58fbb3` + `85cb863`)
-- ✅ Vercel production deploy — `https://pany-kids-studio-jrm7y2dpe-tdbinh27-3978s-projects.vercel.app` aliased to `pany-kids-studio.vercel.app` (HTTP 200, 990ms)
-- ✅ JS bundle verified contains new pillar code (`studioCreative` found in chunk)
-- ✅ VPS deploy via `scripts/deploy-vps.py` (HTTP 200, 38ms)
-
-### Project OS docs updated
-- ✅ `decisions.md` +D-013 (12-pillar architecture) +D-014 (mobile stack Expo SDK 53) +D-015 (chat endpoint single source)
-- ✅ `status.md` rewritten — Sprint 1 complete inventory + 4 next-session resume options
-- ✅ `handoff.md` (this file) — full Session 10 record
-
----
-
-## ⚠️ Critical context for next session
-
-### Identity
-- **Đại Ka** stays — bố Bình's AI representative, calls kids "con", uses Sonnet 4.6 by default
-- 3 kids: Phúc 8 (🌟), An 10 (🚀), Y 12 (🎨)
-
-### URLs (all verified live)
-- **Web Vercel**: https://pany-kids-studio.vercel.app (HTTP 200, ~1s)
-- **VPS 24/7**: http://61.14.233.122/ (HTTP 200, ~40ms)
-- **GitHub public**: https://github.com/tdbinh27-sudo/pany-kids-studio
-- **Domain panykids.app**: NOT bought yet (defer until 1-week internal test confirms 12-pillar UX works)
-
-### Architecture (current v3.2-C)
-- **Web**: Next.js 16 + React 19 + Tailwind + TypeScript on Vercel + VPS
-- **Mobile** (new): Expo SDK 53 + RN 0.79 + React Navigation v7 + AsyncStorage
-- **Storage**: localStorage (web) ↔ AsyncStorage (mobile), SAME `pks3-*` keys, JSON cross-compat
-- **Đại Ka API**: Single `/api/chat` endpoint at Vercel + VPS, called by both web + mobile + future Telegram
-
-### Decisions chốt (15 total)
-- D-001 to D-009: project name, hosting, chatbot name, AI model, etc.
-- D-010: Repo public MIT
-- D-011: Hybrid web + mobile (Q1 strategy v2)
-- D-012: Đại Ka boost Sonnet 4.6 + $15/mo cap
-- D-013 NEW: 12-pillar architecture (6 skills + 6 development)
-- D-014 NEW: Mobile stack = Expo SDK 53 + RN 0.79 + RN Navigation v7
-- D-015 NEW: Đại Ka single endpoint serving all clients (web + mobile + future)
-
-### Known issues / Risks
-- 🔴 **API key STILL exposed** in old session logs — anh chưa rotate after 10 sessions
-- 🟡 **Sonnet 4.6 cost** — capped $15/month, monitor weekly
-- 🟡 **Mobile not pnpm-installed yet** — anh cần `cd apps/mobile && pnpm install && pnpm start` to test on Expo Go
-- 🟡 **Mobile assets missing** — placeholder PNG required (icon/splash/adaptive-icon/favicon) before EAS build
-- 🟢 Both web deploys clean and serving the new pillars
-
-### Cost tracking
-- Vercel: free tier (sufficient for 3 kids + 5-15 family beta)
-- VPS: 6GB RAM, 40GB SSD, paid through 2026-07-25
-- Anthropic: $15/month cap (Sonnet 4.6 default)
-
----
-
-## 📋 Reference files
-
-### Source code
-- `apps/web/components/PanyKidsStudio.tsx` — main dashboard (~4200 lines, 17 tabs)
-- `apps/web/lib/riasec-junior.ts` — 84 RIASEC questions + scoring + 6 types
-- `apps/web/lib/careers-v2.ts` — 60 careers + 18 day-in-life mini-projects
-- `apps/web/lib/family-prompts.ts` — 30 ask-parent + 6 weekly review + 15 show-tell + 15 family activities
-- `apps/mobile/App.tsx` — 4-tab navigator
-- `apps/mobile/screens/*.tsx` — 4 starter screens
-- `apps/mobile/lib/*.ts` — design/storage/api/i18n/kids + 3 copied data files
-
-### Project OS
-- `strategy-v2.md` — ⭐ source-of-truth for v3.2+
-- `decisions.md` — 15 decisions logged (D-001 through D-015)
-- `status.md` — Sprint 1 complete inventory
-- `plan.md` — original architecture (still relevant)
-- `tasks.md` — Sprint 2 backlog
-- `knowledge.md` — schema + design tokens
-- `README.md` — public-facing repo intro
-
-### Scripts
-- `scripts/deploy-vps.py` — paramiko SSH automated VPS deploy (used this session)
-- `scripts/fix-vps-env.py` — env corruption fixer
-
----
-
-## 🎬 Sprint 2 plan (5/8 - 7/8/2026, 2 months)
-
-**Goal**: 3 kids use the dashboard daily. Bố Bình collects UX bugs + feature gaps + content gaps. Iterate without adding new pillars.
-
-### Week 1-2 (5/8 - 5/22)
-- [ ] Phúc/An/Y onboarding session — anh giới thiệu 12 pillars, mỗi con login + setup PIN/profile
-- [ ] Daily usage tracking via streak counter + Đại Ka chat logs
-- [ ] Bố note bugs trong `feedback-week-X.md` files dưới `artifacts/`
-- [ ] Mid-week sync: 30-min family demo → mỗi con show 1 thing they made
-
-### Week 3-4 (5/22 - 6/5)
-- [ ] First feature ask round — mỗi con request 1 feature
-- [ ] Implement top 3 requests (whoever's request lands first gets dev priority)
-- [ ] Mobile pnpm install + Expo Go testing trên phone của 3 con
-
-### Month 2 (6/5 - 7/8)
-- [ ] Content seeding: 300 quests, fill out remaining skills track quarters
-- [ ] Career mini-projects refinement based on which RIASEC types mỗi con drift toward
-- [ ] Begin mobile screen expansion: add Calendar, Library, Career Compass screens
-- [ ] Decide on shared package extraction (`packages/shared/`)
-- [ ] Domain `panykids.io` purchase decision after 1-week confidence
-
-### Mid-sprint gate (6/15)
-Either:
-- (A) Continue → Sprint 3 mobile mature → App Store submission target 7/2026
-- (B) Pivot → if 3 kids don't engage, redesign UX before scaling
-
----
-
-## 🎬 Quick-start checklist for Session 11+
-
-When anh resumes:
-
-1. ☐ Read this handoff.md first
-2. ☐ Check live URLs still HTTP 200 (Vercel + VPS)
-3. ☐ Open `pany-kids-studio.vercel.app` and walk through PHÁT TRIỂN sidebar group with 3 kids
-4. ☐ Note any UX issue immediately into `artifacts/feedback-week-1.md`
-5. ☐ Mobile install + Expo Go test (deferred but available)
-
-Bootstrap command:
+**(A) Wire 4 banks into UI** (recommended — unblocks Sprint 2):
 ```
-Continue pany-kids-studio Sprint 2
+Continue pany-kids-studio Session 13 wire-banks-to-tabs
 ```
+Edit PanyKidsStudio.tsx tabs to import + render the 4 new banks. ~3-4 hours focused work.
+
+**(B) Anh extend quests + start Sprint 2 use**:
+```
+Continue pany-kids-studio Session 13 quest-extension + onboarding
+```
+Anh review 252 quests, mark gaps, em add 250 more to reach 500+.
+
+**(C) Mobile install + Expo Go**:
+```
+Continue pany-kids-studio mobile install
+```
+Still deferred from Session 11.
+
+**(D) Như Ý "kid mode" simplified UI**:
+```
+Continue pany-kids-studio kid-mode-ui for age<=6
+```
+22 tabs là quá nhiều cho 5t. Build simplified 5-tab kid view auto-active khi `profile.age <= 6`.

@@ -24,6 +24,14 @@ import { ASK_PARENT_PROMPTS, WEEKLY_REVIEW_PROMPTS, SHOW_TELL_IDEAS, FAMILY_ACTI
 import { LISTEN_WORDS, SPEAK_SENTENCES, READING_PASSAGES, WRITING_PROMPTS, getLevelForAge, pickRandomItems, pronunciationScore } from '@/lib/english-skills';
 import type { CEFRLevel } from '@/lib/english-skills';
 import { speak, stopSpeaking, listen, ttsSupported, asrSupported, loadVoices } from '@/lib/speech';
+import { ALL_QUESTS, getQuestsByAge, getQuestsForDay } from '@/lib/quests';
+import type { Quest, AgeGroup } from '@/lib/quests';
+import { ALL_MATH_QUESTIONS, getQuestionsByLevel, getMathLevelForKid, getRandomMathQuiz } from '@/lib/math-quiz';
+import type { MathQuestion, MathLevel } from '@/lib/math-quiz';
+import { ALL_STORIES, getStoriesForKid, getStoriesByLevel } from '@/lib/bilingual-stories';
+import type { Story } from '@/lib/bilingual-stories';
+import { SEED_QNA, getQnAStats, getQnAByTopic } from '@/lib/career-qna';
+import type { CareerQnA, QnATopic } from '@/lib/career-qna';
 
 // ============================================================
 // PANY KIDS STUDIO v3 — ANIME/FUNNY · BILINGUAL · ALL TIERS
@@ -140,9 +148,9 @@ const I18N = {
 };
 
 const DEFAULT_KIDS = [
-  { id: 'kid_1', name: 'Phúc',  age: 8,  color: '#FF6B9D', emoji: '🌟', pin: '1111', pinHint: '', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
-  { id: 'kid_2', name: 'An',    age: 10, color: '#4DABF7', emoji: '🚀', pin: '2222', pinHint: '', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
-  { id: 'kid_3', name: 'Y',     age: 12, color: '#51CF66', emoji: '🎨', pin: '3333', pinHint: '', birthday: '', school: '', hobbies: '', goals: '', bio: '', favoriteSubject: '' },
+  { id: 'kid_1', name: 'Phúc',  age: 11, color: '#FF6B9D', emoji: '🌟', pin: '1111', pinHint: '', birthday: '2015-06-26', school: 'Lên lớp 6 (9/2026)',     hobbies: '', goals: '', bio: 'Trần Hạnh Phúc',  favoriteSubject: '' },
+  { id: 'kid_2', name: 'An',    age: 9,  color: '#4DABF7', emoji: '🚀', pin: '2222', pinHint: '', birthday: '2017-08-30', school: 'Lên lớp 4 (9/2026)',     hobbies: '', goals: '', bio: 'Trần Bình An',    favoriteSubject: '' },
+  { id: 'kid_3', name: 'Y',     age: 5,  color: '#51CF66', emoji: '🎨', pin: '3333', pinHint: '', birthday: '2020-02-28', school: 'Vào lớp lá (9/2026)',    hobbies: '', goals: '', bio: 'Trần Như Ý',      favoriteSubject: '' },
 ];
 
 const PILLARS = [
@@ -587,6 +595,8 @@ export default function PanyKidsStudio() {
   const [familyJournal, setFamilyJournal] = useState([]); // [{date, author, kidId, content, type}]
   const [weeklyReviews, setWeeklyReviews] = useState({}); // {kidId-weekKey: {answers: [], date}}
   const [englishProgress, setEnglishProgress] = useState({}); // {kidId: {listen: {right, total}, speak: [{date, score, target, spoken}], read: {passageId: {score, date}}, write: [{date, score, prompt, text, feedback}]}}
+  const [completedQuests, setCompletedQuests] = useState<Record<string, string[]>>({}); // {kidId: [questKey, ...]} — questKey = `${questPillar}-${dayOfWeek}-${date}`
+  const [readStories, setReadStories] = useState<string[]>([]); // [storyId, ...]
 
   const t = (key, fallback) => (I18N[lang] && I18N[lang][key]) || fallback || key;
   const L = (vi, en) => (lang === 'vi' ? vi : en);
@@ -623,6 +633,8 @@ export default function PanyKidsStudio() {
             if (k === 'familyJournal') setFamilyJournal(v);
             if (k === 'weeklyReviews') setWeeklyReviews(v);
             if (k === 'englishProgress') setEnglishProgress(v);
+            if (k === 'completedQuests') setCompletedQuests(v);
+            if (k === 'readStories') setReadStories(v);
           }
         } catch (e) {}
       }
@@ -652,6 +664,8 @@ export default function PanyKidsStudio() {
   const setFamilyJournalP = (v) => { setFamilyJournal(v); persist('familyJournal', v); };
   const setWeeklyReviewsP = (v) => { setWeeklyReviews(v); persist('weeklyReviews', v); };
   const setEnglishProgressP = (v) => { setEnglishProgress(v); persist('englishProgress', v); };
+  const setCompletedQuestsP = (v) => { setCompletedQuests(v); persist('completedQuests', v); };
+  const setReadStoriesP = (v) => { setReadStories(v); persist('readStories', v); };
 
   const tryParentLogin = (val) => {
     if (val === parentPin) {
@@ -899,7 +913,7 @@ export default function PanyKidsStudio() {
       <MobileTabBar activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
 
       <main style={{ maxWidth: 1400, padding: '20px 16px 80px', marginLeft: sidebarOpen ? 240 : 0, transition: 'margin-left 0.25s ease-out' }} className="main-content">
-        {activeTab === 'overview'    && <OverviewTab     kids={kids} getOverall={getOverall} getYearProgress={getYearProgress} getPillarProgress={getPillarProgress} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} />}
+        {activeTab === 'overview'    && <OverviewTab     kids={kids} getOverall={getOverall} getYearProgress={getYearProgress} getPillarProgress={getPillarProgress} streaks={streaks} unlockedBadges={unlockedBadges} completedQuests={completedQuests} setCompletedQuestsP={setCompletedQuestsP} t={t} L={L} />}
         {activeTab === 'roadmap'     && <RoadmapTab      kids={kids} progress={progress} toggleObjective={toggleObjective} expandedYear={expandedYear} setExpandedYear={setExpandedYear} openEval={openEval} getQuarterProgress={getQuarterProgress} t={t} L={L} lang={lang} />}
         {activeTab === 'calendar'    && <CalendarTab     kids={kids} weeklyTasks={weeklyTasks} setTasksP={setTasksP} streaks={streaks} checkInToday={checkInToday} t={t} L={L} />}
         {activeTab === 'skilltree'   && <SkillTreeTab    kids={kids} getPillarProgress={getPillarProgress} t={t} L={L} />}
@@ -917,7 +931,7 @@ export default function PanyKidsStudio() {
         {activeTab === 'rewards'     && <RewardsTab      t={t} L={L} />}
         {activeTab === 'experiences' && <ExperiencesTab  t={t} L={L} kids={kids} lang={lang} />}
         {activeTab === 'publish'     && <PublishTab      t={t} L={L} />}
-        {activeTab === 'library'     && <LibraryTab      t={t} L={L} />}
+        {activeTab === 'library'     && <LibraryTab      readStories={readStories} setReadStoriesP={setReadStoriesP} t={t} L={L} />}
         {activeTab === 'aisearch'    && <AISearchTab     lang={lang} L={L} />}
         {activeTab === 'quiz'        && <QuizTab         kids={kids} quizState={quizState} setQuizState={setQuizState} t={t} L={L} lang={lang} />}
         {activeTab === 'report'      && <ReportTab       kids={kids} getOverall={getOverall} streaks={streaks} unlockedBadges={unlockedBadges} getPillarProgress={getPillarProgress} exportReport={exportReport} exportData={exportData} t={t} L={L} />}
@@ -1402,13 +1416,26 @@ function StatCard({ emoji, label, value, color = C.pink, sub }) {
 // TAB COMPONENTS
 // ============================================================
 
-function OverviewTab({ kids, getOverall, getYearProgress, getPillarProgress, streaks, unlockedBadges, t, L }) {
+function OverviewTab({ kids, getOverall, getYearProgress, getPillarProgress, streaks, unlockedBadges, completedQuests, setCompletedQuestsP, t, L }) {
   const totalDone = kids.reduce((s, k) => s + getOverall(k.id).done, 0);
   const totalAll = kids.reduce((s, k) => s + getOverall(k.id).total, 0);
   const avg = totalAll ? Math.round((totalDone / totalAll) * 100) : 0;
   const top = kids.slice().sort((a, b) => getOverall(b.id).pct - getOverall(a.id).pct)[0];
   const longestStreak = kids.reduce((m, k) => Math.max(m, streaks[k.id]?.longest || 0), 0);
   const totalBadges = kids.reduce((s, k) => s + Object.keys(unlockedBadges[k.id] || {}).length, 0);
+
+  // Quest hôm nay — pick 1 quest per kid by age + current day-of-week
+  const today = new Date();
+  const dayOfWeek = today.getDay() || 7; // 1=Mon ... 7=Sun
+  const dailyQuests = useMemo(() => {
+    return kids.map(k => {
+      const pool = getQuestsForDay(k.age, dayOfWeek);
+      // Stable per-kid-per-day: hash kid.id + date for deterministic pick
+      const seed = (k.id + today.toISOString().slice(0, 10)).split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+      const quest = pool[seed % pool.length] || null;
+      return { kid: k, quest };
+    });
+  }, [kids, dayOfWeek]);
 
   return (
     <div className="fade-in anime-bg">
@@ -1421,6 +1448,77 @@ function OverviewTab({ kids, getOverall, getYearProgress, getPillarProgress, str
         <StatCard emoji="🔥" label={t('longestStreak')} value={`${longestStreak}`} color={C.coral} sub={t('days')} />
         <StatCard emoji="🏆" label={t('totalBadges')} value={`${totalBadges}/${BADGES.length * kids.length}`} color={C.sunny} />
       </div>
+
+      {/* QUEST HÔM NAY — daily quest per kid */}
+      <Card style={{ marginBottom: 24, background: 'linear-gradient(135deg, #FFF4D1 0%, #FFE5E5 100%)', border: `2px solid ${C.gold}` }}>
+        <h3 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          🎯 {L('Quest hôm nay', 'Today\'s Quest')}
+        </h3>
+        <div className="body-f" style={{ fontSize: 12, color: C.sub, marginBottom: 16 }}>
+          {L(`${ALL_QUESTS.length}+ quest tự động đổi mỗi ngày · từ 12 trụ cột`, `${ALL_QUESTS.length}+ quests auto-rotate daily · across 12 pillars`)}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+          {dailyQuests.map(({ kid, quest }) => {
+            if (!quest) {
+              return (
+                <Card key={kid.id} accent={kid.color} padding={14}>
+                  <div className="display" style={{ fontWeight: 700 }}>{kid.emoji} {kid.name}</div>
+                  <div className="body-f" style={{ fontSize: 12, color: C.mute, fontStyle: 'italic', marginTop: 8 }}>
+                    {L('Chưa có quest hôm nay', 'No quest today')}
+                  </div>
+                </Card>
+              );
+            }
+            const questKey = `${quest.pillar}-${dayOfWeek}-${today.toISOString().slice(0, 10)}`;
+            const kidQuests = completedQuests[kid.id] || [];
+            const isDone = kidQuests.includes(questKey);
+            const toggleQuest = () => {
+              const updated = { ...completedQuests };
+              if (isDone) {
+                updated[kid.id] = kidQuests.filter(q => q !== questKey);
+              } else {
+                updated[kid.id] = [...kidQuests, questKey];
+              }
+              setCompletedQuestsP(updated);
+            };
+            const pillarColor = PILLARS.find(p => p.id === quest.pillar)?.color || C.purple;
+            return (
+              <Card key={kid.id} accent={kid.color} padding={14} style={isDone ? { opacity: 0.7, background: '#F0FFF0' } : {}}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                  <div style={{ fontSize: 28 }}>{kid.emoji}</div>
+                  <div style={{ flex: 1 }}>
+                    <div className="display" style={{ fontSize: 15, fontWeight: 700 }}>{kid.name}</div>
+                    <div className="body-f" style={{ fontSize: 10, color: C.mute }}>
+                      {kid.age <= 6 ? L('Mầm non K', 'Kindergarten K') : kid.age <= 11 ? L('Tiểu học P', 'Primary P') : L('Cấp 2 T', 'Secondary T')}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 28 }}>{isDone ? '✅' : quest.emoji}</div>
+                </div>
+                <div style={{ display: 'flex', gap: 4, marginBottom: 8, flexWrap: 'wrap' }}>
+                  <Pill color={pillarColor}>{quest.pillar}</Pill>
+                  <Pill color={C.purple}>{quest.estMin} {L('phút', 'min')}</Pill>
+                  {quest.needsParent && <Pill color={C.coral}>👨‍👩 {L('Cần bố mẹ', 'Needs parent')}</Pill>}
+                  {isDone && <Pill color={C.mint}>✅ {L('Đã xong', 'Done')}</Pill>}
+                </div>
+                <div className="display" style={{ fontSize: 14, fontWeight: 700, marginBottom: 4, textDecoration: isDone ? 'line-through' : 'none' }}>
+                  {L(quest.vi.title, quest.en.title)}
+                </div>
+                <div className="body-f" style={{ fontSize: 12, color: C.sub, lineHeight: 1.5, marginBottom: 8 }}>
+                  {L(quest.vi.desc, quest.en.desc)}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className="hand" style={{ fontSize: 13, color: C.mint, fontWeight: 700 }}>
+                    🎁 {L(quest.vi.reward, quest.en.reward)}
+                  </div>
+                  <button onClick={toggleQuest} className="btn-bounce" style={{ background: isDone ? C.mute : C.mint, color: '#fff', border: 'none', borderRadius: 999, padding: '6px 16px', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>
+                    {isDone ? L('↩ Hoàn tác', '↩ Undo') : L('✅ Hoàn thành!', '✅ Done!')}
+                  </button>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      </Card>
 
       {/* Per-kid cards with mini radar */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, marginBottom: 32 }}>
@@ -2064,10 +2162,35 @@ function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidD
   );
 }
 
-function LibraryTab({ t, L }) {
+function LibraryTab({ readStories, setReadStoriesP, t, L }) {
   const [filterPillar, setFilterPillar] = React.useState(null);
   const [filterAge, setFilterAge] = React.useState(null);
   const [filterType, setFilterType] = React.useState(null);
+
+  // Bilingual stories state
+  const [storyLevel, setStoryLevel] = React.useState<CEFRLevel | null>(null);
+  const [openStory, setOpenStory] = React.useState<Story | null>(null);
+  const visibleStories = storyLevel ? getStoriesByLevel(storyLevel) : ALL_STORIES;
+
+  // Q&A state
+  const [qnaTopic, setQnaTopic] = React.useState<QnATopic | null>(null);
+  const [openQnA, setOpenQnA] = React.useState<CareerQnA | null>(null);
+  const visibleQnA = qnaTopic ? getQnAByTopic(qnaTopic) : SEED_QNA;
+  const qnaStats = React.useMemo(() => getQnAStats(), []);
+  const topicLabels: Record<QnATopic, [string, string]> = {
+    'choosing-major': ['Chọn ngành', 'Choosing major'],
+    'career-exploration': ['Khám phá nghề', 'Career exploration'],
+    'early-interests': ['Sở thích sớm', 'Early interests'],
+    'parenting-style': ['Nuôi dạy', 'Parenting style'],
+    'riasec-self-discovery': ['RIASEC', 'RIASEC'],
+    'major-to-career-pivot': ['Chuyển nghề', 'Pivot'],
+    'resilience-failure': ['Vượt thất bại', 'Resilience'],
+    'money-business-early': ['Tiền & KD sớm', 'Money & biz'],
+    'screen-time-tech': ['Màn hình & tech', 'Screen & tech'],
+    'social-emotional': ['Cảm xúc & XH', 'Social-emotional'],
+    'study-habits': ['Thói quen học', 'Study habits'],
+    'family-communication': ['Giao tiếp GD', 'Family comm.'],
+  };
 
   const filtered = CURATED_RESOURCES.filter(r =>
     (!filterPillar || r.pillar === filterPillar) &&
@@ -2081,6 +2204,178 @@ function LibraryTab({ t, L }) {
   return (
     <div className="fade-in">
       <SectionHeader title={t('library')} subtitle={t('resourceLib')} emoji="📚" />
+
+      {/* BILINGUAL STORIES — new section */}
+      <Card style={{ marginBottom: 24, background: 'linear-gradient(135deg, #E5FAEB 0%, #F0E6FF 100%)', border: `2px solid ${C.mint}` }}>
+        <h3 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          📖 {L('Truyện song ngữ', 'Bilingual Stories')}
+        </h3>
+        <div className="body-f" style={{ fontSize: 12, color: C.sub, marginBottom: 14 }}>
+          {L(`${ALL_STORIES.length} truyện VN ↔ EN · từ mầm non đến cấp 2`, `${ALL_STORIES.length} stories VN ↔ EN · kindergarten to secondary`)}
+        </div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+          <button onClick={() => setStoryLevel(null)} className="btn-bounce body-f" style={{ background: !storyLevel ? C.ink : '#fff', color: !storyLevel ? '#fff' : C.ink, border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{L('Tất cả', 'All')}</button>
+          {(['K', 'A1', 'A2', 'B1'] as const).map(lv => (
+            <button key={lv} onClick={() => setStoryLevel(lv)} className="btn-bounce body-f" style={{ background: storyLevel === lv ? C.mint : '#fff', color: storyLevel === lv ? '#fff' : C.mint, border: `2px solid ${C.mint}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{lv === 'K' ? L('K · Mầm non', 'K · Kindergarten') : lv === 'A1' ? L('A1 · 7-8t', 'A1 · 7-8y') : lv === 'A2' ? L('A2 · 9-11t', 'A2 · 9-11y') : L('B1 · 12-15t', 'B1 · 12-15y')}</button>
+          ))}
+        </div>
+        <div className="body-f" style={{ fontSize: 12, color: C.mint, fontWeight: 700, marginBottom: 8 }}>
+          📖 {L(`Đã đọc ${readStories.filter(id => visibleStories.some(s => s.id === id)).length}/${visibleStories.length} truyện`, `Read ${readStories.filter(id => visibleStories.some(s => s.id === id)).length}/${visibleStories.length} stories`)}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
+          {visibleStories.slice(0, 12).map(story => {
+            const isRead = readStories.includes(story.id);
+            return (
+            <button key={story.id} onClick={() => { setOpenStory(story); if (!isRead) setReadStoriesP([...readStories, story.id]); }} className="card-hover btn-bounce" style={{ textAlign: 'left', padding: 14, background: isRead ? '#F0FFF0' : '#fff', borderRadius: 14, border: `2px solid ${isRead ? C.mint : C.border}`, cursor: 'pointer', position: 'relative' }}>
+              {isRead && <div style={{ position: 'absolute', top: 8, right: 8, fontSize: 14 }}>✅</div>}
+              <div style={{ display: 'flex', gap: 4, marginBottom: 6, flexWrap: 'wrap' }}>
+                <Pill color={C.mint}>{story.level}</Pill>
+                <Pill color={C.purple}>{story.genre}</Pill>
+                <Pill color={C.mute}>⏱ {story.reading_minutes}p</Pill>
+                {isRead && <Pill color={C.mint}>✓ {L('Đã đọc', 'Read')}</Pill>}
+              </div>
+              <div className="display" style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.3, marginBottom: 4 }}>{L(story.title_vi, story.title_en)}</div>
+              <div className="body-f" style={{ fontSize: 11, color: C.sub, lineHeight: 1.4 }}>{L(story.paragraphs[0]?.vi || '', story.paragraphs[0]?.en || '').slice(0, 80)}…</div>
+            </button>
+            );
+          })}
+        </div>
+        {visibleStories.length > 12 && (
+          <div className="body-f" style={{ fontSize: 11, color: C.mute, textAlign: 'center', marginTop: 10, fontStyle: 'italic' }}>
+            {L(`+${visibleStories.length - 12} truyện nữa — chọn level để xem hết`, `+${visibleStories.length - 12} more stories — pick a level to see them`)}
+          </div>
+        )}
+      </Card>
+
+      {/* EXPERT Q&A — Hỏi & Đáp Chuyên gia */}
+      <Card style={{ marginBottom: 24, background: 'linear-gradient(135deg, #F0E6FF 0%, #FFF4D1 100%)', border: `2px solid ${C.purple}` }}>
+        <h3 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          💬 {L('Hỏi & Đáp Chuyên gia', 'Expert Q&A')}
+        </h3>
+        <div className="body-f" style={{ fontSize: 12, color: C.sub, marginBottom: 4 }}>
+          {L(`${qnaStats.total} câu trả lời từ ${qnaStats.uniqueExperts} chuyên gia · ${qnaStats.uniqueSources} nguồn xác thực`,
+             `${qnaStats.total} expert-verified answers from ${qnaStats.uniqueExperts} experts · ${qnaStats.uniqueSources} sources`)}
+        </div>
+        <div className="body-f" style={{ fontSize: 11, color: C.mute, marginBottom: 14, fontStyle: 'italic' }}>
+          🔄 {L('Tự động cập nhật mỗi 3 ngày qua /api/career-qna-refresh (Vercel cron)', 'Auto-refresh every 3 days via /api/career-qna-refresh (Vercel cron)')}
+        </div>
+
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+          <button onClick={() => setQnaTopic(null)} className="btn-bounce body-f" style={{ background: !qnaTopic ? C.ink : '#fff', color: !qnaTopic ? '#fff' : C.ink, border: `2px solid ${C.ink}`, padding: '6px 12px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 11 }}>{L('Tất cả', 'All')}</button>
+          {(Object.keys(topicLabels) as QnATopic[]).map(tp => (
+            <button key={tp} onClick={() => setQnaTopic(tp)} className="btn-bounce body-f" style={{ background: qnaTopic === tp ? C.purple : '#fff', color: qnaTopic === tp ? '#fff' : C.purple, border: `2px solid ${C.purple}`, padding: '6px 12px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 11 }}>{L(topicLabels[tp][0], topicLabels[tp][1])}</button>
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+          {visibleQnA.slice(0, 9).map(qna => (
+            <button key={qna.id} onClick={() => setOpenQnA(qna)} className="card-hover btn-bounce" style={{ textAlign: 'left', padding: 14, background: '#fff', borderRadius: 14, border: `2px solid ${C.border}`, cursor: 'pointer' }}>
+              <div style={{ display: 'flex', gap: 4, marginBottom: 6, flexWrap: 'wrap' }}>
+                <Pill color={C.purple}>{L(topicLabels[qna.topic][0], topicLabels[qna.topic][1])}</Pill>
+                <Pill color={C.mint}>{qna.ageGroup}</Pill>
+                {qna.verified && <Pill color={C.gold}>✓ verified</Pill>}
+              </div>
+              <div className="display" style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.4, marginBottom: 6 }}>
+                ❓ {L(qna.question_vi, qna.question_en)}
+              </div>
+              <div className="body-f" style={{ fontSize: 11, color: C.sub, fontStyle: 'italic' }}>
+                — {qna.expert.name}, <span style={{ fontSize: 10 }}>{qna.expert.affiliation || qna.expert.credentials.split(',')[0]}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+        {visibleQnA.length > 9 && (
+          <div className="body-f" style={{ fontSize: 11, color: C.mute, textAlign: 'center', marginTop: 10, fontStyle: 'italic' }}>
+            +{visibleQnA.length - 9} {L('câu nữa — chọn topic để xem hết', 'more — pick a topic to see them all')}
+          </div>
+        )}
+      </Card>
+
+      {/* Q&A modal — full answer + sources */}
+      {openQnA && (
+        <div onClick={() => setOpenQnA(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 18, padding: 24, maxWidth: 760, maxHeight: '85vh', overflow: 'auto', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
+              <div>
+                <div style={{ display: 'flex', gap: 4, marginBottom: 6, flexWrap: 'wrap' }}>
+                  <Pill color={C.purple}>{L(topicLabels[openQnA.topic][0], topicLabels[openQnA.topic][1])}</Pill>
+                  <Pill color={C.mint}>{openQnA.ageGroup}</Pill>
+                  {openQnA.verified && <Pill color={C.gold}>✓ verified</Pill>}
+                </div>
+                <h2 className="display" style={{ fontSize: 20, fontWeight: 700, margin: '4px 0 0' }}>❓ {L(openQnA.question_vi, openQnA.question_en)}</h2>
+              </div>
+              <button onClick={() => setOpenQnA(null)} className="btn-bounce" style={{ background: C.coral, color: '#fff', border: 'none', borderRadius: 999, width: 32, height: 32, cursor: 'pointer', fontWeight: 700, flexShrink: 0 }}>✕</button>
+            </div>
+
+            <div style={{ padding: 14, background: C.soft, borderRadius: 12, borderLeft: `4px solid ${C.purple}`, marginBottom: 12 }}>
+              <div className="body-f" style={{ fontSize: 14, lineHeight: 1.7, color: C.ink, marginBottom: 10 }}>🇻🇳 {openQnA.answer_vi}</div>
+              <div className="body-f" style={{ fontSize: 13, lineHeight: 1.7, color: C.sub, fontStyle: 'italic' }}>🇬🇧 {openQnA.answer_en}</div>
+            </div>
+
+            <div style={{ padding: 12, background: '#FFF4D1', borderRadius: 12, marginBottom: 10 }}>
+              <div className="display" style={{ fontSize: 12, fontWeight: 700, color: C.gold, marginBottom: 4 }}>👤 {L('Chuyên gia', 'Expert')}</div>
+              <div className="body-f" style={{ fontSize: 13, fontWeight: 600 }}>{openQnA.expert.name}</div>
+              <div className="body-f" style={{ fontSize: 12, color: C.sub }}>{openQnA.expert.credentials}</div>
+              {openQnA.expert.affiliation && <div className="body-f" style={{ fontSize: 11, color: C.mute }}>{openQnA.expert.affiliation}</div>}
+            </div>
+
+            <div style={{ padding: 12, background: '#E5FAEB', borderRadius: 12, marginBottom: 10 }}>
+              <div className="display" style={{ fontSize: 12, fontWeight: 700, color: C.mint, marginBottom: 6 }}>🔗 {L('Nguồn xác thực', 'Verified sources')}</div>
+              {openQnA.sources.map((s, i) => (
+                <a key={i} href={s.url} target="_blank" rel="noreferrer" style={{ display: 'block', padding: 8, background: '#fff', borderRadius: 8, marginBottom: 4, color: C.mint, fontSize: 12, textDecoration: 'none' }}>
+                  <div style={{ fontWeight: 700 }}>{s.title}</div>
+                  <div style={{ fontSize: 10, color: C.sub }}>{s.publisher} · {s.type}{s.date ? ` · ${s.date}` : ''}</div>
+                </a>
+              ))}
+            </div>
+
+            {openQnA.tags.length > 0 && (
+              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                {openQnA.tags.map(t => <Pill key={t} color={C.mute}>#{t}</Pill>)}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Story modal — full bilingual reading */}
+      {openStory && (
+        <div onClick={() => setOpenStory(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 18, padding: 24, maxWidth: 760, maxHeight: '85vh', overflow: 'auto', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
+              <div>
+                <div style={{ display: 'flex', gap: 4, marginBottom: 6, flexWrap: 'wrap' }}>
+                  <Pill color={C.mint}>{openStory.level}</Pill>
+                  <Pill color={C.purple}>{openStory.genre}</Pill>
+                  <Pill color={C.mute}>⏱ {openStory.reading_minutes} {L('phút', 'min')}</Pill>
+                </div>
+                <h2 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '4px 0 0' }}>{L(openStory.title_vi, openStory.title_en)}</h2>
+              </div>
+              <button onClick={() => setOpenStory(null)} className="btn-bounce" style={{ background: C.coral, color: '#fff', border: 'none', borderRadius: 999, width: 32, height: 32, cursor: 'pointer', fontWeight: 700 }}>✕</button>
+            </div>
+            {openStory.paragraphs.map((p, i) => (
+              <div key={i} style={{ marginBottom: 14, padding: 12, background: i % 2 ? C.soft : '#fff', borderLeft: `3px solid ${C.mint}`, borderRadius: 8 }}>
+                <div className="body-f" style={{ fontSize: 14, lineHeight: 1.6, color: C.ink, marginBottom: 6 }}>🇻🇳 {p.vi}</div>
+                <div className="body-f" style={{ fontSize: 13, lineHeight: 1.6, color: C.sub, fontStyle: 'italic' }}>🇬🇧 {p.en}</div>
+              </div>
+            ))}
+            {openStory.moral_vi && (
+              <div style={{ padding: 14, background: '#FFF4D1', borderRadius: 12, borderLeft: `4px solid ${C.gold}`, marginTop: 8 }}>
+                <div className="display" style={{ fontSize: 12, fontWeight: 700, color: C.gold, marginBottom: 4 }}>💡 {L('Bài học', 'Moral')}</div>
+                <div className="body-f" style={{ fontSize: 13 }}>{L(openStory.moral_vi, openStory.moral_en || openStory.moral_vi)}</div>
+              </div>
+            )}
+            {openStory.vocab_focus && openStory.vocab_focus.length > 0 && (
+              <div style={{ marginTop: 12, padding: 12, background: '#E5FAEB', borderRadius: 12 }}>
+                <div className="display" style={{ fontSize: 12, fontWeight: 700, color: C.mint, marginBottom: 6 }}>🔤 {L('Từ chính', 'Key vocab')}</div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {openStory.vocab_focus.map(w => <Pill key={w} color={C.mint}>{w}</Pill>)}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div style={{ background: 'linear-gradient(135deg, #845EC2, #FF6B9D)', color: '#fff', padding: 14, borderRadius: 16, marginBottom: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
         <div className="body-f" style={{ fontSize: 13, fontWeight: 600 }}>
@@ -2186,12 +2481,37 @@ function LibraryTab({ t, L }) {
 
 function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
   const [filter, setFilter] = React.useState({ pillar: null, age: null });
-  const filteredQuiz = QUIZ_BANK.filter(q =>
-    (!filter.pillar || q.pillar === filter.pillar) && (!filter.age || q.age === filter.age)
-  );
+  const [mode, setMode] = React.useState<'pillar' | 'math'>('pillar');
+  const [mathLevel, setMathLevel] = React.useState<MathLevel | null>(null);
+
+  // Adapter: map MathQuestion → QUIZ_BANK shape so render code below stays unchanged
+  const mathBank = React.useMemo(() => {
+    const pool = mathLevel ? getQuestionsByLevel(mathLevel) : ALL_MATH_QUESTIONS;
+    return pool.map(q => ({
+      id: q.id,
+      pillar: 'thinking',
+      age: q.level === 'L1' ? '6-7' : q.level === 'L2' ? '8-10' : q.level === 'L3' ? '11-13' : '14-16',
+      vi_q: `[${q.level}/${q.topic}] ${q.question_vi}`,
+      en_q: `[${q.level}/${q.topic}] ${q.question_en}`,
+      vi_options: q.options,
+      en_options: q.options,
+      answer: q.correctIdx,
+      _isMath: true,
+      _explain: q.explain_vi || q.explain_en,
+    }));
+  }, [mathLevel]);
+
+  const filteredQuiz = mode === 'math'
+    ? mathBank
+    : QUIZ_BANK.filter(q => (!filter.pillar || q.pillar === filter.pillar) && (!filter.age || q.age === filter.age));
   const current = filteredQuiz[quizState.qIdx];
 
   const startQuiz = (kidId, pillar = null, age = null) => {
+    if (mode === 'math') {
+      // Auto-pick math level for kid if not set yet
+      const kid = kids.find(k => k.id === kidId);
+      if (!mathLevel && kid) setMathLevel(getMathLevelForKid(kid.age));
+    }
     setFilter({ pillar, age });
     setQuizState({ kidId, qIdx: 0, score: 0, answered: null, pillar, age });
   };
@@ -2219,9 +2539,34 @@ function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
       {!quizState.kidId ? (
         <Card>
           <h3 className="display" style={{ fontSize: 20, marginTop: 0, fontWeight: 700 }}>🧩 {L('Chọn học viên & lĩnh vực', 'Pick student & topic')}</h3>
-          <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 16 }}>{L(`${QUIZ_BANK.length} câu hỏi sẵn — lọc theo trụ cột & độ tuổi`, `${QUIZ_BANK.length} questions ready — filter by pillar & age`)}</div>
 
-          <div style={{ marginBottom: 14 }}>
+          {/* MODE TOGGLE — Pillar Quiz vs Math Quiz */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14, padding: 4, background: C.soft, borderRadius: 12, width: 'fit-content' }}>
+            <button onClick={() => setMode('pillar')} className="btn-bounce body-f" style={{ background: mode === 'pillar' ? C.purple : 'transparent', color: mode === 'pillar' ? '#fff' : C.purple, border: 'none', padding: '6px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>📚 {L('Quiz Trụ cột', 'Pillar Quiz')}</button>
+            <button onClick={() => setMode('math')} className="btn-bounce body-f" style={{ background: mode === 'math' ? C.coral : 'transparent', color: mode === 'math' ? '#fff' : C.coral, border: 'none', padding: '6px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>🔢 {L('Quiz Toán', 'Math Quiz')}</button>
+          </div>
+
+          <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 16 }}>
+            {mode === 'pillar'
+              ? L(`${QUIZ_BANK.length} câu hỏi sẵn — lọc theo trụ cột & độ tuổi`, `${QUIZ_BANK.length} questions ready — filter by pillar & age`)
+              : L(`${ALL_MATH_QUESTIONS.length} câu toán — lọc theo cấp lớp`, `${ALL_MATH_QUESTIONS.length} math questions — filter by grade level`)}
+          </div>
+
+          {/* Math level picker (only show in math mode) */}
+          {mode === 'math' && (
+            <div style={{ marginBottom: 14 }}>
+              <div className="body-f" style={{ fontSize: 12, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{L('Cấp lớp', 'Grade level')}</div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <button onClick={() => setMathLevel(null)} className="btn-bounce body-f" style={{ background: !mathLevel ? C.ink : '#fff', color: !mathLevel ? '#fff' : C.ink, border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{L('Tất cả', 'All')}</button>
+                {([['L1', L('Lớp lá', 'Kindergarten')], ['L2', L('Lớp 4', 'Grade 4')], ['L3', L('Lớp 6', 'Grade 6')], ['L4', L('Cấp 2', 'Secondary')]] as const).map(([lv, label]) => (
+                  <button key={lv} onClick={() => setMathLevel(lv as MathLevel)} className="btn-bounce body-f" style={{ background: mathLevel === lv ? C.coral : '#fff', color: mathLevel === lv ? '#fff' : C.coral, border: `2px solid ${C.coral}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{lv} · {label}</button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Pillar / age filters only in pillar mode */}
+          {mode === 'pillar' && <div style={{ marginBottom: 14 }}>
             <div className="body-f" style={{ fontSize: 12, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{L('Trụ cột', 'Pillar')}</div>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               <button onClick={() => setFilter({ ...filter, pillar: null })} className="btn-bounce body-f" style={{ background: !filter.pillar ? C.ink : '#fff', color: !filter.pillar ? '#fff' : C.ink, border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{L('Tất cả', 'All')}</button>
@@ -2229,16 +2574,16 @@ function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
                 <button key={p.id} onClick={() => setFilter({ ...filter, pillar: p.id })} className="btn-bounce body-f" style={{ background: filter.pillar === p.id ? p.color : '#fff', color: filter.pillar === p.id ? '#fff' : p.color, border: `2px solid ${p.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{L(p.vi, p.en)}</button>
               ))}
             </div>
-          </div>
+          </div>}
 
-          <div style={{ marginBottom: 18 }}>
+          {mode === 'pillar' && <div style={{ marginBottom: 18 }}>
             <div className="body-f" style={{ fontSize: 12, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{t('age')}</div>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {[null, '6-7', '8-10', '11-13', '14-16'].map(a => (
                 <button key={a || 'all'} onClick={() => setFilter({ ...filter, age: a })} className="btn-bounce body-f" style={{ background: filter.age === a ? C.purple : '#fff', color: filter.age === a ? '#fff' : C.purple, border: `2px solid ${C.purple}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{a || L('Tất cả', 'All')}</button>
               ))}
             </div>
-          </div>
+          </div>}
 
           <div className="body-f" style={{ fontSize: 12, color: C.mute, marginBottom: 14 }}>{filteredQuiz.length} {L('câu hỏi sẽ hiện ra', 'questions will be shown')}</div>
 

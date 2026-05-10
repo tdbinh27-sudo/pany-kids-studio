@@ -1,7 +1,23 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-05-03 (Session 11 — Phase 8 English 4 skills LIVE)
-**Current state:** v3.2-E deployed — long-deferred English Listen/Speak/Read/Write tab now LIVE. Web Speech API + Sonnet 4.6 grading.
+**Last updated:** 2026-05-09 (Session 12 — Kid info correction + 4 content banks expansion)
+**Current state:** v3.3-A in progress — kid ages corrected (Phúc 11/An 9/Y 5), 4 new content banks committed (quests, English expanded, math, stories). Sprint 2 content seeding ~50% complete in 1 session.
+
+## ⭐ SESSION 12 (2026-05-09) — DATA EXPANSION
+
+| Bank | File | Content | Notes |
+|------|------|---------|-------|
+| Daily Quests | `lib/quests.ts` (NEW) | 252 quests (12 pillars × 3 age groups × 7 days) | v1 foundation, anh extends to 500+ |
+| English Skills | `lib/english-skills.ts` (REWRITE) | 205+ vocab / 55 speak / 20 reading / 32 writing | NEW level "K" for Như Ý mầm non |
+| Math Quiz | `lib/math-quiz.ts` (NEW) | 210 curated + 850 generated = **1060** | L1/L2/L3/L4 = lớp lá → cấp 2 |
+| Bilingual Stories | `lib/bilingual-stories.ts` (NEW) | 50 stories (8 K + 14 A1 + 16 A2 + 12 B1) | Paragraph-aligned VI↔EN |
+
+**Kid info corrected** (was 8/10/12, now correct):
+- Phúc 11t (lên lớp 6 9/2026)
+- An 9t (lên lớp 4 9/2026)
+- Như Ý 5t sinh 2020-02-28 (vào lớp lá 9/2026)
+
+Files updated for kid info: `PanyKidsStudio.tsx`, `apps/mobile/lib/kids.ts`, `lib/claude.ts` (VI+EN system prompts).
 
 ## ⭐ SPRINT 1 COMPLETE (5/1 - 5/2/2026)
 
