@@ -1,5 +1,10 @@
 # Onboarding Script — Phúc / An / Y (Sprint 2 Week 1, 5/8/2026)
 
+> ⚠️ **DEPRECATED 2026-05-10** — file này có tuổi sai (Phúc 8/An 10/Y 12).
+> Tuổi đúng: Phúc 11 / An 9 / Như Ý 5 (corrected trong v3.3-A `bcbbdb9`).
+> Dùng `artifacts/onboarding-script-2026-05-10.md` thay thế.
+> File này giữ lại làm reference cho structure ban đầu, KHÔNG follow nội dung.
+
 > Anh dùng script này để giới thiệu Pany Kids Studio cho từng con. Mỗi con ~30 phút riêng.
 > Mục tiêu Day 1: con hiểu 12 trụ cột, biết login, chat với Đại Ka, làm RIASEC quiz, ghi mood.
 
