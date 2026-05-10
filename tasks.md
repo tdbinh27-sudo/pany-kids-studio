@@ -2,6 +2,14 @@
 
 ## NOW (Sprint 2 — week 1 of 8)
 
+### Session 15 (2026-05-10) — 🔴 CRITICAL: math-quiz infinite loop hotfix
+- [x] Diagnosed: production stuck on "Loading Pany Kids Studio..." ~90 min
+- [x] Root cause: `lib/math-quiz.ts` 6 unbounded `while (wrong.size < 3)` loops, deterministic LCG seed 3003 hits genL3 algebra at x=1 where only 2 valid wrong values exist → infinite loop on module load → browser tab freeze
+- [x] Fix: introduced `collectWrongs()` helper (40 RNG attempts → fallback to deterministic distinct offsets). Applied to all 6 generators (L1 add/sub, L2 mixed, L3 percent/algebra/decimal, L4 algebra/pythagoras/square)
+- [x] TypeScript clean, build clean, headless browser hydrates within 12s on localhost:3000
+- [x] Deployed v3.3-C via `vercel deploy --prod` (commit `8931a53`) — production verified hydrating correctly
+- [ ] 🔧 **Anh fix Vercel auto-deploy webhook** — Settings → Git → re-link GitHub integration (last 3 pushes did NOT auto-deploy)
+
 ### Session 14 (2026-05-10) — CEFRLevel 'K' picker fix
 - [x] Bug fixed: EnglishSkillsTab level picker now includes 'K' (was only A1/A2/B1)
 - [x] Bug fixed: age description ternary handles 'K' = "4-6t · mầm non" (was falling through to "12-15t · trung cấp")

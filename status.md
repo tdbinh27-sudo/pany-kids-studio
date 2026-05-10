@@ -1,7 +1,9 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-05-10 (Session 14 — CEFRLevel 'K' picker fix)
-**Current state:** v3.3-A SHIPPED on 2026-05-10 08:20 (`bcbbdb9`) — Session 12+13 work merged: 4 content banks wired, persistence (pks3-completedQuests + pks3-readStories), SSG hang fix, career Q&A. Session 14 patch: EnglishSkillsTab level picker now exposes 'K' for Như Ý + correct age description (was silently falling through to "12-15t · trung cấp" for K).
+**Last updated:** 2026-05-10 (Session 15 — CRITICAL: math-quiz infinite loop hotfix)
+**Current state:** v3.3-C live on production via manual `vercel deploy --prod` (auto-deploy webhook broken, see ⚠️ below). Production was stuck on "Loading Pany Kids Studio..." for ~90 minutes due to deterministic infinite loop in `lib/math-quiz.ts` module-load. Fix: bounded `collectWrongs()` helper applied to all 6 generator branches. Verified live at https://pany-kids-studio.vercel.app/ — full app hydrates, zero console errors. Session 14 picker fix included.
+
+⚠️ **Vercel auto-deploy webhook broken** — pushes `c3f947a` (Session 14 fix), `322ac64` (docs), `8931a53` (Session 15 hotfix) did NOT auto-deploy. Used `vercel deploy --prod` manually. Anh check Vercel project → Settings → Git → re-link GitHub integration when convenient.
 
 ## ⭐ SESSION 12 (2026-05-09) — DATA EXPANSION
 
