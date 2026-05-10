@@ -2,13 +2,23 @@
 
 ## NOW (Sprint 2 — week 1 of 8)
 
-### Verify Session 12 data (2026-05-09)
-- [ ] `pnpm dev` — check dashboard hiển thị Phúc 11/An 9/Y 5 đúng
-- [ ] Đại Ka chat thử với câu Vietnamese — verify nó adapt language theo tuổi 5/9/11
-- [ ] Wire `lib/quests.ts` vào tab "Hôm nay" — show 1 quest/pillar by age group
-- [ ] Wire `lib/math-quiz.ts` vào tab Quiz — getRandomMathQuiz(level, 10)
-- [ ] Wire `lib/bilingual-stories.ts` vào tab Thư viện — list by kid age
-- [ ] Build script: print getQuestStats() + getMathStats() + getStoryStats() + getEnglishStats() vào console once
+### Session 14 (2026-05-10) — CEFRLevel 'K' picker fix
+- [x] Bug fixed: EnglishSkillsTab level picker now includes 'K' (was only A1/A2/B1)
+- [x] Bug fixed: age description ternary handles 'K' = "4-6t · mầm non" (was falling through to "12-15t · trung cấp")
+- [x] TypeScript clean (`pnpm exec tsc --noEmit` zero errors)
+
+### Session 12+13 verification (already merged in `bcbbdb9`, 2026-05-10 08:20)
+- [x] Wire `lib/quests.ts` into "Hôm nay" tab — Quest hôm nay card with deterministic daily pick
+- [x] Wire `lib/math-quiz.ts` into Quiz tab — math mode toggle, all 1060 questions accessible
+- [x] Wire `lib/bilingual-stories.ts` into Library tab — level filter K/A1/A2/B1 + reader modal
+- [x] Quest completion persistence (pks3-completedQuests with Done/Undo button)
+- [x] Story reading progress (pks3-readStories with auto-mark + counter)
+- [x] SSG hang fix via dynamic import ssr:false
+- [x] Turbopack root misdetection fix (stale package-lock.json)
+- [x] Career Q&A system added (12 topics, 3-day cron refresh)
+- [ ] `pnpm dev` smoke test — anh visually verify dashboard with 4 banks live
+- [ ] Đại Ka chat thử Vietnamese — verify language adapt by age 5/9/11
+- [ ] Build script: print getQuestStats() + getMathStats() + getStoryStats() + getEnglishStats() once for sanity
 
 ### Internal usage feedback (Phúc/An/Y)
 - [ ] Onboarding session — anh giới thiệu 12 pillars + 4 banks mới to 3 kids

@@ -4959,14 +4959,17 @@ function EnglishSkillsTab({ kids, englishProgress, setEnglishProgressP, activeKi
         <span className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1 }}>
           {L('Cấp độ', 'Level')}:
         </span>
-        {(['A1', 'A2', 'B1'] as CEFRLevel[]).map(lvl => (
+        {(['K', 'A1', 'A2', 'B1'] as CEFRLevel[]).map(lvl => (
           <button key={lvl} onClick={() => setLevel(lvl)} className="btn-bounce body-f" style={{
             background: level === lvl ? C.purple : '#fff', color: level === lvl ? '#fff' : C.purple,
             border: `2px solid ${C.purple}`, padding: '4px 12px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
           }}>{lvl}</button>
         ))}
         <span className="body-f" style={{ fontSize: 11, color: C.mute, marginLeft: 8 }}>
-          ({L(level === 'A1' ? '6-8t · vỡ lòng' : level === 'A2' ? '9-11t · sơ cấp' : '12-15t · trung cấp', level === 'A1' ? 'ages 6-8 · beginner' : level === 'A2' ? 'ages 9-11 · elementary' : 'ages 12-15 · intermediate')})
+          ({L(
+            level === 'K' ? '4-6t · mầm non' : level === 'A1' ? '7-8t · vỡ lòng' : level === 'A2' ? '9-11t · sơ cấp' : '12-15t · trung cấp',
+            level === 'K' ? 'ages 4-6 · kindergarten' : level === 'A1' ? 'ages 7-8 · beginner' : level === 'A2' ? 'ages 9-11 · elementary' : 'ages 12-15 · intermediate'
+          )})
         </span>
       </div>
 

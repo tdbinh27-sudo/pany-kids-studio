@@ -1,7 +1,7 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-05-09 (Session 12 — Kid info correction + 4 content banks expansion)
-**Current state:** v3.3-A in progress — kid ages corrected (Phúc 11/An 9/Y 5), 4 new content banks committed (quests, English expanded, math, stories). Sprint 2 content seeding ~50% complete in 1 session.
+**Last updated:** 2026-05-10 (Session 14 — CEFRLevel 'K' picker fix)
+**Current state:** v3.3-A SHIPPED on 2026-05-10 08:20 (`bcbbdb9`) — Session 12+13 work merged: 4 content banks wired, persistence (pks3-completedQuests + pks3-readStories), SSG hang fix, career Q&A. Session 14 patch: EnglishSkillsTab level picker now exposes 'K' for Như Ý + correct age description (was silently falling through to "12-15t · trung cấp" for K).
 
 ## ⭐ SESSION 12 (2026-05-09) — DATA EXPANSION
 
