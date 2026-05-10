@@ -319,6 +319,30 @@ const rng = (seed: number) => {
 
 const pick = <T,>(arr: T[], r: () => number): T => arr[Math.floor(r() * arr.length)];
 
+// Bounded wrong-answer collector. Prevents infinite loops when the RNG-driven
+// candidate space yields fewer than 3 valid values for the correct answer
+// (e.g. genL3 algebra at x=1 where only {2, 3} satisfy w!==x && w>0 in ±2 range).
+// `validate` decides whether a candidate is acceptable; `fallback(i)` provides
+// guaranteed-distinct candidates indexed by 1..N if RNG attempts exhaust.
+function collectWrongs<T>(
+  correct: T,
+  candidate: () => T,
+  fallback: (i: number) => T,
+  validate: (w: T) => boolean,
+  maxAttempts = 40,
+): T[] {
+  const wrong = new Set<T>();
+  for (let attempts = 0; wrong.size < 3 && attempts < maxAttempts; attempts++) {
+    const w = candidate();
+    if (w !== correct && validate(w)) wrong.add(w);
+  }
+  for (let i = 1; wrong.size < 3 && i < 200; i++) {
+    const w = fallback(i);
+    if (w !== correct && validate(w)) wrong.add(w);
+  }
+  return Array.from(wrong);
+}
+
 // L1 GEN — addition / subtraction with results 1-10
 function genL1AddSub(seed: number, count: number): MathQuestion[] {
   const r = rng(seed);
@@ -335,11 +359,12 @@ function genL1AddSub(seed: number, count: number): MathQuestion[] {
       b = Math.floor(r() * a) + 1;
       ans = a - b;
     }
-    const wrong = new Set<number>();
-    while (wrong.size < 3) {
-      const w = ans + Math.floor(r() * 5) - 2;
-      if (w !== ans && w >= 0 && w <= 12) wrong.add(w);
-    }
+    const wrong = collectWrongs<number>(
+      ans,
+      () => ans + Math.floor(r() * 5) - 2,
+      (i) => Math.min(12, ans + i + 2),
+      (w) => w !== ans && w >= 0 && w <= 12,
+    );
     const opts = [ans, ...wrong].sort(() => r() - 0.5).map(String);
     const correctIdx = opts.indexOf(String(ans));
     out.push(M(`l1-gen-${i}`, 'L1', op === '+' ? 'add' : 'subtract',
@@ -368,12 +393,13 @@ function genL2(seed: number, count: number): MathQuestion[] {
       b = 2 + Math.floor(r() * 11); const q = 2 + Math.floor(r() * 12); a = b * q;
       op = '÷'; ans = a / b; topic = 'divide';
     }
-    const wrong = new Set<number>();
     const span = Math.max(3, Math.floor(Math.abs(ans) * 0.1));
-    while (wrong.size < 3) {
-      const w = ans + Math.floor(r() * span * 2) - span;
-      if (w !== ans && w >= 0) wrong.add(w);
-    }
+    const wrong = collectWrongs<number>(
+      ans,
+      () => ans + Math.floor(r() * span * 2) - span,
+      (i) => ans + i + span,
+      (w) => w !== ans && w >= 0,
+    );
     const opts = [ans, ...wrong].sort(() => r() - 0.5).map(String);
     const correctIdx = opts.indexOf(String(ans));
     out.push(M(`l2-gen-${i}`, 'L2', topic,
@@ -393,11 +419,12 @@ function genL3(seed: number, count: number): MathQuestion[] {
       const p = pick([10, 20, 25, 30, 40, 50, 60, 75, 80], r);
       const n = pick([40, 50, 80, 100, 120, 150, 200, 300, 400], r);
       const ans = (p * n) / 100;
-      const wrong = new Set<number>();
-      while (wrong.size < 3) {
-        const w = ans + (Math.floor(r() * 11) - 5) * (n / 100);
-        if (Math.abs(w - ans) > 0.5 && w >= 0) wrong.add(Math.round(w));
-      }
+      const wrong = collectWrongs<number>(
+        Math.round(ans),
+        () => Math.round(ans + (Math.floor(r() * 11) - 5) * (n / 100)),
+        (i) => Math.round(ans + i * Math.max(1, n / 100)),
+        (w) => w !== Math.round(ans) && w >= 0,
+      );
       const opts = [ans, ...wrong].sort(() => r() - 0.5).map((x) => String(x));
       const correctIdx = opts.indexOf(String(ans));
       out.push(M(`l3-gen-${i}`, 'L3', 'percent',
@@ -408,11 +435,12 @@ function genL3(seed: number, count: number): MathQuestion[] {
       const x = 1 + Math.floor(r() * 9);
       const b = Math.floor(r() * 10);
       const c = a * x + b;
-      const wrong = new Set<number>();
-      while (wrong.size < 3) {
-        const w = x + Math.floor(r() * 5) - 2;
-        if (w !== x && w > 0) wrong.add(w);
-      }
+      const wrong = collectWrongs<number>(
+        x,
+        () => x + Math.floor(r() * 5) - 2,
+        (i) => x + i + 2, // guaranteed > x, > 0
+        (w) => w !== x && w > 0,
+      );
       const opts = [x, ...wrong].sort(() => r() - 0.5).map(String);
       const correctIdx = opts.indexOf(String(x));
       out.push(M(`l3-gen-${i}`, 'L3', 'algebra',
@@ -422,11 +450,15 @@ function genL3(seed: number, count: number): MathQuestion[] {
       const x1 = parseFloat((r() * 10 + 1).toFixed(1));
       const x2 = parseFloat((r() * 10 + 1).toFixed(1));
       const ans = parseFloat((x1 + x2).toFixed(1));
-      const wrong = new Set<string>();
-      while (wrong.size < 3) {
-        const w = parseFloat((ans + (Math.floor(r() * 7) - 3) * 0.1).toFixed(1));
-        if (Math.abs(w - ans) > 0.05) wrong.add(String(w));
-      }
+      const wrong = collectWrongs<string>(
+        String(ans),
+        () => {
+          const w = parseFloat((ans + (Math.floor(r() * 7) - 3) * 0.1).toFixed(1));
+          return Math.abs(w - ans) > 0.05 ? String(w) : String(ans);
+        },
+        (i) => parseFloat((ans + i * 0.5).toFixed(1)).toString(),
+        (w) => w !== String(ans),
+      );
       const opts = [String(ans), ...wrong].sort(() => r() - 0.5);
       const correctIdx = opts.indexOf(String(ans));
       out.push(M(`l3-gen-${i}`, 'L3', 'decimal',
@@ -449,11 +481,12 @@ function genL4(seed: number, count: number): MathQuestion[] {
       const c = 1 + Math.floor(r() * (a - 1));
       const b = Math.floor(r() * 10);
       const d = (a - c) * xVal + b;
-      const wrong = new Set<number>();
-      while (wrong.size < 3) {
-        const w = xVal + Math.floor(r() * 7) - 3;
-        if (w !== xVal && w > 0) wrong.add(w);
-      }
+      const wrong = collectWrongs<number>(
+        xVal,
+        () => xVal + Math.floor(r() * 7) - 3,
+        (i) => xVal + i + 3,
+        (w) => w !== xVal && w > 0,
+      );
       const opts = [xVal, ...wrong].sort(() => r() - 0.5).map(String);
       const correctIdx = opts.indexOf(String(xVal));
       out.push(M(`l4-gen-${i}`, 'L4', 'algebra',
@@ -464,11 +497,12 @@ function genL4(seed: number, count: number): MathQuestion[] {
       const triples = [[3,4,5],[5,12,13],[8,15,17],[7,24,25],[9,40,41],[6,8,10],[9,12,15]];
       const t = pick(triples, r);
       const ans = t[2];
-      const wrong = new Set<number>();
-      while (wrong.size < 3) {
-        const w = ans + Math.floor(r() * 9) - 4;
-        if (w !== ans && w > 0) wrong.add(w);
-      }
+      const wrong = collectWrongs<number>(
+        ans,
+        () => ans + Math.floor(r() * 9) - 4,
+        (i) => ans + i + 4,
+        (w) => w !== ans && w > 0,
+      );
       const opts = [ans, ...wrong].sort(() => r() - 0.5).map(String);
       const correctIdx = opts.indexOf(String(ans));
       out.push(M(`l4-gen-${i}`, 'L4', 'geometry',
@@ -480,11 +514,12 @@ function genL4(seed: number, count: number): MathQuestion[] {
       const side = 3 + Math.floor(r() * 12);
       const askArea = r() < 0.5;
       const ans = askArea ? side * side : 4 * side;
-      const wrong = new Set<number>();
-      while (wrong.size < 3) {
-        const w = ans + Math.floor(r() * 21) - 10;
-        if (w !== ans && w > 0) wrong.add(w);
-      }
+      const wrong = collectWrongs<number>(
+        ans,
+        () => ans + Math.floor(r() * 21) - 10,
+        (i) => ans + i + 10,
+        (w) => w !== ans && w > 0,
+      );
       const opts = [ans, ...wrong].sort(() => r() - 0.5).map(String);
       const correctIdx = opts.indexOf(String(ans));
       out.push(M(`l4-gen-${i}`, 'L4', 'geometry',
