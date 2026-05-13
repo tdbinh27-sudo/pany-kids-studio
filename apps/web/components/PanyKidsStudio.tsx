@@ -1224,6 +1224,11 @@ function TabNav({ activeTab, setActiveTab, t, sidebarOpen, setSidebarOpen, L }) 
       { id: 'portfolio',   label: t('portfolio'),   em: '🖼️' },
       { id: 'leaderboard', label: t('leaderboard'), em: '📊' },
     ]},
+    { vi: 'Khám phá', en: 'Explore', items: [
+      { id: 'library',     label: t('library'),     em: '📚' },
+      { id: 'aisearch',    label: t('aiSearch'),    em: '🔍' },
+      { id: 'quiz',        label: t('quiz'),        em: '🧩' },
+    ]},
     { vi: 'Công cụ học', en: 'Learning', items: [
       { id: 'hardware',    label: t('hardware'),    em: '💻' },
       { id: 'software',    label: t('software'),    em: '🤖' },
@@ -1243,11 +1248,6 @@ function TabNav({ activeTab, setActiveTab, t, sidebarOpen, setSidebarOpen, L }) 
       { id: 'rewards',     label: t('rewards'),     em: '🎁' },
       { id: 'experiences', label: t('experiences'), em: '🌳' },
       { id: 'publish',     label: t('publish'),     em: '📤' },
-    ]},
-    { vi: 'Khám phá', en: 'Explore', items: [
-      { id: 'library',     label: t('library'),     em: '📚' },
-      { id: 'aisearch',    label: t('aiSearch'),    em: '🔍' },
-      { id: 'quiz',        label: t('quiz'),        em: '🧩' },
     ]},
     { vi: 'Hệ thống', en: 'System', items: [
       { id: 'report',      label: t('report'),      em: '📋' },

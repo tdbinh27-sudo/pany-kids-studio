@@ -185,3 +185,87 @@
   - Suggestions are non-persistent — anh must manually paste chosen entries into `SEED_QNA[]` after review. Future: GitHub Actions automation possible if anh wants.
 - **Companion deliverable**: `docs/career-philosophy.md` — 3-tier framework (Discovery 4-10t / Exploration 11-13t / Specialization 14-18t), Pany Kids Loop weekly workflow, 4 parenting trust pillars, 4-layer data organization, 5-year roadmap 2026-2031.
 
+## 2026-05-13 — Session 16: Commercialization scope locked
+
+### D-020: Commercial pattern = clone Pany Gia Phả multi-tenant SaaS ✅ FINAL
+- **Decision**: Adapt Gia Phả's commercial assets (live since 2026-05-12) into Kids Studio. Port `clan_*` → `family_*`, re-use Brevo + Telegram bot + auto-provision pipeline.
+- **Why**: Gia Phả already battle-tested with 1 real customer (Mai/họ Lê) → ~60% code re-use, eliminates 15h dev work, proven UX flow.
+- **Source assets to fork**: `lib/clan-provision.ts` → `family-provision.ts`, `(landing)/sell/`, `(landing)/sell/register/`, `(public)/dangky/`, `admin/signup-requests/`, `lib/email.ts`, `lib/notifications.ts`, `og-image.svg`, `share-kit.md`.
+
+### D-021: Subdomain = `kids.panyvn.app` ✅ FINAL (Q1)
+- **Decision**: Use `kids.panyvn.app` (free Vercel subdomain) — defer `panykids.io` $15/yr purchase to post-3-month review.
+- **Why**: Ship fast, stay in panyvn.app ecosystem with Gia Phả + Super OS for unified branding.
+
+### D-022: Pricing = FREE for first 3 months, no tiers ✅ FINAL (Q2 revised by anh)
+- **Decision**: Landing page nicely built like Gia Phả + auto-register, BUT **REMOVE all tier pricing display**. Free download/use trial period = **3 months** (review trigger 2026-08-13). All features unlocked during trial. After 3 months: review usage data → decide pricing model.
+- **Why**: Anh's instinct — get organic adoption signal first, defer monetization decisions until real usage proves which features are sticky.
+- **Trade-off**: Cost risk during free trial = Anthropic API spend. Mitigation: per-family Đại Ka cap (100 turns/month default) + Haiku 4.5 fallback if cost > $50/mo aggregate.
+- **Review trigger**: 2026-08-13 — decide between (a) keep free, (b) introduce paid tier, (c) freemium with usage cap.
+
+### D-023: P0 sidebar reorder shipped same day ✅ FINAL (Q3)
+- **Decision**: Move "Khám phá" tab group from position #6 to position #3 (under "Học viên", above "Công cụ học").
+- **Why**: Per anh's request — Khám phá (Library + AI Search + Quiz) is high-engagement content, deserves promotion above tooling tabs.
+- **Impact**: 1 file change (`PanyKidsStudio.tsx` lines 1227-1255), 5 ins / 5 del, TypeScript clean. Mobile MobileTabBar unchanged (only 4 main tabs).
+
+### D-024: Content seed via CTV draft + bố review ✅ FINAL (Q4)
+- **Decision**: Phase 2 content expansion (age 5-16 personalization + B2 English + L5 math + teen careers) → CTV writes draft using template, bố reviews + approves.
+- **Why**: Anh's 60h cap is tight; CTV draft saves ~70% writing time; bố review preserves quality + tone control.
+- **Implementation**: Templates in `artifacts/content-templates/` (TBD), CTV checklist with rejection criteria, per-batch approval log.
+
+### D-025: Backfill Sprint 2 feedback Day 1-4 before P1 starts ✅ FINAL (Q5)
+- **Decision**: Anh sits 30min with 3 con today (2026-05-13) to backfill `artifacts/feedback-week-1.md` Day 1-4 with actual observations before Phase 1 (multi-tenant schema) work begins.
+- **Why**: No usage signal = no validation that commercial product solves real problem. Risk of building 28h for the wrong shape.
+- **Gate**: If Day 1-4 backfill reveals < 60% kid engagement (each kid uses < 3 tabs voluntarily), defer commercialization 2 weeks for UX iteration first.
+
+### D-026: Beta cohort = family + friends + school groups + FB; B2B separate enterprise pricing ✅ FINAL (Q6)
+- **Decision**: Beta cohort for free 3-month trial = anh em họ + bạn bè + parent groups of các con's class (Phúc lớp 6, An lớp 4, Y lớp lá) + targeted FB parent groups.
+- **B2B carve-out**: Schools, education centers, enterprise tutoring services → SEPARATE quote-based enterprise tier (NOT free trial). To be priced individually based on student count + features.
+- **Why**: B2C trial generates organic signal; B2B is different sales motion + different cost profile + different LTV expectation. Conflating them dilutes both.
+- **Acquisition channels**:
+  - Primary: WhatsApp/Zalo personal share with anh em họ + 2-3 close friends
+  - Secondary: FB parent groups (3-5 communities anh đã active)
+  - Tertiary: Kid school class groups via teacher/parent rep intro (Phúc class, An class)
+  - B2B inbound only: queries via giapha.panyvn.app contact → route to enterprise pipeline
+
+### D-027: Payment = SePay VietQR only initially ✅ FINAL (Q7)
+- **Decision**: When pricing introduced (post-3-month review), use SePay VietQR as sole payment rail. MoMo/ZaloPay/credit card defer until MRR justifies integration cost.
+- **Why**: SePay already integrated in PANY biz stack; VietQR has ~95% Vietnamese parent adoption; no card processing PCI scope.
+- **Review trigger**: Add MoMo/ZaloPay when MRR ≥ 5M ₫/month sustained 2 months.
+
+### D-028: Age personalization 5-16 by single-year granularity ✅ FINAL (Trục 6 new)
+- **Decision**: Move from 3-bucket age groups (K=4-6, P=7-11, T=12-15) to **12 single-year age tracks** (5, 6, 7, ..., 16). Content sourced from:
+  - **Layer 1 — School textbook tracking**: Bộ Giáo dục VN curriculum per grade (lớp lá, lớp 1-12)
+  - **Layer 2 — Reference book corpus**: VN reference book series (Cánh Diều, Kết Nối Tri Thức, Chân Trời Sáng Tạo)
+  - **Layer 3 — Advanced knowledge sources**: International (Khan Academy, Brilliant, Coursera Kids, AoPS) + Vietnamese (HOCMAI, Vinschool, VAS curricula)
+- **Why**: 3-bucket forced same content for 5t and 6t (mầm non lớp chồi vs lá very different), 7t and 11t (lớp 2 vs lớp 5 huge gap), 12t and 15t (lớp 6 vs lớp 10 nearly different worlds). Single-year tracks let Đại Ka + content adapt precisely.
+- **Implementation**:
+  - `lib/age-curriculum.ts` NEW — map age → VN grade level → curriculum modules → recommended content per pillar
+  - `getContentForAge(age, pillar)` helper → returns age-specific quests/quiz/stories/career-qna
+  - Migration: existing K/P/T tagged content keeps backward-compat; new content tagged with primary age + range fallback
+  - Tooling: scripts to ingest VN curriculum tables of contents → seed mapping
+- **Effort estimate**: +15h on top of original 14h estimate for Section 2.1 of plan = ~29h total for age expansion + personalization.
+- **CTV scope (D-024)**: CTV produces content per grade (lớp 1, 2, ..., 12) following templates. Bố approves per batch.
+
+### D-029: Khám phá tab knowledge links — anh-curated ✅ FINAL (Trục 7 new)
+- **Decision**: Anh personally curates premium knowledge links for Khám phá tab (Library + AI Search + Quiz subtabs). Em provides UI scaffold + admin form (or `lib/curated-links.ts` schema) for anh to drop entries in.
+- **Why**: Quality of educational links is a trust signal anh wants to control directly, not delegate to AI generation or CTV.
+- **Implementation**:
+  - `lib/curated-links.ts` NEW — schema: `{ id, title_vi, title_en, url, description, ageRange: [min,max], pillar, source_authority, addedBy, addedDate, tags[] }`
+  - LibraryTab renders these curated entries above existing content
+  - Admin form at Settings → "Curated Links" (parent mode only) for anh to add/edit
+  - Future: peer parent sharing — admin from other families can submit, anh approves
+
+### D-030: Đại Ka chatbot name = KEEP, add per-family rename override ✅ FINAL (Q8)
+- **Decision**: DO NOT global-rename "Đại Ka" → "Cô Pany". Honor D-011 (2026-05-01 "Đại Ka stays NOT renamed to Cô Pany"). Instead, **add Settings option** so each family can rename their chatbot.
+- **Why**:
+  - 197 occurrences across 28 files + 40 system prompt refs in `claude.ts` = ~6h pure rename effort + retune risk on tone calibration
+  - D-011 explicit decision documented with reasoning (mentor-energy vs kawaii) — overturning needs new strong reason
+  - "Cô Pany" works for commercial branding alignment with PANY — but forcing it kills brand neutrality for non-PANY families
+- **Implementation** (~2h):
+  - Add `family_settings.chatbot_name` (default `'Đại Ka'`)
+  - Add `family_settings.chatbot_pronoun` (default `'Đại Ka'`, alternatives: `'Cô Pany'`, `'Anh AI'`, `'Bạn AI'`, custom)
+  - Inject into system prompt: `const botName = familySettings.chatbot_name; ... "Bạn là ${botName}..."`
+  - Settings UI tab: "Tên trợ lý AI" picker — 4 presets + custom text input
+  - PANY-branded marketing copy can use "Cô Pany" as PANY-house default while users override
+- **Migration**: No-op for existing kids (default = 'Đại Ka' preserved). New families during onboarding wizard see picker as Step 3.
+

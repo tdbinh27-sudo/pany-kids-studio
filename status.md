@@ -1,9 +1,24 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-05-10 (Session 15 — CRITICAL: math-quiz infinite loop hotfix)
-**Current state:** v3.3-C live on production via manual `vercel deploy --prod` (auto-deploy webhook broken, see ⚠️ below). Production was stuck on "Loading Pany Kids Studio..." for ~90 minutes due to deterministic infinite loop in `lib/math-quiz.ts` module-load. Fix: bounded `collectWrongs()` helper applied to all 6 generator branches. Verified live at https://pany-kids-studio.vercel.app/ — full app hydrates, zero console errors. Session 14 picker fix included.
+**Last updated:** 2026-05-13 1:36pm GMT+7 (Session 16 — Status sync, 3-day gap since hotfix)
+**Current state:** v3.3-C still live on production. No new commits since `eeea893` (2026-05-10). Both endpoints verified healthy at session open: `https://pany-kids-studio.vercel.app` HTTP 200 (title "Pany Kids Studio"), VPS `61.14.233.122` HTTP 200. **No regressions detected.**
 
-⚠️ **Vercel auto-deploy webhook broken** — pushes `c3f947a` (Session 14 fix), `322ac64` (docs), `8931a53` (Session 15 hotfix) did NOT auto-deploy. Used `vercel deploy --prod` manually. Anh check Vercel project → Settings → Git → re-link GitHub integration when convenient.
+## 🔄 SESSION 16 (2026-05-13) — STATUS SYNC
+
+**Gap audit (5/10 → 5/13):**
+- ✅ Production stable — hotfix `8931a53` still serving, no console errors reported
+- 🔴 **Sprint 2 Week 1 feedback file empty** — `artifacts/feedback-week-1.md` Day 1 (Thứ 7 5/10 onboarding) through Day 4 (Thứ 3 5/13, today) all unfilled. Real-usage iteration loop has NOT started. This is the biggest risk to Sprint 2 timeline (5/8 → 7/8).
+- 🔴 **Anthropic API key still NOT rotated** — flagged Session 12 (5/9), now 4 days post-hotfix, ~11 sessions total. Manual action at https://console.anthropic.com/settings/keys.
+- ⚠️ **Vercel auto-deploy webhook still broken** — re-link GitHub integration in Settings → Git pending.
+- ⚠️ **Local uncommitted state** from Session 15 hotfix verification:
+  - `apps/web/package.json` adds `boneyard-js@^1.8.1` (runtime dep) + `playwright@^1.59.1` (dev dep)
+  - `apps/web/pnpm-lock.yaml` matching
+  - Untracked: `boneyard.config.json` (146B), `screenshot-hydration-check.png` (228KB), `verify-fix.png` (228KB)
+  - **Decision needed:** keep boneyard as a real dep (commit) OR strip + gitignore screenshots (revert experiment)
+
+**No code changes this session — sync-only.**
+
+⚠️ **Vercel auto-deploy webhook still broken** — pushes `c3f947a` (Session 14 fix), `322ac64` (docs), `8931a53` (Session 15 hotfix) did NOT auto-deploy. Used `vercel deploy --prod` manually. Anh check Vercel project → Settings → Git → re-link GitHub integration when convenient.
 
 ## ⭐ SESSION 12 (2026-05-09) — DATA EXPANSION
 
@@ -111,7 +126,7 @@ Browser-native interactive English practice. CEFR-leveled (A1/A2/B1) auto-picked
 | Phase 10 — v3.2-B Development pillars | ✅ DONE 5/2 |
 | Phase 11 — v3.2-C Mobile scaffold | ✅ DONE 5/2 |
 | **Sprint 1** — Internal build (1 week) | ✅ COMPLETE |
-| **Sprint 2** — Iterate w/ Phúc/An/Y (2 months, 5/8 - 7/8) | ⏳ STARTING |
+| **Sprint 2** — Iterate w/ Phúc/An/Y (2 months, 5/8 - 7/8) | ⚠️ WEEK 1 IN PROGRESS — feedback file empty Day 1-4 |
 | Sprint 3 — Mobile mature + App Store submission (7/2026) | ⏸️ Future |
 | Sprint 4 — Beta family expansion (8/2026) | ⏸️ Future |
 | Public launch | ⏸️ Target 8/16/2026 |

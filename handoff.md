@@ -1,7 +1,29 @@
 # Handoff — Pany Kids Studio
 
-**Last updated:** 2026-05-10 (Session 14 — CEFRLevel 'K' picker fix)
-**Resume command:** `Continue pany-kids-studio Sprint 2 daily usage` (recommended) — see options at bottom.
+**Last updated:** 2026-05-13 1:36pm GMT+7 (Session 16 — Status sync after 3-day gap)
+**Resume command:** `Continue pany-kids-studio Sprint 2 — Day 4 feedback catch-up + decide debug-deps cleanup`
+
+## Session 16 (2026-05-13) — Sync only, no code changes
+
+Anh mở lại dự án sau 3 ngày yên. Em check state:
+
+| Check | Result |
+|-------|--------|
+| Production web | ✅ HTTP 200, title "Pany Kids Studio" |
+| VPS 24/7 | ✅ HTTP 200 |
+| Git branch | `main`, 0 commits ahead of `eeea893` (5/10 EOD) |
+| Local uncommitted | 2 modified (`package.json`, `pnpm-lock.yaml`) + 3 untracked (debug PNG×2 + `boneyard.config.json`) |
+| Sprint 2 feedback Day 1-4 | 🔴 ALL EMPTY (`artifacts/feedback-week-1.md`) |
+| API key rotation | 🔴 Still pending, ~11 sessions |
+| Vercel webhook | ⚠️ Still broken (manual `vercel deploy --prod` only) |
+
+**3 open decisions for anh:**
+
+1. **Debug-deps cleanup** — Session 15 hotfix verify added `boneyard-js@1.8.1` (runtime) + `playwright@1.59.1` (dev) + 2 hydration screenshots + 1 boneyard config. Two paths:
+   - **A) Keep:** commit `boneyard-js` + `playwright` as legitimate verify tooling, gitignore the PNGs + boneyard config
+   - **B) Strip:** revert `package.json` + `pnpm-lock.yaml`, delete 3 untracked files — back to pristine post-hotfix state
+2. **Sprint 2 cadence reset** — Feedback file Day 1-4 empty. Options: (a) anh sit with 3 kids 30min today to backfill Day 1-4 with what you remember, (b) abandon Day 1-4 and start clean Day 5 (Thứ 4 5/14), (c) extend Week 1 by 3 days (slide schedule).
+3. **API key rotation** — 4 days past hotfix, exposed in old logs since Session 12. Anh chỉ cần 2 phút click rotate ở `console.anthropic.com/settings/keys` + paste new key vào Vercel + VPS env.
 
 ## Session 14 (2026-05-10, this session) — patch on top of v3.3-A
 

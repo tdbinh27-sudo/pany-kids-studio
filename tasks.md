@@ -1,6 +1,15 @@
 # Pany Kids Studio — Tasks
 
-## NOW (Sprint 2 — week 1 of 8)
+## NOW (Sprint 2 — week 1 of 8, Day 4 of 7)
+
+### Session 16 (2026-05-13) — Status sync, 3-day gap
+
+- [x] Verified production HTTP 200 (Vercel + VPS)
+- [x] Updated status.md + handoff.md to today (sync-only, no code)
+- [ ] **DECISION:** debug-deps cleanup — keep `boneyard-js`+`playwright` (Path A) or revert (Path B)
+- [ ] **DECISION:** Sprint 2 cadence — backfill Day 1-4 / restart Day 5 / slide schedule
+- [ ] **BLOCKED ON ANH:** rotate Anthropic API key (4 days past hotfix, ~11 sessions exposed)
+- [ ] **BLOCKED ON ANH:** re-link Vercel ↔ GitHub webhook (Settings → Git)
 
 ### Session 15 (2026-05-10) — 🔴 CRITICAL: math-quiz infinite loop hotfix
 - [x] Diagnosed: production stuck on "Loading Pany Kids Studio..." ~90 min
