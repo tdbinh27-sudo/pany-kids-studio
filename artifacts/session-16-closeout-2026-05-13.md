@@ -1,8 +1,22 @@
 # Session 16 Closeout — Pany Kids Studio Commercialization Scaffold
 
-**Date:** 2026-05-13 (~13:30 → ~18:00 GMT+7, ~4.5h working)
-**Outcome:** P0 SHIPPED + P2 FOUNDATION + P3 SKELETON + Commercial routes all built.
-**Status:** Blocked on anh — 7 Resume Gate items.
+**Date:** 2026-05-13 (~13:30 → ~20:30 GMT+7, ~7h working — extended after initial closeout)
+**Outcome:** P0 SHIPPED + P2 FOUNDATION (full 5-16 seed) + P3 SKELETON + Commercial routes + Admin Dashboard + Onboarding API all built.
+**Status:** Blocked on anh — 7 Resume Gate items. Mai tiếp tục.
+
+## 🌙 Closeout extension (post-initial save, 2026-05-13 evening)
+
+After initial S+T closeout, anh requested polish work to continue parallel:
+- **Push 8 commits to GitHub** ✅ (origin/main now matches local)
+- **Full curriculum seed 5-16** ✅ (12 single-year tracks complete)
+- **/admin/dashboard combined UI** ✅ (5 sections + cost guard banner)
+- **D-032 chatbot rename hybrid** ✅ ("Cô Pany" default for new families, "Đại Ka" override for 3 con)
+- **X: seed-content.ts** ✅ (~60 sample entries dev test data)
+- **Z: family-onboarding.ts** ✅ (3-step wizard helpers + smart suggestions)
+- **AA: plan progress dashboard** ✅ (D-032 + new milestones logged)
+- **BB: /api/family/onboarding route** ✅ (POST step submit + GET state, wires Z into HTTP)
+
+**Session 16 final total: 11 commits, ~8.5K LOC, 13 decisions D-020 → D-032.**
 
 > **Single-file resume packet.** Next session: open this file first, then `handoff.md`, then start work. All canonical files (status/handoff/tasks/decisions/plan) updated synchronously.
 

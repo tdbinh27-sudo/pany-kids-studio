@@ -1,7 +1,17 @@
 # Handoff — Pany Kids Studio
 
-**Last updated:** 2026-05-13 ~17:30 GMT+7 (Session 16 — MAJOR: P0 + P2 foundation + P3 skeleton + commercial pipeline)
-**Resume command:** `Continue pany-kids-studio P1 schema apply` (after anh hoàn thành 4 gate items below)
+**Last updated:** 2026-05-13 ~20:30 GMT+7 (Session 16 EOD — closeout + polish + D-032 + BB onboarding API)
+**Resume command (mai 2026-05-14):** `Continue pany-kids-studio — đọc artifacts/session-16-closeout-2026-05-13.md trước rồi tiếp tục theo Resume Gate`
+
+## Mai resume (2026-05-14)
+
+Đọc 3 file theo thứ tự để có full context:
+
+1. `artifacts/session-16-closeout-2026-05-13.md` — single-file resume packet (đã update v2 với extension)
+2. `decisions.md` — 13 decisions D-020 → D-032 (đặc biệt D-032 chatbot rename hybrid)
+3. `handoff.md` (file này) — Resume Gate 7 items below
+
+Sau khi anh hoàn thành 4 Block 1 items → ping em "Bắt đầu P1" → em wire end-to-end live.
 
 ## Session 16 RESUME GATE (anh làm trước khi em chạy P1 wire-up)
 

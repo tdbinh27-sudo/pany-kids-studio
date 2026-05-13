@@ -59,6 +59,9 @@ CREATE TABLE IF NOT EXISTS public.family_settings (
   chatbot_name_en    TEXT,                                          -- optional EN variant
   primary_lang       TEXT NOT NULL DEFAULT 'vi'
                      CHECK (primary_lang IN ('vi', 'en')),
+  onboarding_step    TEXT NOT NULL DEFAULT '1'                      -- BB: family-onboarding wizard state
+                     CHECK (onboarding_step IN ('1', '2', '3', 'done')),
+  onboarding_completed_at TIMESTAMPTZ,
   parent_pin         TEXT NOT NULL DEFAULT '0000',                  -- 4-digit hash recommended in prod
   monthly_chat_cap   INTEGER NOT NULL DEFAULT 100,                  -- D-022 cost guardrail
   monthly_chat_used  INTEGER NOT NULL DEFAULT 0,
@@ -262,8 +265,10 @@ VALUES (
 )
 ON CONFLICT (slug) DO NOTHING;
 
-INSERT INTO public.family_settings (family_id, target_years, age_min, age_max, max_kids, chatbot_name, primary_lang, monthly_chat_cap)
-SELECT id, 5, 5, 16, 5, 'Đại Ka', 'vi', 1000  -- D-032: founding family explicit override keeps 'Đại Ka' (zero-disruption for Phúc/An/Y from Sprint 1+2); cap 10×
+INSERT INTO public.family_settings (family_id, target_years, age_min, age_max, max_kids, chatbot_name, primary_lang, monthly_chat_cap, onboarding_step, onboarding_completed_at)
+SELECT id, 5, 5, 16, 5, 'Đại Ka', 'vi', 1000, 'done', NOW()
+  -- D-032: founding family explicit override keeps 'Đại Ka' (zero-disruption for Phúc/An/Y from Sprint 1+2); cap 10×
+  -- BB: founding family pre-marked onboarding_step='done' (already configured manually in Sprint 1)
 FROM public.families
 WHERE slug = 'tran-binh'
 ON CONFLICT (family_id) DO NOTHING;
