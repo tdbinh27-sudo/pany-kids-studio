@@ -16,7 +16,7 @@ Pany Kids cần các env vars sau để chuyển từ "skeleton mode" → "live 
 | `NEXT_PUBLIC_SUPABASE_URL` | ✅ | Public Supabase project URL | P1 (sau khi apply migration) |
 | `SUPABASE_SERVICE_ROLE_KEY` | ✅ | Service-role key — RLS bypass cho server-side auto-provision | P1 |
 | `SUPABASE_ANON_KEY` | ✅ | Public anon key — client login | P1 |
-| `ANTHROPIC_API_KEY` | ✅ | Claude API cho Đại Ka chat | Cần ROTATE NGAY (đã pending 11+ session) |
+| `ANTHROPIC_API_KEY` | ✅ | Claude API cho Cô Pany chat (Đại Ka legacy) | Cần ROTATE NGAY (đã pending 11+ session) |
 | `BREVO_API_KEY` | ✅ | Transactional email gửi welcome | P3 |
 | `BREVO_SENDER_EMAIL` | ✅ | Sender domain (vd: `noreply@panyvn.app`) | P3 |
 | `TELEGRAM_BOT_TOKEN` | ✅ | Alert anh khi có lead mới | P3 (reuse từ Gia Phả) |

@@ -16,12 +16,12 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kids.panyvn.app';
 export const metadata: Metadata = {
   title: 'Pany Kids Studio — Studio học tập gia đình cho trẻ 5-16 tuổi',
   description:
-    'Dashboard học tập 24/7 cho 5 con. 12 trụ cột phát triển. Trợ lý AI Đại Ka đồng hành. Đăng ký miễn phí 3 tháng.',
+    'Dashboard học tập 24/7 cho 5 con. 12 trụ cột phát triển. Trợ lý AI Cô Pany đồng hành. Đăng ký miễn phí 3 tháng.',
   alternates: { canonical: `${APP_URL}/sell` },
   robots: { index: false, follow: false }, // hidden until launch
   openGraph: {
     title: '🌸 Pany Kids Studio — Đăng ký miễn phí 3 tháng',
-    description: 'Studio học tập cho gia đình Việt: 12 trụ cột phát triển × 5 học viên × trợ lý AI Đại Ka.',
+    description: 'Studio học tập cho gia đình Việt: 12 trụ cột phát triển × 5 học viên × trợ lý AI Cô Pany.',
     url: `${APP_URL}/sell`,
     siteName: 'Pany Kids Studio',
     locale: 'vi_VN',
@@ -58,7 +58,7 @@ const BRAND = {
 const features = [
   { icon: '🏠', title: '12 Trụ cột phát triển', desc: 'Công nghệ · Tiếng Anh · Tài chính · Tư duy · Kinh doanh · Trải nghiệm + 6 trụ cột phát triển toàn diện (Sáng tạo, Vận động, Tự khám phá, La bàn nghề, Gia đình, Theo dõi).' },
   { icon: '👥', title: 'Tối đa 5 học viên', desc: 'Tài khoản gia đình cho 1-5 con cùng độ tuổi 5-16. Mỗi con có PIN riêng, lộ trình riêng, badge riêng.' },
-  { icon: '🤖', title: 'Đại Ka — Trợ lý AI bố mẹ', desc: 'Claude Sonnet 4.6 đóng vai mentor ấm áp, kiên nhẫn. Tự switch ngôn ngữ Việt/Anh theo con. KHÔNG cho đáp án thẳng — dạy con tự nghĩ.' },
+  { icon: '🤖', title: 'Cô Pany — Trợ lý AI cho con', desc: 'Claude Sonnet 4.6 đóng vai cô giáo trẻ ấm áp, kiên nhẫn. Tự switch ngôn ngữ Việt/Anh theo con. KHÔNG cho đáp án thẳng — dạy con tự nghĩ.' },
   { icon: '📚', title: 'Khám phá tinh tuyển', desc: 'Thư viện + Quiz + AI Search. Liên kết kiến thức bố tự curated từ SGK Cánh Diều/KNTT/CTST + Khan Academy + HOCMAI.' },
   { icon: '🧭', title: 'La bàn 60 nghề', desc: 'Khám phá nghề tương lai qua RIASEC quiz 36/48 câu. 60 nghề × "ngày trong đời" giúp con thấy nghề thực tế.' },
   { icon: '🎯', title: 'Số năm chỉ tiêu tùy chỉnh', desc: 'Phụ huynh tự set 3 / 5 / 7 / 10 năm lộ trình. Mỗi năm có 4 quarters × objectives × pillars.' },
@@ -69,16 +69,16 @@ const features = [
 const howItWorks = [
   { n: 1, title: 'Đăng ký miễn phí', desc: 'Điền form 5 phút (tên, email, SĐT, độ tuổi các con). Hệ thống tự tạo gia đình ngay.' },
   { n: 2, title: 'Đăng nhập + setup', desc: 'Nhận email với link đăng nhập + mật khẩu tạm. Đổi mật khẩu, đặt PIN cho từng con.' },
-  { n: 3, title: 'Con khám phá hằng ngày', desc: 'Mỗi con login bằng PIN riêng. Làm quest, đọc truyện, chat Đại Ka. Bố mẹ xem progress.' },
+  { n: 3, title: 'Con khám phá hằng ngày', desc: 'Mỗi con login bằng PIN riêng. Làm quest, đọc truyện, chat Cô Pany. Bố mẹ xem progress.' },
   { n: 4, title: '3 tháng miễn phí trải nghiệm', desc: 'Toàn bộ tính năng mở khóa. Sau 3 tháng PANY sẽ thông báo phương án tiếp theo dựa trên usage thực tế.' },
 ];
 
 const faqs = [
   { q: 'Có thực sự miễn phí hoàn toàn không?', a: 'Đúng vậy. Trong giai đoạn 3 tháng đầu (tới 2026-08-13), toàn bộ tính năng được mở khóa, không thu phí. Sau đó PANY sẽ review usage rồi quyết định phương án tiếp theo — anh/chị sẽ được thông báo trước ít nhất 2 tuần.' },
-  { q: 'Con tôi 5 tuổi/16 tuổi có dùng được không?', a: 'Có. Pany Kids hỗ trợ chính xác từng độ tuổi 5-16 (12 single-year tracks). Nội dung được map theo chương trình VN: mầm non lá → lớp 11. Đại Ka tự điều chỉnh ngôn ngữ theo tuổi từng con.' },
+  { q: 'Con tôi 5 tuổi/16 tuổi có dùng được không?', a: 'Có. Pany Kids hỗ trợ chính xác từng độ tuổi 5-16 (12 single-year tracks). Nội dung được map theo chương trình VN: mầm non lá → lớp 11. Cô Pany tự điều chỉnh ngôn ngữ theo tuổi từng con.' },
   { q: 'Tôi có thể thêm bao nhiêu con vào 1 tài khoản?', a: 'Tối đa 5 học viên/gia đình. Mỗi con có profile + PIN + lộ trình riêng. Nếu anh/chị có nhiều hơn 5 con hoặc là trung tâm/trường — liên hệ phương án enterprise riêng.' },
-  { q: 'Đại Ka có thay được tên không?', a: 'Có. Mặc định "Đại Ka" (cảm giác anh cả/mentor). Anh/chị có thể đổi thành "Cô Pany", "Anh AI", "Bạn AI", hoặc tên tùy chỉnh trong Settings sau khi đăng nhập.' },
-  { q: 'Đại Ka có làm hộ bài tập không?', a: 'KHÔNG. Đại Ka tuyệt đối không cho đáp án thẳng (toán, code, văn). Dùng Socratic — hỏi ngược lại để dẫn dắt con tự nghĩ. Đây là rule cứng để bảo vệ tư duy con.' },
+  { q: 'Cô Pany có thay được tên không?', a: 'Có. Mặc định "Cô Pany" (cảm giác cô giáo trẻ ấm áp). Anh/chị có thể đổi thành "Đại Ka" (anh cả/mentor), "Anh AI", "Bạn AI", hoặc tên tùy chỉnh trong Settings sau khi đăng nhập.' },
+  { q: 'Cô Pany có làm hộ bài tập không?', a: 'KHÔNG. Cô Pany tuyệt đối không cho đáp án thẳng (toán, code, văn). Dùng Socratic — hỏi ngược lại để dẫn dắt con tự nghĩ. Đây là rule cứng để bảo vệ tư duy con.' },
   { q: 'Email tôi đã dùng cho sản phẩm PANY khác (như Gia Phả) — đăng ký Pany Kids được không?', a: 'Được. Khi hệ thống phát hiện email trùng, anh/chị sẽ được xác nhận qua SĐT (OTP) để liên kết Pany Kids vào account hiện có. Hoặc dùng email khác cũng được — hệ thống không bắt buộc unified account ban đầu.' },
   { q: 'Dữ liệu của con tôi có an toàn không?', a: 'Có. Dữ liệu lưu Supabase enterprise-grade + RLS per-family isolation (không gia đình nào xem được data gia đình khác). Tuân thủ PDPL Việt Nam (Luật 91/2025). Không bán data cho bên thứ ba.' },
 ];
@@ -99,7 +99,7 @@ export default function SellPage() {
             Studio học tập gia đình cho <strong>5 con × 12 trụ cột × 5-16 tuổi</strong>.
           </p>
           <p style={{ fontSize: 16, color: BRAND.mute, margin: '0 0 32px' }}>
-            Đại Ka — trợ lý AI Claude Sonnet 4.6 đồng hành cùng các con mỗi ngày.<br />
+            Cô Pany — trợ lý AI Claude Sonnet 4.6 đồng hành cùng các con mỗi ngày.<br />
             Setup 5 phút, dùng được ngay trên trình duyệt + điện thoại.
           </p>
           <Link

@@ -266,7 +266,7 @@ export default function RegisterPage() {
                 <li>Mở email từ noreply@panyvn.app</li>
                 <li>Click link login + đổi mật khẩu tạm</li>
                 <li>Vào tab "Học viên" → setup PIN + bio cho từng con</li>
-                <li>Khám phá 12 trụ cột + chat với Đại Ka</li>
+                <li>Khám phá 12 trụ cột + chat với Cô Pany</li>
               </ol>
             </div>
             {result?.app_link && (

@@ -7,12 +7,12 @@
  *              Port of Gia Phả's clan-provision.ts, adapted for Kids context:
  *              - clan → family
  *              - 12 lunar ceremonies → default family_settings (target_years,
- *                age range, max_kids, chatbot_name 'Đại Ka', primary_lang)
+ *                age range, max_kids, chatbot_name 'Cô Pany' (D-032), primary_lang)
  *              - +family_kids auto-create from kids_ages[] array
  *              - +trial_ends_at = NOW() + 3 months (D-022 free trial)
  *
  * @decision D-020 (clone Gia Phả pattern), D-022 (free 3mo), D-026 (max 5 kids),
- *           D-028 (age 5-16 single-year), D-030 (chatbot_name = Đại Ka default)
+ *           D-028 (age 5-16 single-year), D-030 + D-032 (chatbot_name = 'Cô Pany' default for new families; founding family override 'Đại Ka')
  * @status SKELETON — compiles, env-gated. Wire to /api/sell/register in P3.
  *
  * @flow
@@ -340,7 +340,7 @@ export async function provisionFamily(
     age_min: Math.min(...kidsAges, 5),
     age_max: Math.max(...kidsAges, 16),
     max_kids: 5, // D-026
-    chatbot_name: 'Đại Ka', // D-030 default (parent can rename in Settings)
+    chatbot_name: 'Cô Pany', // D-032 new-family default (parent can rename in Settings via D-030)
     primary_lang: 'vi',
     parent_pin: '0000', // user changes immediately
     monthly_chat_cap: 100, // D-022 cost guardrail
@@ -389,7 +389,7 @@ export async function provisionFamily(
     loginUrl,
     kidsCount: kidsAges.length,
     trialEndsAt: trialEndsHuman,
-    chatbotName: 'Đại Ka',
+    chatbotName: 'Cô Pany',
   });
 
   const emailResult = await sendFamilyEmail({

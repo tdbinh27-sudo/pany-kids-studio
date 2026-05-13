@@ -15,7 +15,7 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kids.panyvn.app';
 export const metadata: Metadata = {
   title: 'Pany Kids Studio — Studio học tập gia đình cho trẻ 5-16 tuổi',
   description:
-    'Bố Bình xây Pany Kids cho 3 con Phúc, An, Như Ý — giờ mở miễn phí cho gia đình Việt khác. 12 trụ cột × trợ lý AI Đại Ka × song ngữ Việt-Anh.',
+    'Bố Bình xây Pany Kids cho 3 con Phúc, An, Như Ý — giờ mở miễn phí cho gia đình Việt khác. 12 trụ cột × trợ lý AI Cô Pany × song ngữ Việt-Anh.',
   alternates: { canonical: `${APP_URL}/welcome` },
   openGraph: {
     title: '🌸 Pany Kids Studio — Studio học tập gia đình',
@@ -63,7 +63,7 @@ const storyPoints = [
     n: '3',
     icon: '🎯',
     title: 'Pany Kids khác gì các app khác',
-    body: 'Trợ lý AI "Đại Ka" có rule cứng: KHÔNG cho con đáp án thẳng — chỉ hỏi ngược để con tự nghĩ (Socratic). 12 trụ cột phát triển (Tech, English, Finance, Tư duy, Kinh doanh, Trải nghiệm + 6 phát triển toàn diện). Mọi nội dung viết native VN + EN song song — không phải dịch máy. Lộ trình 3/5/7/10 năm tùy phụ huynh chọn.',
+    body: 'Trợ lý AI "Cô Pany" có rule cứng: KHÔNG cho con đáp án thẳng — chỉ hỏi ngược để con tự nghĩ (Socratic). 12 trụ cột phát triển (Tech, English, Finance, Tư duy, Kinh doanh, Trải nghiệm + 6 phát triển toàn diện). Mọi nội dung viết native VN + EN song song — không phải dịch máy. Lộ trình 3/5/7/10 năm tùy phụ huynh chọn.',
   },
 ];
 
@@ -81,7 +81,7 @@ export default function WelcomePage() {
             Studio học tập gia đình cho con từ <strong>5 đến 16 tuổi</strong>.
           </p>
           <p style={{ fontSize: 16, lineHeight: 1.6, color: BRAND.mute, margin: '0 0 32px' }}>
-            Trợ lý AI Đại Ka đồng hành mỗi ngày · 12 trụ cột phát triển · Song ngữ Việt-Anh
+            Trợ lý AI Cô Pany đồng hành mỗi ngày · 12 trụ cột phát triển · Song ngữ Việt-Anh
           </p>
           <Link
             href="/dangky"
@@ -150,7 +150,7 @@ export default function WelcomePage() {
           <p style={{ textAlign: 'center', color: BRAND.mute, marginBottom: 40 }}>Tóm gọn 8 thứ bố/mẹ + con sẽ dùng hằng ngày.</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, fontSize: 14 }}>
             {[
-              { e: '🤖', t: 'Đại Ka AI Mentor', d: 'Claude Sonnet 4.6 đồng hành' },
+              { e: '🤖', t: 'Cô Pany AI Mentor', d: 'Claude Sonnet 4.6 đồng hành' },
               { e: '🗺️', t: 'Lộ trình 3-10 năm', d: 'Phụ huynh tự chọn' },
               { e: '📚', t: 'Quest hằng ngày', d: '252+ entries, mở rộng 500+' },
               { e: '🌐', t: 'Truyện song ngữ', d: '50 VN↔EN paragraph-aligned' },

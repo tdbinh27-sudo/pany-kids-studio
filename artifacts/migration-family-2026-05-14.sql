@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS public.family_settings (
                      CHECK (age_max BETWEEN 5 AND 16),
   max_kids           INTEGER NOT NULL DEFAULT 5
                      CHECK (max_kids BETWEEN 1 AND 5),              -- D-026 max 5
-  chatbot_name       TEXT NOT NULL DEFAULT 'Đại Ka',                -- D-030 per-family rename
+  chatbot_name       TEXT NOT NULL DEFAULT 'Cô Pany',               -- D-032 new-family default (D-030 per-family rename)
   chatbot_name_en    TEXT,                                          -- optional EN variant
   primary_lang       TEXT NOT NULL DEFAULT 'vi'
                      CHECK (primary_lang IN ('vi', 'en')),
@@ -263,7 +263,7 @@ VALUES (
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO public.family_settings (family_id, target_years, age_min, age_max, max_kids, chatbot_name, primary_lang, monthly_chat_cap)
-SELECT id, 5, 5, 16, 5, 'Đại Ka', 'vi', 1000  -- founding family has 10× cap
+SELECT id, 5, 5, 16, 5, 'Đại Ka', 'vi', 1000  -- D-032: founding family explicit override keeps 'Đại Ka' (zero-disruption for Phúc/An/Y from Sprint 1+2); cap 10×
 FROM public.families
 WHERE slug = 'tran-binh'
 ON CONFLICT (family_id) DO NOTHING;

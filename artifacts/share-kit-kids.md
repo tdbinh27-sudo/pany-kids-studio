@@ -23,7 +23,7 @@ Reference pattern: `pany-gia-pha/artifacts/share-kit.md` (Gia Phả 2026-05-12 l
 
 ```
 🌸 Pany Kids Studio — Dashboard học tập 24/7 cho con 5-16 tuổi.
-12 trụ cột phát triển. Trợ lý AI Đại Ka đồng hành.
+12 trụ cột phát triển. Trợ lý AI Cô Pany đồng hành.
 MIỄN PHÍ 3 tháng — không cần thẻ tín dụng.
 👉 kids.panyvn.app/dangky
 ```
@@ -35,7 +35,7 @@ MIỄN PHÍ 3 tháng — không cần thẻ tín dụng.
 
 Dashboard học tập 24/7 cho con 5-16 tuổi:
 ✅ 12 trụ cột phát triển (Tech · English · Finance · Thinking · Business · Life + 6 trụ cột phát triển toàn diện)
-✅ Trợ lý AI "Đại Ka" — Claude Sonnet 4.6 đồng hành mỗi ngày (KHÔNG cho đáp án thẳng — dạy con tự nghĩ)
+✅ Trợ lý AI "Cô Pany" — Claude Sonnet 4.6 đồng hành mỗi ngày (KHÔNG cho đáp án thẳng — dạy con tự nghĩ)
 ✅ Quest hằng ngày + Quiz toán 1000+ câu + Truyện song ngữ Việt-Anh
 ✅ La bàn 60 nghề + RIASEC quiz
 ✅ Tối đa 5 học viên / gia đình
@@ -59,7 +59,7 @@ Lý do em build: 3 con của em (Phúc 11t · An 9t · Như Ý 5t) cần 1 chỗ
 không phải app dạng game-lừa-thời-gian. Em viết hẳn 1 studio gia đình với:
 
 • 12 trụ cột phát triển (tech · english · finance · tư duy · ...)
-• Trợ lý AI "Đại Ka" đóng vai bố/mẹ khi mình bận — dùng Socratic không cho đáp án thẳng
+• Trợ lý AI "Cô Pany" đóng vai bố/mẹ khi mình bận — dùng Socratic không cho đáp án thẳng
 • Quest hằng ngày + quiz + truyện song ngữ Việt-Anh
 • Tối đa 5 học viên / gia đình
 
@@ -84,7 +84,7 @@ Em là Trần Đức Bình (bố của Phúc lớp 6 / An lớp 4 / Như Ý lớ
 Dùng để gì:
 📚 Bố/mẹ track lộ trình học con theo từng độ tuổi (mầm non lá → lớp 11)
 🎯 Mỗi con có quest hằng ngày phù hợp tuổi (KHÔNG phải game-lừa thời gian)
-🤖 Trợ lý AI "Đại Ka" giúp con tự suy nghĩ — KHÔNG cho đáp án thẳng
+🤖 Trợ lý AI "Cô Pany" giúp con tự suy nghĩ — KHÔNG cho đáp án thẳng
 🌐 Quiz toán + truyện song ngữ + 60 nghề tương lai
 🏆 Badge + streak motivation con tự check-in
 
@@ -119,7 +119,7 @@ Vì sao em làm:
 
 Pany Kids giải quyết:
 ✅ Dashboard 12 trụ cột phát triển, 1-5 con / 1 tài khoản
-✅ Trợ lý AI "Đại Ka" (Claude Sonnet 4.6) đồng hành — anh/chị có thể đổi tên thành "Cô Pany" hoặc tên tùy chọn
+✅ Trợ lý AI "Cô Pany" (Claude Sonnet 4.6) đồng hành — anh/chị có thể đổi tên thành "Đại Ka" hoặc tên tùy chọn
 ✅ Quest hằng ngày + Quiz toán 1000+ câu + 50+ truyện song ngữ Việt-Anh
 ✅ La bàn 60 nghề + RIASEC junior quiz
 ✅ Số năm chỉ tiêu tùy chỉnh 3/5/7/10 năm
@@ -174,8 +174,8 @@ Khi có lead mới:
 **Q: "Free thật không hay sau 3 tháng tính phí?"**
 A: Free thật trong 3 tháng đầu (đến 2026-08-13). Sau đó PANY sẽ review usage thực tế rồi quyết định. Anh/chị sẽ được thông báo trước ít nhất 2 tuần — không tự động tính phí.
 
-**Q: "Đại Ka có thay được tên không?"**
-A: Có. Anh/chị vào Settings → đổi tên trợ lý thành "Cô Pany" / "Anh AI" / "Bạn AI" / tên tùy chọn. Mặc định là "Đại Ka".
+**Q: "Cô Pany có thay được tên không?"**
+A: Có. Anh/chị vào Settings → đổi tên trợ lý thành "Đại Ka" / "Anh AI" / "Bạn AI" / tên tùy chọn. Mặc định là "Cô Pany".
 
 **Q: "Con tôi đã dùng email cho Gia Phả/Super OS rồi — đăng ký Pany Kids bằng email đó được không?"**
 A: Được. Khi hệ thống detect email trùng, anh/chị xác nhận bằng SĐT (OTP) để liên kết Pany Kids vào account hiện có. Hoặc dùng email khác cũng OK.
@@ -183,8 +183,8 @@ A: Được. Khi hệ thống detect email trùng, anh/chị xác nhận bằng 
 **Q: "Em có dùng được trên iPhone/Android không?"**
 A: Web responsive dùng được ngay trên trình duyệt mobile. App native (Expo) đang trong sprint mobile, dự kiến App Store + CH Play 8/2026.
 
-**Q: "Đại Ka có làm hộ bài tập con tôi không?"**
-A: KHÔNG. Đại Ka có rule cứng: KHÔNG cho đáp án thẳng cho toán/code/văn. Chỉ dùng câu hỏi Socratic để dẫn dắt con tự nghĩ.
+**Q: "Cô Pany có làm hộ bài tập con tôi không?"**
+A: KHÔNG. Cô Pany có rule cứng: KHÔNG cho đáp án thẳng cho toán/code/văn. Chỉ dùng câu hỏi Socratic để dẫn dắt con tự nghĩ.
 
 **Q: "Dữ liệu con tôi có bị bán không?"**
 A: KHÔNG. PANY tuân thủ PDPL Việt Nam (Luật 91/2025). Dữ liệu lưu Supabase enterprise-grade + RLS per-family isolation. Không bán/chia sẻ với bên thứ ba.

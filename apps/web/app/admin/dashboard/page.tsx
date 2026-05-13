@@ -196,8 +196,8 @@ export default function AdminDashboard() {
           )}
         </Section>
 
-        {/* SECTION 4 — Đại Ka usage + cost */}
-        <Section title="🤖 Đại Ka usage + cost (D-022 $50/mo cap)" subtitle={stats ? `${stats.chat.total_chats_this_month} chats this month · ${stats.chat.total_tokens_this_month.toLocaleString()} tokens · est. $${stats.cost_usd_estimate.toFixed(2)}` : '...'}>
+        {/* SECTION 4 — Chatbot (Cô Pany/Đại Ka) usage + cost */}
+        <Section title="🤖 Chatbot usage + cost (D-022 $50/mo cap)" subtitle={stats ? `${stats.chat.total_chats_this_month} chats this month · ${stats.chat.total_tokens_this_month.toLocaleString()} tokens · est. $${stats.cost_usd_estimate.toFixed(2)}` : '...'}>
           <Grid>
             <Card label="Chat tháng này" value={stats?.chat.total_chats_this_month ?? 0} color={BRAND.purple} />
             <Card label="Sonnet 4.6" value={stats?.chat.by_model['claude-sonnet-4-6'] ?? 0} color={BRAND.amber} sub="$0.003/1K tokens" />

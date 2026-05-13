@@ -5,24 +5,39 @@
 **Reference pattern:** Pany Gia Phả (live `giapha.panyvn.app` 2026-05-12)
 **Owner:** Trần Đức Bình
 
-## 🚦 PHASE PROGRESS DASHBOARD (Session 16 closeout 2026-05-13 ~17:30)
+## 🚦 PHASE PROGRESS DASHBOARD (latest update 2026-05-13 sau Session 16 polish)
 
 | Phase | Status | Detail | Commit(s) |
 |---|---|---|---|
 | **P0 — Sidebar reorder** | ✅ DONE | Khám phá → position #3 (D-023), TS clean | `14bb3eb` |
-| **P2 foundation libs** | ✅ DONE | age-curriculum / curated-links / claude-patch / templates / migration SQL draft | `85fd95a` |
-| **P3 skeleton libs** | ✅ DONE | family-provision / family-email / family-notifications / phone-verify | `a6a03ee`, `db7fc15` |
-| **P3 commercial routes** | ✅ DONE | /sell, /sell/register, /dangky, /api/sell/register, /api/sell/verify-otp, /admin/signup-requests, /api/admin/signup-requests, /api/admin/families, /welcome, /og-image.svg | `db7fc15`, `83bc69c`, (this) |
-| **P3 admin analytics** | ✅ DONE | lib/family-stats.ts (4 stat helpers + dashboard payload + cost guard) | (this) |
+| **P2 foundation libs** | ✅ DONE | age-curriculum (FULL 5-16 seed) / curated-links / claude-patch / templates / migration SQL draft | `85fd95a`, `3140eb5` |
+| **P3 skeleton libs** | ✅ DONE | family-provision / family-email / family-notifications / phone-verify / family-stats / family-onboarding / seed-content | `a6a03ee`, `db7fc15`, `6577007`, (this) |
+| **P3 commercial routes** | ✅ DONE | /sell, /sell/register, /dangky, /api/sell/register, /api/sell/verify-otp, /admin/signup-requests, /admin/dashboard, /api/admin/signup-requests, /api/admin/families, /welcome, /og-image.svg | `db7fc15`, `83bc69c`, `6577007`, `3140eb5` |
+| **P3 admin analytics + dashboard UI** | ✅ DONE | lib/family-stats.ts (4 stat helpers + cost guard) + /admin/dashboard combined UI | `6577007`, `3140eb5` |
 | **P3 share kit + CTV docs** | ✅ DONE | share-kit-kids.md, ctv-agreement-template.md, vercel-env-setup-2026-05-13.md | `db7fc15`, `83bc69c` |
+| **P3 chatbot rename D-032** | ✅ DONE | "Cô Pany" default for new families, "Đại Ka" override for founding family | (this) |
+| **P3 onboarding wizard helper** | ✅ DONE | lib/family-onboarding.ts (3-step validator + suggestions + state machine) | (this) |
+| **P3 seed-content dev data** | ✅ DONE | lib/seed-content.ts — ~60 sample quests/stories/math/links for dev test | (this) |
+| **P3 curriculum FULL 5-16** | ✅ DONE | 12 single-year tracks seeded với VN curriculum + reference + advanced links | `3140eb5` |
 | **Browser test (F)** | ✅ DONE | 5/5 routes PASS localhost dev | n/a |
-| **P1 schema apply** | ⏸️ BLOCKED ON ANH | SQL drafted, anh chưa apply Supabase | — |
+| **P1 schema apply** | ⏸️ BLOCKED ON ANH | SQL drafted (`migration-family-2026-05-14.sql`), anh chưa apply Supabase | — |
 | **P1 wire-up (env vars)** | ⏸️ BLOCKED ON ANH | Vercel env vars chưa set theo guide | — |
 | **P3 SMS provider live** | ⏸️ DEFERRED | eSMS/Stringee chưa wire — đợi anh approve budget | — |
 | **P4 beta launch** | ⏸️ Pending | Sau P1 wire-up + Vercel webhook fix | — |
-| **P5 3-month review** | ⏸️ Pending | 2026-08-13 review trigger | — |
+| **P5 3-month review** | ⏸️ Pending | 2026-08-13 review trigger (D-022) | — |
 
-**Session 16 totals: 6 commits, ~6K LOC, 12 decisions (D-020 → D-031), 0 TypeScript errors, browser-tested 5/5.**
+**Session 16 totals (8+ commits, ~7K LOC, 13 decisions D-020 → D-032, 0 TypeScript errors, browser-tested 5/5).**
+
+### 🆕 Sau Session 16 closeout — polish + D-032 batch
+
+| Item | Status | Notes |
+|---|---|---|
+| Push 8 commits to origin/main | ✅ DONE | Webhook still broken — no auto-deploy |
+| Curriculum FULL 5-16 (9 ages mới) | ✅ DONE | age-curriculum.ts +850 LOC |
+| /admin/dashboard combined UI | ✅ DONE | 5 sections + stat cards + recent families table |
+| D-032 "Cô Pany" default | ✅ DONE | claude.ts + migration SQL + marketing copy 7 files |
+| seed-content.ts dev data | ✅ DONE | ~60 sample entries across 4 banks × 12 ages |
+| family-onboarding.ts wizard | ✅ DONE | Step 1-3 validators + suggestion helpers + state machine |
 
 ## Approval state (2026-05-13 anh chốt)
 

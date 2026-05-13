@@ -294,3 +294,24 @@
   4. Phone OTP flow (when SMS provider live) → success → link existing family OR allow new product signup
 - **Cross-reference**: D-020 (clone Gia Phả pattern), D-022 (free 3mo trial), D-026 (B2B separate enterprise pricing — B2B can opt into shared Pany ID earlier).
 
+### D-032: "Cô Pany" = DEFAULT for new families + "Đại Ka" override for 3 con của anh ✅ FINAL
+- **Trigger** (2026-05-13): Anh tái cân nhắc Q8 sau khi review impact matrix 262 occurrences. Chọn Option A (hybrid default+override).
+- **Decision**: Set `DEFAULT_BOT_NAME = "Cô Pany"` cho new families đăng ký qua /dangky. Founding family (slug `tran-binh`, Phúc/An/Y) override explicitly với `family_settings.chatbot_name = 'Đại Ka'` để giữ familiarity từ Sprint 1+2.
+- **Why this overrides D-011 + D-030 partially**:
+  - D-011 (2026-05-01) said "Đại Ka stays NOT renamed to Cô Pany" — applied to ENTIRE product. Now D-032 narrows to: "Đại Ka stays for FOUNDING FAMILY ONLY; default for new families is Cô Pany".
+  - D-030 (2026-05-13) added per-family rename override mechanism. D-032 = apply D-030 at scale với default flip.
+- **Brand rationale**: "Cô Pany" link mạnh với PANY brand mỗi lần con chat → phụ huynh nhớ PANY ecosystem → cross-sell Gia Phả/Super OS dễ hơn. Mất gravitas "mentor võ sĩ trẻ" của Đại Ka nhưng được brand cohesion.
+- **3 con's preservation**: Phúc 11t + An 9t đã chat nhiều với Đại Ka trong Sprint 1+2. Y 5t đặc biệt dễ confuse nếu đổi tên giữa chừng. Founding family override = zero disruption.
+- **Implementation (~30 phút)**:
+  - `lib/claude.ts`:
+    - Add `LEGACY_BOT_NAME = "Đại Ka"` constant (what HARD_RULES literally contain)
+    - Change `DEFAULT_BOT_NAME = "Cô Pany"` (what new families get)
+    - Update `applyBotNameOverride()`: rewrite Đại Ka → newName UNLESS newName === LEGACY_BOT_NAME (no-op for founding family)
+    - "bố Đại Ka" idiom → drop "bố " prefix, become standalone newName (already handled)
+  - `artifacts/migration-family-2026-05-14.sql`:
+    - `chatbot_name TEXT NOT NULL DEFAULT 'Cô Pany'` (was 'Đại Ka')
+    - Founding family INSERT explicit `chatbot_name = 'Đại Ka'` to preserve override
+  - Marketing copy in /sell, /welcome, share-kit-kids.md, family-email welcome template: mention "Cô Pany"
+- **Reversibility**: nếu sau 2-3 tháng usage data cho thấy phụ huynh prefer "Đại Ka" hơn (vd: feedback từ beta cohort), 1-line revert DEFAULT_BOT_NAME = "Đại Ka". Migration KHÔNG cần data change (founding family explicit override always wins).
+- **EN bilingual**: "Cô Pany" giữ nguyên trong EN (don't translate "Cô"). EN audience hơi awkward 1 lần đầu — nhưng PANY brand exotic VN charm consistent với philosophy D-003 + D-007.
+

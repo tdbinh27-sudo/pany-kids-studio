@@ -84,9 +84,9 @@ export function buildFamilyWelcomeEmail(input: {
   loginUrl: string;
   kidsCount: number;
   trialEndsAt: string;       // ISO date or human-readable
-  chatbotName?: string;      // default 'Đại Ka' (D-030)
+  chatbotName?: string;      // default 'Cô Pany' (D-032; D-030 per-family override)
 }): { subject: string; html: string; text: string } {
-  const botName = input.chatbotName ?? 'Đại Ka';
+  const botName = input.chatbotName ?? 'Cô Pany';
   const subject = `🌸 Chào mừng ${input.familyName} đến với Pany Kids Studio — 3 tháng miễn phí`;
 
   const text = `

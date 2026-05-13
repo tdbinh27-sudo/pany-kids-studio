@@ -28,17 +28,32 @@ export type ChatContext = {
   botName_en?: string; // optional EN variant; falls back to botName if omitted
 };
 
-export const DEFAULT_BOT_NAME = "Đại Ka";
+/**
+ * D-032 (2026-05-13): Default bot name for NEW families = "Cô Pany" (brand-aligned).
+ * Founding family + early beta keep "Đại Ka" via explicit family_settings.chatbot_name override.
+ *
+ * - LEGACY_BOT_NAME = literal string baked into HARD_RULES_VI/EN templates below.
+ *   Do not change this without also rewriting the templates — applyBotNameOverride() relies
+ *   on this exact token to find-and-replace.
+ * - DEFAULT_BOT_NAME = what new families see when chatbot_name not set in family_settings.
+ *   Change this to flip the default brand presented to new signups.
+ */
+export const LEGACY_BOT_NAME = "Đại Ka";   // template token in HARD_RULES_*
+export const DEFAULT_BOT_NAME = "Cô Pany"; // new-family default (D-032)
 
 /**
- * D-030 helper — rewrite a built system prompt to use a custom bot name.
- * Conservative replacement: handles compound "bố Đại Ka" first, then standalone.
- * No-op when newName matches DEFAULT_BOT_NAME (backward-compat for D-011).
+ * D-030 + D-032 helper — rewrite system prompt to use the family's chosen bot name.
+ *
+ *   newName missing       → use DEFAULT_BOT_NAME ("Cô Pany")
+ *   newName === LEGACY_*  → no-op (founding family keeps "Đại Ka" as-is)
+ *   newName === any other → replace all "Đại Ka" tokens with that name
+ *
+ * "bố Đại Ka" compound (informal "father Đại Ka") collapses to standalone newName
+ * since "bố Cô Pany" reads awkwardly. Founding family is unaffected because no-op.
  */
 export function applyBotNameOverride(prompt: string, newName?: string): string {
-  if (!newName) return prompt;
-  const safe = newName.trim();
-  if (!safe || safe === DEFAULT_BOT_NAME) return prompt;
+  const safe = (newName?.trim()) || DEFAULT_BOT_NAME;
+  if (safe === LEGACY_BOT_NAME) return prompt; // founding family path — no rewrite
   return prompt
     .replace(/bố Đại Ka/g, safe)
     .replace(/Đại Ka/g, safe);
