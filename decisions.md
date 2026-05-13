@@ -269,3 +269,28 @@
   - PANY-branded marketing copy can use "Cô Pany" as PANY-house default while users override
 - **Migration**: No-op for existing kids (default = 'Đại Ka' preserved). New families during onboarding wizard see picker as Step 3.
 
+### D-031: Pany Kids = separate Supabase project + phone-verify scaffold for cross-product collision ✅ FINAL
+- **Trigger** (2026-05-13): Anh raised real concern — leads thường dùng cùng 1 email cho nhiều sản phẩm PANY (vd: email X đăng ký Gia Phả, sau lại dùng cho Pany Kids). Hiện skeleton `family-provision.ts` reject thẳng khi EMAIL_EXISTS → sẽ block customer hợp lệ.
+- **Decision (short-term)**: Pany Kids dùng Supabase project RIÊNG (NOT shared với Gia Phả). Kết quả: 2 product's `auth.users` tables tách biệt → cùng 1 email có thể tồn tại độc lập ở 2 product → KHÔNG có collision ban đầu.
+- **Decision (code scaffold today)**: Thêm errorCode mới `EMAIL_EXISTS_PHONE_VERIFY` + phone-OTP flow stub vào `family-provision.ts`. Khi P1 schema apply + collision phát hiện trong-product (cùng project Pany Kids), system suggest phone verify thay vì reject thẳng.
+- **Decision (long-term Q3 2026+)**: Build "Pany ID" central identity service. Phone số = primary identifier (Vietnamese context). Email + Telegram = secondary. 1 customer → multi-product memberships (giapha, kids, super-os) via shared Pany ID. SSO across ecosystem.
+- **Why phone as primary ID for VN**:
+  - 95% người Việt có số điện thoại; nhiều người không có email "chuẩn" (dùng email cho mỗi product riêng)
+  - Số điện thoại là 1-to-1 với người thật (KYC banking đã verify)
+  - SMS OTP là pattern quen thuộc với người dùng VN (banking, ride-hailing)
+- **SMS provider candidates** (defer until Pany ID build):
+  - eSMS.vn — ~250-350 ₫/SMS, brand-name SMS available
+  - Stringee — ~300-400 ₫/SMS, có cả call verify
+  - Twilio (international fallback) — đắt hơn nhưng global
+  - Cost estimate at 100 family/month signups × 2 SMS avg = ~60k ₫/tháng (trivial)
+- **Implementation today (P3 skeleton)**:
+  - `family-provision.ts` new errorCode `EMAIL_EXISTS_PHONE_VERIFY`
+  - `lib/phone-verify.ts` NEW skeleton — `requestOTP(phone)` + `verifyOTP(phone, code)` env-gated stubs
+  - `family_signup_requests` table get new column `phone_verified BOOLEAN DEFAULT FALSE` (will add in P1 migration update)
+- **UX flow when collision detected**:
+  1. Form submit → API detects existing email
+  2. Response: `{ ok: false, errorCode: 'EMAIL_EXISTS_PHONE_VERIFY', existing_product: 'pany-kids' }`
+  3. UI shows: "Email này đã có account Pany Kids. Anh/chị có thể xác nhận bằng SĐT để khôi phục access, hoặc dùng email khác."
+  4. Phone OTP flow (when SMS provider live) → success → link existing family OR allow new product signup
+- **Cross-reference**: D-020 (clone Gia Phả pattern), D-022 (free 3mo trial), D-026 (B2B separate enterprise pricing — B2B can opt into shared Pany ID earlier).
+

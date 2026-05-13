@@ -1,0 +1,191 @@
+/**
+ * @file app/sell/page.tsx
+ * @description Pany Kids Studio sales landing page.
+ *              FREE 3-month trial — no pricing tier display (D-022).
+ *              Port-adapted from pany-gia-pha-app/(landing)/sell/page.tsx.
+ *              Hidden from search engines (robots: noindex).
+ * @version 1.0.0-draft
+ * @updated 2026-05-13
+ */
+
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kids.panyvn.app';
+
+export const metadata: Metadata = {
+  title: 'Pany Kids Studio — Studio học tập gia đình cho trẻ 5-16 tuổi',
+  description:
+    'Dashboard học tập 24/7 cho 5 con. 12 trụ cột phát triển. Trợ lý AI Đại Ka đồng hành. Đăng ký miễn phí 3 tháng.',
+  alternates: { canonical: `${APP_URL}/sell` },
+  robots: { index: false, follow: false }, // hidden until launch
+  openGraph: {
+    title: '🌸 Pany Kids Studio — Đăng ký miễn phí 3 tháng',
+    description: 'Studio học tập cho gia đình Việt: 12 trụ cột phát triển × 5 học viên × trợ lý AI Đại Ka.',
+    url: `${APP_URL}/sell`,
+    siteName: 'Pany Kids Studio',
+    locale: 'vi_VN',
+    type: 'website',
+  },
+};
+
+const BRAND = {
+  purple: '#845EC2',
+  pink: '#FF6B9D',
+  mint: '#51CF66',
+  sky: '#4DABF7',
+  amber: '#FFD43B',
+  soft: '#F9F4FF',
+  text: '#2D1B4E',
+  mute: '#666',
+  border: '#E5DBFF',
+};
+
+const features = [
+  { icon: '🏠', title: '12 Trụ cột phát triển', desc: 'Công nghệ · Tiếng Anh · Tài chính · Tư duy · Kinh doanh · Trải nghiệm + 6 trụ cột phát triển toàn diện (Sáng tạo, Vận động, Tự khám phá, La bàn nghề, Gia đình, Theo dõi).' },
+  { icon: '👥', title: 'Tối đa 5 học viên', desc: 'Tài khoản gia đình cho 1-5 con cùng độ tuổi 5-16. Mỗi con có PIN riêng, lộ trình riêng, badge riêng.' },
+  { icon: '🤖', title: 'Đại Ka — Trợ lý AI bố mẹ', desc: 'Claude Sonnet 4.6 đóng vai mentor ấm áp, kiên nhẫn. Tự switch ngôn ngữ Việt/Anh theo con. KHÔNG cho đáp án thẳng — dạy con tự nghĩ.' },
+  { icon: '📚', title: 'Khám phá tinh tuyển', desc: 'Thư viện + Quiz + AI Search. Liên kết kiến thức bố tự curated từ SGK Cánh Diều/KNTT/CTST + Khan Academy + HOCMAI.' },
+  { icon: '🧭', title: 'La bàn 60 nghề', desc: 'Khám phá nghề tương lai qua RIASEC quiz 36/48 câu. 60 nghề × "ngày trong đời" giúp con thấy nghề thực tế.' },
+  { icon: '🎯', title: 'Số năm chỉ tiêu tùy chỉnh', desc: 'Phụ huynh tự set 3 / 5 / 7 / 10 năm lộ trình. Mỗi năm có 4 quarters × objectives × pillars.' },
+  { icon: '🏆', title: '16 huy hiệu + streak', desc: 'Mở khóa badge khi đạt mốc. Streak check-in hằng ngày. Bảng xếp hạng trong nhà.' },
+  { icon: '🌐', title: 'Song ngữ Việt-Anh native', desc: 'Mọi nội dung viết native VN + EN parallel. Truyện song ngữ paragraph-aligned. CEFR K → B2 auto theo tuổi.' },
+];
+
+const howItWorks = [
+  { n: 1, title: 'Đăng ký miễn phí', desc: 'Điền form 5 phút (tên, email, SĐT, độ tuổi các con). Hệ thống tự tạo gia đình ngay.' },
+  { n: 2, title: 'Đăng nhập + setup', desc: 'Nhận email với link đăng nhập + mật khẩu tạm. Đổi mật khẩu, đặt PIN cho từng con.' },
+  { n: 3, title: 'Con khám phá hằng ngày', desc: 'Mỗi con login bằng PIN riêng. Làm quest, đọc truyện, chat Đại Ka. Bố mẹ xem progress.' },
+  { n: 4, title: '3 tháng miễn phí trải nghiệm', desc: 'Toàn bộ tính năng mở khóa. Sau 3 tháng PANY sẽ thông báo phương án tiếp theo dựa trên usage thực tế.' },
+];
+
+const faqs = [
+  { q: 'Có thực sự miễn phí hoàn toàn không?', a: 'Đúng vậy. Trong giai đoạn 3 tháng đầu (tới 2026-08-13), toàn bộ tính năng được mở khóa, không thu phí. Sau đó PANY sẽ review usage rồi quyết định phương án tiếp theo — anh/chị sẽ được thông báo trước ít nhất 2 tuần.' },
+  { q: 'Con tôi 5 tuổi/16 tuổi có dùng được không?', a: 'Có. Pany Kids hỗ trợ chính xác từng độ tuổi 5-16 (12 single-year tracks). Nội dung được map theo chương trình VN: mầm non lá → lớp 11. Đại Ka tự điều chỉnh ngôn ngữ theo tuổi từng con.' },
+  { q: 'Tôi có thể thêm bao nhiêu con vào 1 tài khoản?', a: 'Tối đa 5 học viên/gia đình. Mỗi con có profile + PIN + lộ trình riêng. Nếu anh/chị có nhiều hơn 5 con hoặc là trung tâm/trường — liên hệ phương án enterprise riêng.' },
+  { q: 'Đại Ka có thay được tên không?', a: 'Có. Mặc định "Đại Ka" (cảm giác anh cả/mentor). Anh/chị có thể đổi thành "Cô Pany", "Anh AI", "Bạn AI", hoặc tên tùy chỉnh trong Settings sau khi đăng nhập.' },
+  { q: 'Đại Ka có làm hộ bài tập không?', a: 'KHÔNG. Đại Ka tuyệt đối không cho đáp án thẳng (toán, code, văn). Dùng Socratic — hỏi ngược lại để dẫn dắt con tự nghĩ. Đây là rule cứng để bảo vệ tư duy con.' },
+  { q: 'Email tôi đã dùng cho sản phẩm PANY khác (như Gia Phả) — đăng ký Pany Kids được không?', a: 'Được. Khi hệ thống phát hiện email trùng, anh/chị sẽ được xác nhận qua SĐT (OTP) để liên kết Pany Kids vào account hiện có. Hoặc dùng email khác cũng được — hệ thống không bắt buộc unified account ban đầu.' },
+  { q: 'Dữ liệu của con tôi có an toàn không?', a: 'Có. Dữ liệu lưu Supabase enterprise-grade + RLS per-family isolation (không gia đình nào xem được data gia đình khác). Tuân thủ PDPL Việt Nam (Luật 91/2025). Không bán data cho bên thứ ba.' },
+];
+
+export default function SellPage() {
+  return (
+    <div style={{ fontFamily: 'system-ui, -apple-system, sans-serif', color: BRAND.text, background: '#fff' }}>
+      {/* HERO */}
+      <section style={{ background: `linear-gradient(135deg, #FFE5F1 0%, ${BRAND.soft} 100%)`, padding: '64px 24px 80px', textAlign: 'center' }}>
+        <div style={{ maxWidth: 720, margin: '0 auto' }}>
+          <div style={{ display: 'inline-block', background: '#FFFBEB', color: '#92400E', padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
+            🎁 MIỄN PHÍ 3 THÁNG — Không cần thẻ tín dụng
+          </div>
+          <h1 style={{ fontSize: 40, fontWeight: 800, lineHeight: 1.15, margin: '0 0 16px', color: BRAND.purple }}>
+            Pany Kids Studio
+          </h1>
+          <p style={{ fontSize: 20, lineHeight: 1.5, color: BRAND.text, margin: '0 0 12px' }}>
+            Studio học tập gia đình cho <strong>5 con × 12 trụ cột × 5-16 tuổi</strong>.
+          </p>
+          <p style={{ fontSize: 16, color: BRAND.mute, margin: '0 0 32px' }}>
+            Đại Ka — trợ lý AI Claude Sonnet 4.6 đồng hành cùng các con mỗi ngày.<br />
+            Setup 5 phút, dùng được ngay trên trình duyệt + điện thoại.
+          </p>
+          <Link
+            href="/sell/register"
+            style={{
+              display: 'inline-block',
+              background: BRAND.purple,
+              color: '#fff',
+              padding: '16px 36px',
+              borderRadius: 999,
+              fontSize: 18,
+              fontWeight: 700,
+              textDecoration: 'none',
+              boxShadow: '0 8px 24px rgba(132,94,194,0.35)',
+            }}
+          >
+            🌸 Đăng ký miễn phí 3 tháng →
+          </Link>
+          <p style={{ fontSize: 13, color: BRAND.mute, marginTop: 12 }}>
+            Hoặc nhắn Zalo: <a href="tel:0983179109" style={{ color: BRAND.purple }}>0983 179 109</a>
+          </p>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section style={{ padding: '64px 24px', maxWidth: 1100, margin: '0 auto' }}>
+        <h2 style={{ fontSize: 28, fontWeight: 800, textAlign: 'center', color: BRAND.purple, marginBottom: 8 }}>Vì sao chọn Pany Kids?</h2>
+        <p style={{ textAlign: 'center', color: BRAND.mute, marginBottom: 40 }}>8 lý do dashboard này khác mọi app giáo dục hiện có.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+          {features.map((f, i) => (
+            <div key={i} style={{ background: BRAND.soft, padding: 24, borderRadius: 16, border: `1px solid ${BRAND.border}` }}>
+              <div style={{ fontSize: 36, marginBottom: 12 }}>{f.icon}</div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: BRAND.purple, margin: '0 0 8px' }}>{f.title}</h3>
+              <p style={{ fontSize: 14, lineHeight: 1.6, color: BRAND.text, margin: 0 }}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section style={{ background: BRAND.soft, padding: '64px 24px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 28, fontWeight: 800, textAlign: 'center', color: BRAND.purple, marginBottom: 40 }}>Bắt đầu trong 5 phút</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24 }}>
+            {howItWorks.map(s => (
+              <div key={s.n} style={{ background: '#fff', padding: 24, borderRadius: 16, border: `1px solid ${BRAND.border}` }}>
+                <div style={{ display: 'inline-block', width: 36, height: 36, lineHeight: '36px', textAlign: 'center', background: BRAND.purple, color: '#fff', borderRadius: '50%', fontWeight: 700, marginBottom: 12 }}>{s.n}</div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 8px' }}>{s.title}</h3>
+                <p style={{ fontSize: 14, lineHeight: 1.6, color: BRAND.mute, margin: 0 }}>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section style={{ padding: '64px 24px', maxWidth: 800, margin: '0 auto' }}>
+        <h2 style={{ fontSize: 28, fontWeight: 800, textAlign: 'center', color: BRAND.purple, marginBottom: 40 }}>Câu hỏi thường gặp</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {faqs.map((f, i) => (
+            <details key={i} style={{ background: BRAND.soft, padding: '16px 20px', borderRadius: 12, border: `1px solid ${BRAND.border}` }}>
+              <summary style={{ fontWeight: 700, cursor: 'pointer', color: BRAND.text }}>{f.q}</summary>
+              <p style={{ fontSize: 14, lineHeight: 1.7, color: BRAND.text, marginTop: 12, marginBottom: 0 }}>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section style={{ background: `linear-gradient(135deg, ${BRAND.purple} 0%, ${BRAND.pink} 100%)`, padding: '64px 24px', textAlign: 'center', color: '#fff' }}>
+        <div style={{ maxWidth: 600, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 28, fontWeight: 800, margin: '0 0 12px' }}>Sẵn sàng cho 3 tháng đầu tiên?</h2>
+          <p style={{ fontSize: 17, opacity: 0.95, marginBottom: 32 }}>Đăng ký mất 5 phút. Hệ thống tự setup gia đình + gửi email login trong 30 giây.</p>
+          <Link
+            href="/sell/register"
+            style={{
+              display: 'inline-block',
+              background: '#fff',
+              color: BRAND.purple,
+              padding: '16px 36px',
+              borderRadius: 999,
+              fontSize: 18,
+              fontWeight: 700,
+              textDecoration: 'none',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+            }}
+          >
+            🌸 Đăng ký miễn phí ngay →
+          </Link>
+          <p style={{ fontSize: 13, opacity: 0.85, marginTop: 16 }}>
+            Cần tư vấn? Telegram <a href="https://t.me/pany_super_os_bot" style={{ color: '#fff', textDecoration: 'underline' }}>@pany_super_os_bot</a> · Hotline 0983 179 109
+          </p>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer style={{ padding: '32px 24px', textAlign: 'center', fontSize: 13, color: BRAND.mute, borderTop: `1px solid ${BRAND.border}` }}>
+        <p style={{ margin: 0 }}>Pany Kids Studio · Sản phẩm của PANY Vietnam · 2026</p>
+        <p style={{ margin: '4px 0 0' }}>Tuân thủ PDPL Việt Nam · Dữ liệu mã hóa · Không bán data</p>
+      </footer>
+    </div>
+  );
+}

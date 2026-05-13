@@ -332,7 +332,25 @@ export function buildSystemPrompt(ctx: ChatContext): string {
   const contextLine = ctx.kidName
     ? `\n\nNGỮ CẢNH HIỆN TẠI: kid=${ctx.kidName} age=${ctx.kidAge ?? "?"} lang=${ctx.lang} tab=${ctx.currentTab ?? "?"} progress=${ctx.overallPct ?? 0}% streak=${ctx.streakDays ?? 0}days pillar_focus=${ctx.pillarFocus ?? "?"}`
     : "";
-  const fullPrompt = rules + contextLine;
+
+  // D-028: inject single-year age-specific tone hint from age-curriculum.
+  // Lazy-load to avoid circular imports and keep this module pure.
+  let toneHint = "";
+  if (typeof ctx.kidAge === "number" && ctx.kidAge >= 5 && ctx.kidAge <= 16) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { getDaiKaToneHint } = require("./age-curriculum") as typeof import("./age-curriculum");
+      const hint = getDaiKaToneHint(ctx.kidAge, ctx.lang);
+      if (hint) {
+        const header = ctx.lang === "vi" ? "\n\nHƯỚNG DẪN TONE THEO TUỔI (cứng):\n" : "\n\nAGE-SPECIFIC TONE GUIDE (hard rule):\n";
+        toneHint = header + hint;
+      }
+    } catch {
+      // age-curriculum optional — skip silently if unavailable
+    }
+  }
+
+  const fullPrompt = rules + toneHint + contextLine;
   // D-030: apply per-family bot rename if configured. No-op for default 'Đại Ka'.
   const customName = ctx.lang === "en" ? (ctx.botName_en ?? ctx.botName) : ctx.botName;
   return applyBotNameOverride(fullPrompt, customName);

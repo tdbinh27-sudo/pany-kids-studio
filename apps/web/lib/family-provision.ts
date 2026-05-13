@@ -49,12 +49,17 @@ export type ProvisionFamilyResult = {
   error?: string;
   errorCode?:
     | 'EMAIL_EXISTS'
+    | 'EMAIL_EXISTS_PHONE_VERIFY' // D-031: collision → suggest phone OTP path
     | 'INVALID_REQUEST'
     | 'DB_ERROR'
     | 'AUTH_ERROR'
     | 'AGE_OUT_OF_RANGE'
     | 'TOO_MANY_KIDS'
+    | 'PHONE_VERIFY_REQUIRED'      // D-031: phone OTP required
     | 'UNKNOWN';
+  // D-031: when EMAIL_EXISTS_PHONE_VERIFY → frontend prompts phone OTP flow
+  existing_family_slug?: string;   // collision target's existing family
+  phone_verify_hint?: string;      // masked phone like '+84*****1234' to confirm
 };
 
 // ─── Helpers ───────────────────────────────────────────────────────
@@ -102,6 +107,18 @@ function pickKidEmoji(age: number, position: number): string {
  */
 function pickKidColor(position: number): string {
   return ['#FF6B9D', '#4DABF7', '#51CF66', '#FFD43B', '#845EC2'][position % 5];
+}
+
+/**
+ * D-031: mask phone for UX hint (don't leak full number).
+ * "+84983179109" → "+84*****9109"
+ */
+function maskPhone(phone: string): string {
+  const cleaned = phone.replace(/\s/g, '');
+  if (cleaned.length < 7) return '****';
+  const last4 = cleaned.slice(-4);
+  const prefix = cleaned.startsWith('+') ? cleaned.slice(0, 3) : cleaned.slice(0, 2);
+  return `${prefix}*****${last4}`;
 }
 
 // ─── Main entry point ──────────────────────────────────────────────
@@ -162,30 +179,62 @@ export async function provisionFamily(
     }
   }
 
-  // ─── 2. Email-exists pre-check ──────────────────────────────────
+  // ─── 2. Email-exists pre-check (D-031: phone-verify path) ───────
   // Lesson from Gia Phả's Mai bug (commit 10e349e): existing CTV / member
   // with same email blocks auth.admin.createUser silently.
+  //
+  // D-031 enhancement: instead of hard-reject, suggest phone OTP verify
+  // when caller provided parent_phone. Anh's customers often re-use same
+  // email across PANY products (Gia Phả + Kids + Super OS).
   const { data: existingProfile } = await sb
     .from('profiles')
-    .select('user_id, email, family_id')
+    .select('user_id, email, family_id, phone')
     .eq('email', req.parent_email)
     .maybeSingle();
 
   if (existingProfile) {
-    await sb
-      .from('family_signup_requests')
-      .update({
-        status: 'email_exists',
-        error_message: `Email ${req.parent_email} đã có account.`,
-        processed_at: new Date().toISOString(),
-      })
-      .eq('id', req.id);
+    // D-031: if signup row was already phone-verified (UI completed OTP step
+    // before re-submitting), skip the reject and proceed with cross-product
+    // linking (handled by an upstream caller — TODO P3 wire-up).
+    if (req.phone_verified === true) {
+      // Fall through to normal provisioning — auth user already exists,
+      // we just need a new families row + family_kids for the Kids product.
+      // (The auth.admin.createUser step will return EMAIL_EXISTS and we'll
+      //  fetch the existing user_id instead.)
+      console.warn('[family-provision] D-031 cross-product link path — email already in profiles, phone verified, continuing.');
+    } else {
+      // Lookup the existing family to give the UI useful context for the OTP prompt.
+      let existingSlug: string | undefined;
+      if (existingProfile.family_id) {
+        const { data: existingFam } = await sb
+          .from('families')
+          .select('slug')
+          .eq('id', existingProfile.family_id)
+          .maybeSingle();
+        existingSlug = existingFam?.slug;
+      }
 
-    return {
-      ok: false,
-      error: `Email ${req.parent_email} đã có account. Vui lòng dùng email khác hoặc liên hệ admin.`,
-      errorCode: 'EMAIL_EXISTS',
-    };
+      const phoneHint = req.parent_phone
+        ? maskPhone(req.parent_phone)
+        : (existingProfile.phone ? maskPhone(existingProfile.phone) : undefined);
+
+      await sb
+        .from('family_signup_requests')
+        .update({
+          status: 'phone_verify_required',
+          error_message: `Email ${req.parent_email} đã tồn tại — chờ phone OTP confirm.`,
+          processed_at: new Date().toISOString(),
+        })
+        .eq('id', req.id);
+
+      return {
+        ok: false,
+        error: `Email ${req.parent_email} đã có account trong hệ thống PANY. Anh/chị có thể xác nhận bằng SĐT để liên kết thêm Pany Kids vào account hiện có.`,
+        errorCode: 'EMAIL_EXISTS_PHONE_VERIFY',
+        existing_family_slug: existingSlug,
+        phone_verify_hint: phoneHint,
+      };
+    }
   }
 
   // ─── 3. Generate unique family slug ─────────────────────────────
