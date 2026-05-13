@@ -1,9 +1,28 @@
 # Pany Kids Studio — Commercialization & Feature Expansion Plan
 
 **Created:** 2026-05-13 (Session 16)
-**Status:** ✅ APPROVED by anh 2026-05-13 — see decisions D-020 → D-030 in `decisions.md`
+**Status:** ✅ APPROVED + P0+P2+P3 SCAFFOLDS SHIPPED 2026-05-13 — see decisions D-020 → D-031 in `decisions.md`
 **Reference pattern:** Pany Gia Phả (live `giapha.panyvn.app` 2026-05-12)
 **Owner:** Trần Đức Bình
+
+## 🚦 PHASE PROGRESS DASHBOARD (Session 16 closeout 2026-05-13 ~17:30)
+
+| Phase | Status | Detail | Commit(s) |
+|---|---|---|---|
+| **P0 — Sidebar reorder** | ✅ DONE | Khám phá → position #3 (D-023), TS clean | `14bb3eb` |
+| **P2 foundation libs** | ✅ DONE | age-curriculum / curated-links / claude-patch / templates / migration SQL draft | `85fd95a` |
+| **P3 skeleton libs** | ✅ DONE | family-provision / family-email / family-notifications / phone-verify | `a6a03ee`, `db7fc15` |
+| **P3 commercial routes** | ✅ DONE | /sell, /sell/register, /dangky, /api/sell/register, /api/sell/verify-otp, /admin/signup-requests, /api/admin/signup-requests, /api/admin/families, /welcome, /og-image.svg | `db7fc15`, `83bc69c`, (this) |
+| **P3 admin analytics** | ✅ DONE | lib/family-stats.ts (4 stat helpers + dashboard payload + cost guard) | (this) |
+| **P3 share kit + CTV docs** | ✅ DONE | share-kit-kids.md, ctv-agreement-template.md, vercel-env-setup-2026-05-13.md | `db7fc15`, `83bc69c` |
+| **Browser test (F)** | ✅ DONE | 5/5 routes PASS localhost dev | n/a |
+| **P1 schema apply** | ⏸️ BLOCKED ON ANH | SQL drafted, anh chưa apply Supabase | — |
+| **P1 wire-up (env vars)** | ⏸️ BLOCKED ON ANH | Vercel env vars chưa set theo guide | — |
+| **P3 SMS provider live** | ⏸️ DEFERRED | eSMS/Stringee chưa wire — đợi anh approve budget | — |
+| **P4 beta launch** | ⏸️ Pending | Sau P1 wire-up + Vercel webhook fix | — |
+| **P5 3-month review** | ⏸️ Pending | 2026-08-13 review trigger | — |
+
+**Session 16 totals: 6 commits, ~6K LOC, 12 decisions (D-020 → D-031), 0 TypeScript errors, browser-tested 5/5.**
 
 ## Approval state (2026-05-13 anh chốt)
 
@@ -17,6 +36,7 @@
 | Q6 | Beta = family + friends + school class groups + FB; B2B separate enterprise | D-026 |
 | Q7 | SePay only (when pricing introduced) | D-027 |
 | Q8 | Đại Ka name KEEP, add per-family rename override in Settings | D-030 |
+| +Cross-product | Pany Kids = separate Supabase + phone OTP scaffold for email collision | D-031 |
 | +T6 | Age personalization 5-16 by SINGLE YEAR (12 tracks) using VN school + reference + advanced sources | D-028 |
 | +T7 | Khám phá curated links = anh-curated personally | D-029 |
 
