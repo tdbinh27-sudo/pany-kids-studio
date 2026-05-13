@@ -21,7 +21,28 @@ export type ChatContext = {
   overallPct?: number;
   streakDays?: number;
   pillarFocus?: string;
+  // D-030 (2026-05-13): per-family chatbot rename override.
+  // Default 'Đại Ka' preserves D-011 (Sprint 1 brand) for existing families.
+  // P2.5 admin form lets parent-mode users pick: Đại Ka / Cô Pany / Anh AI / Bạn AI / custom.
+  botName?: string;
+  botName_en?: string; // optional EN variant; falls back to botName if omitted
 };
+
+export const DEFAULT_BOT_NAME = "Đại Ka";
+
+/**
+ * D-030 helper — rewrite a built system prompt to use a custom bot name.
+ * Conservative replacement: handles compound "bố Đại Ka" first, then standalone.
+ * No-op when newName matches DEFAULT_BOT_NAME (backward-compat for D-011).
+ */
+export function applyBotNameOverride(prompt: string, newName?: string): string {
+  if (!newName) return prompt;
+  const safe = newName.trim();
+  if (!safe || safe === DEFAULT_BOT_NAME) return prompt;
+  return prompt
+    .replace(/bố Đại Ka/g, safe)
+    .replace(/Đại Ka/g, safe);
+}
 
 export type ChatTurn = { role: "user" | "assistant"; content: string };
 
@@ -311,7 +332,10 @@ export function buildSystemPrompt(ctx: ChatContext): string {
   const contextLine = ctx.kidName
     ? `\n\nNGỮ CẢNH HIỆN TẠI: kid=${ctx.kidName} age=${ctx.kidAge ?? "?"} lang=${ctx.lang} tab=${ctx.currentTab ?? "?"} progress=${ctx.overallPct ?? 0}% streak=${ctx.streakDays ?? 0}days pillar_focus=${ctx.pillarFocus ?? "?"}`
     : "";
-  return rules + contextLine;
+  const fullPrompt = rules + contextLine;
+  // D-030: apply per-family bot rename if configured. No-op for default 'Đại Ka'.
+  const customName = ctx.lang === "en" ? (ctx.botName_en ?? ctx.botName) : ctx.botName;
+  return applyBotNameOverride(fullPrompt, customName);
 }
 
 export function pickModel(message: string): string {
