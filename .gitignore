@@ -15,3 +15,9 @@ node_modules
 
 # OS
 Thumbs.db
+
+# Dev / test artifacts (Session 16+ pattern)
+apps/web/test-screenshots/
+apps/web/screenshot-*.png
+apps/web/verify-*.png
+apps/web/boneyard.config.json

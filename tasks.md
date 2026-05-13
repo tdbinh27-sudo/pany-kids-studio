@@ -2,14 +2,53 @@
 
 ## NOW (Sprint 2 — week 1 of 8, Day 4 of 7)
 
-### Session 16 (2026-05-13) — Status sync, 3-day gap
+### Session 16 (2026-05-13) — COMMERCIALIZATION PIPELINE BUILT
 
-- [x] Verified production HTTP 200 (Vercel + VPS)
-- [x] Updated status.md + handoff.md to today (sync-only, no code)
-- [ ] **DECISION:** debug-deps cleanup — keep `boneyard-js`+`playwright` (Path A) or revert (Path B)
-- [ ] **DECISION:** Sprint 2 cadence — backfill Day 1-4 / restart Day 5 / slide schedule
-- [ ] **BLOCKED ON ANH:** rotate Anthropic API key (4 days past hotfix, ~11 sessions exposed)
-- [ ] **BLOCKED ON ANH:** re-link Vercel ↔ GitHub webhook (Settings → Git)
+**Decisions D-020 → D-031 logged (12 decisions). 5 commits ~3.5K LOC.**
+
+#### P0 — Sidebar reorder ✅ SHIPPED (D-023)
+- [x] Move "Khám phá" tab group → position #3 (under "Học viên", above "Công cụ học")
+- [x] TypeScript clean, browser-pilot verified
+
+#### P2 foundation ✅ DONE (D-024, D-028, D-029, D-030)
+- [x] `lib/age-curriculum.ts` — 12 age tracks 5→16 mapped VN grade + Đại Ka tone hint
+- [x] `lib/curated-links.ts` — schema + helpers cho anh-curated links
+- [x] `lib/claude.ts` patch — botName override + age-aware tone injection
+- [x] `artifacts/content-templates/` — 4 CTV briefs (README + quest + story + math)
+- [x] `artifacts/migration-family-2026-05-14.sql` — P1 schema draft (NOT applied)
+
+#### P3 skeleton ✅ DONE (D-020, D-031)
+- [x] `lib/family-provision.ts` — 12-step auto-provision skeleton
+- [x] `lib/family-email.ts` — Brevo skeleton + welcome email VN (3-month banner)
+- [x] `lib/family-notifications.ts` — Telegram bot skeleton (plain text)
+- [x] `lib/phone-verify.ts` — D-031 SMS OTP scaffold (eSMS/Stringee/Twilio stubs)
+
+#### P3 routes ✅ DONE
+- [x] `/sell` — landing với 8 features + 7 FAQs, NO pricing
+- [x] `/sell/register` — 3-step form (form → phone OTP → success)
+- [x] `/dangky` — short URL redirect
+- [x] `/api/sell/register` — env-gated POST endpoint
+- [x] `/api/sell/verify-otp` — D-031 OTP verification + provision retry
+- [x] `/admin/signup-requests` + `/api/admin/signup-requests` — admin UI + list/approve/decline
+- [x] `public/og-image.svg` — Pany Kids brand FB/Zalo preview
+
+#### Docs ✅ DONE
+- [x] `artifacts/commercialization-plan-2026-05-13.md` — full plan đã approved
+- [x] `artifacts/share-kit-kids.md` — 4 captions + email template + 6 FAQ
+- [x] `artifacts/ctv-agreement-template.md` — 9 sections + 2 phụ lục
+- [x] `artifacts/vercel-env-setup-2026-05-13.md` — step-by-step env guide
+
+#### Browser test (F) ✅ DONE
+- [x] `pnpm dev` localhost, browser-pilot tested 5/5 routes PASS
+
+### Session 16 BLOCKED ON ANH (Resume Gate)
+- [ ] 🔴 **#1** Rotate Anthropic API key (~2 phút)
+- [ ] 🔴 **#2** Backfill Sprint 2 Day 1-4 feedback (~30 phút, D-025 gate)
+- [ ] ⚠️ **#3** Re-link Vercel ↔ GitHub webhook (~2 phút)
+- [ ] ⚖️ **#4** Path A/B Session 15 debug deps decision (~1 phút)
+- [ ] 🟡 **#5** Tạo Supabase project mới `pany-kids-prod` (~10 phút)
+- [ ] 🟡 **#6** Apply P1 migration SQL + add `phone_verified` column (~5 phút)
+- [ ] 🟡 **#7** Setup Vercel env vars per `vercel-env-setup-2026-05-13.md` (~15-20 phút)
 
 ### Session 15 (2026-05-10) — 🔴 CRITICAL: math-quiz infinite loop hotfix
 - [x] Diagnosed: production stuck on "Loading Pany Kids Studio..." ~90 min

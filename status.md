@@ -1,22 +1,76 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-05-13 1:36pm GMT+7 (Session 16 — Status sync, 3-day gap since hotfix)
-**Current state:** v3.3-C still live on production. No new commits since `eeea893` (2026-05-10). Both endpoints verified healthy at session open: `https://pany-kids-studio.vercel.app` HTTP 200 (title "Pany Kids Studio"), VPS `61.14.233.122` HTTP 200. **No regressions detected.**
+**Last updated:** 2026-05-13 ~17:30 GMT+7 (Session 16 — MAJOR: P0 ship + P2 foundation + P3 skeleton + commercial pipeline)
+**Current state:** v3.3-C still live on production. 5 new commits today on `main` branch (NOT auto-deployed — webhook still broken, anh manual deploy when ready). All code TypeScript clean. Browser-pilot tested 5/5 routes PASS at localhost dev.
 
-## 🔄 SESSION 16 (2026-05-13) — STATUS SYNC
+## ⭐ SESSION 16 (2026-05-13) — COMMERCIALIZATION PIPELINE BUILT
 
-**Gap audit (5/10 → 5/13):**
-- ✅ Production stable — hotfix `8931a53` still serving, no console errors reported
-- 🔴 **Sprint 2 Week 1 feedback file empty** — `artifacts/feedback-week-1.md` Day 1 (Thứ 7 5/10 onboarding) through Day 4 (Thứ 3 5/13, today) all unfilled. Real-usage iteration loop has NOT started. This is the biggest risk to Sprint 2 timeline (5/8 → 7/8).
-- 🔴 **Anthropic API key still NOT rotated** — flagged Session 12 (5/9), now 4 days post-hotfix, ~11 sessions total. Manual action at https://console.anthropic.com/settings/keys.
-- ⚠️ **Vercel auto-deploy webhook still broken** — re-link GitHub integration in Settings → Git pending.
-- ⚠️ **Local uncommitted state** from Session 15 hotfix verification:
-  - `apps/web/package.json` adds `boneyard-js@^1.8.1` (runtime dep) + `playwright@^1.59.1` (dev dep)
-  - `apps/web/pnpm-lock.yaml` matching
-  - Untracked: `boneyard.config.json` (146B), `screenshot-hydration-check.png` (228KB), `verify-fix.png` (228KB)
-  - **Decision needed:** keep boneyard as a real dep (commit) OR strip + gitignore screenshots (revert experiment)
+### Decisions logged (D-020 → D-031, 12 decisions)
+- D-020 Clone Gia Phả commercial pattern (multi-tenant family SaaS)
+- D-021 Subdomain `kids.panyvn.app`
+- D-022 **FREE 3 months, NO pricing tier display** (review trigger 2026-08-13)
+- D-023 P0 sidebar reorder Khám phá → #3 ✅ SHIPPED
+- D-024 Content seed CTV draft + bố review
+- D-025 Backfill Sprint 2 feedback Day 1-4 BEFORE P1 starts
+- D-026 Beta B2C = family/friends/parent groups/FB; B2B = enterprise pricing riêng
+- D-027 SePay only initially (when pricing introduced)
+- D-028 Age 5-16 → 12 single-year tracks (VN school + reference + advanced sources)
+- D-029 Khám phá curated links anh-curated (em build UI scaffold)
+- D-030 Đại Ka name KEEP (honor D-011) + add per-family rename in Settings
+- D-031 Pany Kids = separate Supabase project + phone-OTP verify for cross-product email collision
 
-**No code changes this session — sync-only.**
+### Code shipped (5 commits, ~3.5K insertions, all TypeScript clean)
+
+```
+db7fc15 feat(B+C+D+E): /sell landing + share-kit + age-aware Đại Ka tone + CTV agreement + phone-verify (D-031)
+a6a03ee feat(P3-skeleton): port family-provision + email + notifications from Gia Phả
+85fd95a feat(P2-foundation): age-curriculum + curated-links + chatbot_name scaffold + CTV templates + P1 migration draft
+14bb3eb feat(P0): sidebar reorder Khám phá → position #3 + Session 16 commercialization plan
++ pending commit: F→K batch (verify-otp + OG image + admin UI + env guide + docs)
+```
+
+### Foundation libs (P2)
+- `lib/age-curriculum.ts` — 12 age tracks 5→16, VN grade mapping, Đại Ka tone hint per age
+- `lib/curated-links.ts` — schema + helpers cho anh-curated Khám phá links
+- `lib/family-provision.ts` — 12-step auto-provision skeleton (validate → email check → create family + auth + settings + kids → email + telegram)
+- `lib/family-email.ts` — Brevo skeleton + Kids welcome template (3-month trial banner)
+- `lib/family-notifications.ts` — Telegram bot skeleton (plain text)
+- `lib/phone-verify.ts` — D-031 SMS OTP scaffold (eSMS/Stringee/Twilio stubs)
+- `lib/claude.ts` patches — botName override (D-030) + age-aware tone injection (D-028)
+
+### Commercial routes (P3)
+- `/sell` — landing với 8 features + 4-step + 7 FAQs + final CTA, NO pricing
+- `/sell/register` — form 3-step (form → phone OTP → success)
+- `/dangky` — short URL redirect
+- `/api/sell/register` — POST endpoint env-gated (Telegram alert + auto-provision)
+- `/api/sell/verify-otp` — D-031 OTP verification + provision retry
+- `/admin/signup-requests` — admin UI (auth via ADMIN_SECRET) với approve/decline
+- `/api/admin/signup-requests` — GET list + PATCH approve/decline
+- `public/og-image.svg` — Pany Kids brand OG image cho FB/Zalo preview
+
+### Artifacts (CTV + commercial docs)
+- `artifacts/commercialization-plan-2026-05-13.md` — full proposal đã approved
+- `artifacts/migration-family-2026-05-14.sql` — P1 schema draft (NOT applied)
+- `artifacts/content-templates/` — 4 CTV briefs (README + quest + story + math)
+- `artifacts/share-kit-kids.md` — 4 captions VN + email template phụ huynh + 6 FAQ
+- `artifacts/ctv-agreement-template.md` — 9 sections + 2 phụ lục (CTV brief)
+- `artifacts/vercel-env-setup-2026-05-13.md` — step-by-step env vars guide
+
+### Browser test (F)
+✅ Localhost `pnpm dev` → browser-pilot tested 5 routes:
+- `/sell` PASS, 0 console errors, no pricing tier, all sections present
+- `/dangky` PASS, redirects to /sell/register correctly
+- `/sell/register` form PASS, validation works, age fields fill correctly
+- `/admin/signup-requests` PASS, gate works, admin UI loads (503 expected without Supabase)
+- `/og-image.svg` PASS, SVG renders với Pany Kids branding
+
+### Still pending anh action (block production claim)
+- 🔴 Rotate Anthropic API key (`console.anthropic.com/settings/keys`) — đã pending 11+ sessions
+- 🔴 Backfill Sprint 2 Day 1-4 feedback với 3 con (D-025 gate before P1 starts)
+- ⚠️ Re-link Vercel ↔ GitHub webhook (Settings → Git)
+- ⚖️ Path A/B decision cho Session 15 debug deps (boneyard-js + playwright + 3 PNGs)
+- 🟡 P1 migration apply (anh review `artifacts/migration-family-2026-05-14.sql` + add `phone_verified` column per `vercel-env-setup-2026-05-13.md`)
+- 🟡 Setup Vercel env vars per env-setup guide
 
 ⚠️ **Vercel auto-deploy webhook still broken** — pushes `c3f947a` (Session 14 fix), `322ac64` (docs), `8931a53` (Session 15 hotfix) did NOT auto-deploy. Used `vercel deploy --prod` manually. Anh check Vercel project → Settings → Git → re-link GitHub integration when convenient.
 

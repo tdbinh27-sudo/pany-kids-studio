@@ -1,9 +1,24 @@
 # Handoff — Pany Kids Studio
 
-**Last updated:** 2026-05-13 1:36pm GMT+7 (Session 16 — Status sync after 3-day gap)
-**Resume command:** `Continue pany-kids-studio Sprint 2 — Day 4 feedback catch-up + decide debug-deps cleanup`
+**Last updated:** 2026-05-13 ~17:30 GMT+7 (Session 16 — MAJOR: P0 + P2 foundation + P3 skeleton + commercial pipeline)
+**Resume command:** `Continue pany-kids-studio P1 schema apply` (after anh hoàn thành 4 gate items below)
 
-## Session 16 (2026-05-13) — Sync only, no code changes
+## Session 16 RESUME GATE (anh làm trước khi em chạy P1 wire-up)
+
+| # | Action | Effort | Status |
+|---|---|---|---|
+| 1 | 🔴 Rotate Anthropic API key tại `console.anthropic.com/settings/keys` | 2 phút | pending |
+| 2 | 🔴 Backfill `artifacts/feedback-week-1.md` Day 1-4 với 3 con | 30 phút | pending (D-025 gate) |
+| 3 | ⚠️ Re-link Vercel ↔ GitHub webhook tại Settings → Git | 2 phút | pending |
+| 4 | ⚖️ Chốt Path A/B cho Session 15 debug deps (`boneyard-js` + `playwright` + 3 PNGs) | 1 phút | pending |
+| 5 | 🟡 Tạo Supabase project mới `pany-kids-prod` (theo `vercel-env-setup-2026-05-13.md` BƯỚC 1) | 10 phút | pending |
+| 6 | 🟡 Apply `artifacts/migration-family-2026-05-14.sql` + add `phone_verified` column | 5 phút | pending |
+| 7 | 🟡 Setup Vercel env vars (theo env-setup guide) | 15-20 phút | pending |
+
+Khi anh xong **#1-4** (block production claim) → ping em "Bắt đầu P1" → em pickup P1 wire-up.
+Khi anh xong **#5-7** (P1 wire-up gate) → em test `/sell/register` end-to-end live.
+
+## Session 16 (2026-05-13) — Commercialization pipeline shipped
 
 Anh mở lại dự án sau 3 ngày yên. Em check state:
 

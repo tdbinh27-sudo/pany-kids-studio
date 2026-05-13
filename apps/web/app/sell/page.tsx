@@ -26,6 +26,20 @@ export const metadata: Metadata = {
     siteName: 'Pany Kids Studio',
     locale: 'vi_VN',
     type: 'website',
+    images: [
+      {
+        url: `${APP_URL}/og-image.svg`,
+        width: 1200,
+        height: 630,
+        alt: 'Pany Kids Studio — Đăng ký miễn phí 3 tháng',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '🌸 Pany Kids Studio — Đăng ký miễn phí 3 tháng',
+    description: 'Studio học tập cho gia đình Việt: 12 trụ cột phát triển × 5 học viên.',
+    images: [`${APP_URL}/og-image.svg`],
   },
 };
 
