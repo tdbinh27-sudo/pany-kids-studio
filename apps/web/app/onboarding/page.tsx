@@ -19,7 +19,7 @@
  * @reference CC (this file) wires Z (family-onboarding.ts helpers) + BB (API route)
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const BRAND = {
@@ -97,6 +97,23 @@ const PILLAR_TOUR = [
 ];
 
 export default function OnboardingPage() {
+  // Next.js 16: useSearchParams() requires Suspense boundary for static gen.
+  return (
+    <Suspense fallback={<OnboardingLoadingFallback />}>
+      <OnboardingPageInner />
+    </Suspense>
+  );
+}
+
+function OnboardingLoadingFallback() {
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: BRAND.soft, color: BRAND.mute, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <p>Đang tải…</p>
+    </div>
+  );
+}
+
+function OnboardingPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
