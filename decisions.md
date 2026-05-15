@@ -350,3 +350,27 @@
 - **System prompt budget bonus**: 20 msg/day × ~3K tokens/msg × $3/Mtok input + ~500 tok output × $15/Mtok ≈ **$0.27/family/day max**. 100 families = $27/day = $810/mo within D-022's original $50/mo cap WHEN families are 5x more numerous — i.e., this scales with 5x headroom.
 - **Cross-reference**: D-022 (cost cap concept — preserved), D-033 (free long-term framing — partner decision), D-031 (Pany Kids separate Supabase project — quota table goes there).
 
+
+### D-035: UI metaphor primary = 🌳 CÂY PHÁT TRIỂN + CHA MẸ SONG HÀNH · Spaceship = Mature Mode deferred ✅ FINAL
+- **Trigger** (2026-05-15, Session 18 Phase B): Anh dashboard + landing đang rối + thiếu visual identity. Em research 5 metaphor (file ux-metaphor-research-2026-05-15.md) → anh pivot 2 mô hình focused (Cây vs Tàu vũ trụ, file ux-metaphor-2-models-2026-05-15.md). Anh chốt Cây.
+- **Decision**: Toàn bộ workflow + system Pany Kids visualize qua metaphor cây phát triển 6 giai đoạn (🌰 Hạt giống → 🌱 Mầm non → 🌿 Cây non → 🌳 Trưởng thành → 🌸 Ra hoa → 🍎 Kết trái). 12 trụ cột phát triển = 12 cành. Cha mẹ = "tia mặt trời" tưới ánh sáng cho cây mỗi ngày.
+- **Endgame**: Cây kết trái (16+ tuổi) = career fork (60 hoa từ D-019 → 1-3 trái chín = nghề chọn).
+- **Family view**: 3 cây cạnh nhau (Phúc 11 lớn nhất / An 9 medium / Như Ý 5 mầm non) trong "Vườn Trần family".
+- **Mature Mode unlock (kid 12+ lv ≥30)**: Layer "Tàu vũ trụ" overlay — narrative bridge "build spaceship from materials grown on the tree". Tàu vũ trụ NOT primary metaphor — deferred until usage data shows teens 12-16t engagement drop on Cây.
+- **Why chose Cây over Tàu (scoring matrix in ux-metaphor-2-models)**:
+  - VN cultural fit ⭐⭐⭐⭐⭐ vs ⭐⭐⭐ (Tàu sci-fi không native VN)
+  - 3 con anh (Phúc 11, An 9, Y 5) audience match 100% (Tàu hợp teen 12+)
+  - Parent narrative warmth ⭐⭐⭐⭐⭐ ("Cây Phúc nay ra 3 lá" share Zalo dễ)
+  - Build cost 50-60h (Tàu 60-70h) — ship faster, validate sooner
+  - Reversible: nếu Cây fail teen engagement → activate Spaceship Mature Mode (already designed)
+- **Build phases**:
+  - **Phase 1 (Week 1-2, ~30-40h)**: Landing /welcome + /sell hero replace với Tree illustration. Dashboard `/` sidebar refactor — Tree center stage thay 29 tabs.
+  - **Phase 2 (Week 3, ~15-20h)**: Parent view "Vườn ươm gia đình" 3-tree side-by-side. Daily watering interaction layer (parent tap 'Tưới' button).
+  - **Phase 3 (Week 4, ~10-15h)**: Streak/season state machine (background đổi mùa khi life-stage progression). Endgame "Cây kết trái" career fork ceremony.
+- **Asset pipeline**: Anh tạo Gemini Imagen master prompt (commit pending) → derive 6 viewport variants (landing hero, dashboard tree, 6-stage strip, family forest, parent watering, endgame fruiting). Stored `artifacts/mockups/tree/`.
+- **Cross-references**:
+  - D-019 (60 careers) — 60 hoa = 60 career candidates, 1-3 trái chín = career fork
+  - D-028 (12 single-year tracks) — 12 cành mapping
+  - D-022 → D-033 (free long-term) — không có "trial pressure" trong cây
+  - D-034 (20 chat/day) — Cô Pany xuất hiện trong cây như "gardener helper" / "fairy of garden"
+
