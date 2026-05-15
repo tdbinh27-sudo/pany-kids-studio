@@ -579,12 +579,14 @@ export default function PanyKidsStudio() {
   const [confettiOn, setConfettiOn] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Sidebar starts open on desktop, closed on mobile
+  // D-035 Phase 2c: sidebar starts CLOSED on Overview (Tree home), open on desktop for other tabs.
+  // User can still toggle via hamburger if they want sidebar visible on Overview.
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setSidebarOpen(window.innerWidth >= 1024);
+      const isDesktop = window.innerWidth >= 1024;
+      setSidebarOpen(isDesktop && activeTab !== 'overview');
     }
-  }, []);
+  }, [activeTab]);
   const [quizState, setQuizState] = useState({ kidId: null, qIdx: 0, score: 0, answered: null, pillar: null, age: null });
   const [showLogin, setShowLogin] = useState(false);
 
@@ -912,7 +914,10 @@ export default function PanyKidsStudio() {
       {confettiOn && <ConfettiBurst />}
 
       <Header lang={lang} setLang={setLangP} t={t} kids={kids} activeKidId={activeKidId} setActiveKidId={setActiveKidId} setShowLogin={setShowLogin} parentLocked={parentLocked} parentUnlocked={parentUnlocked} setParentUnlocked={setParentUnlocked} L={L} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <TabNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} L={L} />
+      {/* D-035 Phase 2c: hide TabNav on Overview — Tree home nav grid replaces it */}
+      {activeTab !== 'overview' && (
+        <TabNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} L={L} />
+      )}
       <MobileTabBar activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
 
       <main style={{ maxWidth: 1400, padding: '20px 16px 80px', marginLeft: sidebarOpen ? 240 : 0, transition: 'margin-left 0.25s ease-out' }} className="main-content">
@@ -926,10 +931,9 @@ export default function PanyKidsStudio() {
                 lang={lang}
               >
                 <HeroGreeting
-                  variant="hero"
+                  variant="inline"
                   mode={currentKid ? 'kid' : 'parent'}
                   displayName={currentKid ? currentKid.name : 'bố Bình'}
-                  subtitle="Chạm vào điểm sáng trên cây để bắt đầu khám phá"
                 />
               </TreeOfKnowledgeHome>
               {isParentMode && kids && kids.length > 0 && (
