@@ -998,7 +998,7 @@ export default function PanyKidsStudio() {
         {activeTab === 'rewards'     && <RewardsTab      t={t} L={L} />}
         {activeTab === 'experiences' && <ExperiencesTab  t={t} L={L} kids={kids} lang={lang} />}
         {activeTab === 'publish'     && <PublishTab      t={t} L={L} />}
-        {activeTab === 'library'     && <LibraryTab      readStories={readStories} setReadStoriesP={setReadStoriesP} t={t} L={L} />}
+        {activeTab === 'library'     && <LibraryTab      t={t} L={L} />}
         {activeTab === 'aisearch'    && <AISearchTab     lang={lang} L={L} />}
         {activeTab === 'quiz'        && <QuizTab         kids={kids} quizState={quizState} setQuizState={setQuizState} t={t} L={L} lang={lang} />}
         {activeTab === 'report'      && <ReportTab       kids={kids} getOverall={getOverall} streaks={streaks} unlockedBadges={unlockedBadges} getPillarProgress={getPillarProgress} exportReport={exportReport} exportData={exportData} t={t} L={L} />}
@@ -1008,7 +1008,7 @@ export default function PanyKidsStudio() {
         {activeTab === 'discovery'   && <SelfDiscoveryTab  kids={kids} moodLog={moodLog} setMoodP={setMoodP} riasecAnswers={riasecAnswers} setRiasecAnsP={setRiasecAnsP} riasecCompleted={riasecCompleted} setRiasecDoneP={setRiasecDoneP} activeKidId={activeKidId} t={t} L={L} lang={lang} fireConfetti={fireConfetti} />}
         {activeTab === 'career-v2'   && <CareerCompassTab  kids={kids} savedCareers={savedCareers} setSavedCareersP={setSavedCareersP} riasecCompleted={riasecCompleted} activeKidId={activeKidId} t={t} L={L} lang={lang} />}
         {activeTab === 'family'      && <FamilyBridgeTab    kids={kids} familyJournal={familyJournal} setFamilyJournalP={setFamilyJournalP} weeklyReviews={weeklyReviews} setWeeklyReviewsP={setWeeklyReviewsP} activeKidId={activeKidId} isParentAuthed={isParentAuthed} t={t} L={L} lang={lang} weekKey={weekKey} />}
-        {activeTab === 'english-skills' && <EnglishSkillsTab kids={kids} englishProgress={englishProgress} setEnglishProgressP={setEnglishProgressP} activeKidId={activeKidId} t={t} L={L} lang={lang} />}
+        {activeTab === 'english-skills' && <EnglishSkillsTab kids={kids} englishProgress={englishProgress} setEnglishProgressP={setEnglishProgressP} activeKidId={activeKidId} t={t} L={L} lang={lang} readStories={readStories} setReadStoriesP={setReadStoriesP} />}
       </main>
 
       {evalKid && evalQuarter && (
@@ -2230,15 +2230,13 @@ function KidsTab({ kids, editingKidId, setEditingKidId, editKidData, setEditKidD
   );
 }
 
-function LibraryTab({ readStories, setReadStoriesP, t, L }) {
+function LibraryTab({ t, L }) {
   const [filterPillar, setFilterPillar] = React.useState(null);
   const [filterAge, setFilterAge] = React.useState(null);
   const [filterType, setFilterType] = React.useState(null);
 
-  // Bilingual stories state
-  const [storyLevel, setStoryLevel] = React.useState<CEFRLevel | null>(null);
-  const [openStory, setOpenStory] = React.useState<Story | null>(null);
-  const visibleStories = storyLevel ? getStoriesByLevel(storyLevel) : ALL_STORIES;
+  // D-035 Phase 3b (2026-05-15): bilingual stories MOVED to EnglishSkillsTab.
+  // Library tab now focuses on (1) trụ cột resources + filters, then (2) Q&A chuyên gia.
 
   // Q&A state
   const [qnaTopic, setQnaTopic] = React.useState<QnATopic | null>(null);
@@ -2273,49 +2271,108 @@ function LibraryTab({ readStories, setReadStoriesP, t, L }) {
     <div className="fade-in">
       <SectionHeader title={t('library')} subtitle={t('resourceLib')} emoji="📚" />
 
-      {/* BILINGUAL STORIES — new section */}
-      <Card style={{ marginBottom: 24, background: 'linear-gradient(135deg, #E5FAEB 0%, #F0E6FF 100%)', border: `2px solid ${C.mint}` }}>
-        <h3 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          📖 {L('Truyện song ngữ', 'Bilingual Stories')}
-        </h3>
-        <div className="body-f" style={{ fontSize: 12, color: C.sub, marginBottom: 14 }}>
-          {L(`${ALL_STORIES.length} truyện VN ↔ EN · từ mầm non đến cấp 2`, `${ALL_STORIES.length} stories VN ↔ EN · kindergarten to secondary`)}
+      {/* D-035 Phase 3b: 12 trụ cột moved to TOP — anh feedback "đưa phần trụ cột lên trên cùng" */}
+
+      <div style={{ background: 'linear-gradient(135deg, #845EC2, #FF6B9D)', color: '#fff', padding: 14, borderRadius: 16, marginBottom: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+        <div className="body-f" style={{ fontSize: 13, fontWeight: 600 }}>
+          ✨ {L(`${CURATED_RESOURCES.length} tài nguyên đã chọn lọc · cập nhật hằng tháng`, `${CURATED_RESOURCES.length} curated resources · refreshed monthly`)}
         </div>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
-          <button onClick={() => setStoryLevel(null)} className="btn-bounce body-f" style={{ background: !storyLevel ? C.ink : '#fff', color: !storyLevel ? '#fff' : C.ink, border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{L('Tất cả', 'All')}</button>
-          {(['K', 'A1', 'A2', 'B1'] as const).map(lv => (
-            <button key={lv} onClick={() => setStoryLevel(lv)} className="btn-bounce body-f" style={{ background: storyLevel === lv ? C.mint : '#fff', color: storyLevel === lv ? '#fff' : C.mint, border: `2px solid ${C.mint}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{lv === 'K' ? L('K · Mầm non', 'K · Kindergarten') : lv === 'A1' ? L('A1 · 7-8t', 'A1 · 7-8y') : lv === 'A2' ? L('A2 · 9-11t', 'A2 · 9-11y') : L('B1 · 12-15t', 'B1 · 12-15y')}</button>
+        <div className="body-f" style={{ fontSize: 11, opacity: 0.9 }}>📅 {L('Cập nhật', 'Refreshed')}: {LAST_REFRESHED}</div>
+      </div>
+
+      {/* Pillar filter — anh wants this at TOP */}
+      <div style={{ marginBottom: 12 }}>
+        <div className="body-f" style={{ fontSize: 13, fontWeight: 700, color: C.ink, marginBottom: 6 }}>🏛️ {L('12 Trụ cột phát triển', '12 Development Pillars')}</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button onClick={() => setFilterPillar(null)} className="btn-bounce body-f" style={{
+            background: !filterPillar ? C.ink : '#fff', color: !filterPillar ? '#fff' : C.ink,
+            border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{L('Tất cả', 'All')}</button>
+          {PILLARS.map(p => (
+            <button key={p.id} onClick={() => setFilterPillar(p.id)} className="btn-bounce body-f" style={{
+              background: filterPillar === p.id ? p.color : '#fff', color: filterPillar === p.id ? '#fff' : p.color,
+              border: `2px solid ${p.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+            }}>{L(p.vi, p.en)}</button>
           ))}
         </div>
-        <div className="body-f" style={{ fontSize: 12, color: C.mint, fontWeight: 700, marginBottom: 8 }}>
-          📖 {L(`Đã đọc ${readStories.filter(id => visibleStories.some(s => s.id === id)).length}/${visibleStories.length} truyện`, `Read ${readStories.filter(id => visibleStories.some(s => s.id === id)).length}/${visibleStories.length} stories`)}
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
-          {visibleStories.slice(0, 12).map(story => {
-            const isRead = readStories.includes(story.id);
-            return (
-            <button key={story.id} onClick={() => { setOpenStory(story); if (!isRead) setReadStoriesP([...readStories, story.id]); }} className="card-hover btn-bounce" style={{ textAlign: 'left', padding: 14, background: isRead ? '#F0FFF0' : '#fff', borderRadius: 14, border: `2px solid ${isRead ? C.mint : C.border}`, cursor: 'pointer', position: 'relative' }}>
-              {isRead && <div style={{ position: 'absolute', top: 8, right: 8, fontSize: 14 }}>✅</div>}
-              <div style={{ display: 'flex', gap: 4, marginBottom: 6, flexWrap: 'wrap' }}>
-                <Pill color={C.mint}>{story.level}</Pill>
-                <Pill color={C.purple}>{story.genre}</Pill>
-                <Pill color={C.mute}>⏱ {story.reading_minutes}p</Pill>
-                {isRead && <Pill color={C.mint}>✓ {L('Đã đọc', 'Read')}</Pill>}
-              </div>
-              <div className="display" style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.3, marginBottom: 4 }}>{L(story.title_vi, story.title_en)}</div>
-              <div className="body-f" style={{ fontSize: 11, color: C.sub, lineHeight: 1.4 }}>{L(story.paragraphs[0]?.vi || '', story.paragraphs[0]?.en || '').slice(0, 80)}…</div>
-            </button>
-            );
-          })}
-        </div>
-        {visibleStories.length > 12 && (
-          <div className="body-f" style={{ fontSize: 11, color: C.mute, textAlign: 'center', marginTop: 10, fontStyle: 'italic' }}>
-            {L(`+${visibleStories.length - 12} truyện nữa — chọn level để xem hết`, `+${visibleStories.length - 12} more stories — pick a level to see them`)}
-          </div>
-        )}
-      </Card>
+      </div>
 
-      {/* EXPERT Q&A — Hỏi & Đáp Chuyên gia */}
+      {/* Age filter */}
+      <div style={{ marginBottom: 12 }}>
+        <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{t('age')}</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button onClick={() => setFilterAge(null)} className="btn-bounce body-f" style={{
+            background: !filterAge ? C.ink : '#fff', color: !filterAge ? '#fff' : C.ink,
+            border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{L('Mọi tuổi', 'All ages')}</button>
+          {[6, 8, 10, 12, 14, 16].map(a => (
+            <button key={a} onClick={() => setFilterAge(a)} className="btn-bounce body-f" style={{
+              background: filterAge === a ? C.purple : '#fff', color: filterAge === a ? '#fff' : C.purple,
+              border: `2px solid ${C.purple}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+            }}>{a} {L('tuổi', 'y')}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Type filter */}
+      <div style={{ marginBottom: 18 }}>
+        <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{L('Loại', 'Type')}</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button onClick={() => setFilterType(null)} className="btn-bounce body-f" style={{
+            background: !filterType ? C.ink : '#fff', color: !filterType ? '#fff' : C.ink,
+            border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+          }}>{L('Tất cả', 'All')}</button>
+          {Object.entries(typeEmojis).map(([t, em]) => (
+            <button key={t} onClick={() => setFilterType(t)} className="btn-bounce body-f" style={{
+              background: filterType === t ? C.coral : '#fff', color: filterType === t ? '#fff' : C.coral,
+              border: `2px solid ${C.coral}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
+            }}>{em} {t}</button>
+          ))}
+        </div>
+      </div>
+
+      <div className="body-f" style={{ fontSize: 12, color: C.mute, marginBottom: 14 }}>
+        {filtered.length} {L('tài nguyên', 'resources')}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14, marginBottom: 32 }}>
+        {filtered.map(r => {
+          const c = pillarColors[r.pillar];
+          const pillar = PILLARS.find(p => p.id === r.pillar);
+          return (
+            <Card key={r.id} accent={c} padding={16}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 8 }}>
+                <div style={{ fontSize: 28 }}>{typeEmojis[r.type]}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 4 }}>
+                    <Pill color={c}>{pillar ? L(pillar.vi, pillar.en) : r.pillar}</Pill>
+                    <Pill color={C.purple}>{r.age_min}-{r.age_max}{L(' tuổi', 'y')}</Pill>
+                    {r.duration_min && <Pill color={C.mute}>⏱ {r.duration_min}p</Pill>}
+                  </div>
+                  <div className="display" style={{ fontSize: 15, fontWeight: 700, marginTop: 4, lineHeight: 1.3 }}>{L(r.title_vi, r.title_en)}</div>
+                  <div className="body-f" style={{ fontSize: 11, color: C.mute, fontWeight: 600 }}>{r.source}</div>
+                </div>
+              </div>
+              <div className="body-f" style={{ fontSize: 12, color: C.sub, lineHeight: 1.5, marginBottom: 10 }}>{L(r.why_vi, r.why_en)}</div>
+              {r.prompt_vi && (
+                <div style={{ padding: 10, background: '#FFF4D1', borderRadius: 10, marginBottom: 10, borderLeft: `3px solid ${C.gold}` }}>
+                  <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.gold, marginBottom: 4 }}>💭 {L('Câu hỏi suy nghĩ', 'Reflection prompt')}</div>
+                  <div className="body-f" style={{ fontSize: 12, color: C.ink, fontStyle: 'italic' }}>{L(r.prompt_vi, r.prompt_en)}</div>
+                </div>
+              )}
+              <a href={r.url} target="_blank" rel="noreferrer" className="body-f btn-bounce" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: c, fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>🔗 {L('Mở link', 'Open link')}</a>
+            </Card>
+          );
+        })}
+      </div>
+
+      {filtered.length === 0 && (
+        <div className="body-f" style={{ textAlign: 'center', padding: 40, color: C.mute, fontStyle: 'italic', marginBottom: 24 }}>
+          {L('Không có tài nguyên phù hợp với filter này. Thử bỏ bớt filter.', 'No resources match these filters. Try removing some.')}
+        </div>
+      )}
+
+      {/* EXPERT Q&A — Hỏi & Đáp Chuyên gia (moved BELOW pillar resources per anh feedback) */}
       <Card style={{ marginBottom: 24, background: 'linear-gradient(135deg, #F0E6FF 0%, #FFF4D1 100%)', border: `2px solid ${C.purple}` }}>
         <h3 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}>
           💬 {L('Hỏi & Đáp Chuyên gia', 'Expert Q&A')}
@@ -2406,143 +2463,6 @@ function LibraryTab({ readStories, setReadStoriesP, t, L }) {
         </div>
       )}
 
-      {/* Story modal — full bilingual reading */}
-      {openStory && (
-        <div onClick={() => setOpenStory(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 18, padding: 24, maxWidth: 760, maxHeight: '85vh', overflow: 'auto', width: '100%' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
-              <div>
-                <div style={{ display: 'flex', gap: 4, marginBottom: 6, flexWrap: 'wrap' }}>
-                  <Pill color={C.mint}>{openStory.level}</Pill>
-                  <Pill color={C.purple}>{openStory.genre}</Pill>
-                  <Pill color={C.mute}>⏱ {openStory.reading_minutes} {L('phút', 'min')}</Pill>
-                </div>
-                <h2 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '4px 0 0' }}>{L(openStory.title_vi, openStory.title_en)}</h2>
-              </div>
-              <button onClick={() => setOpenStory(null)} className="btn-bounce" style={{ background: C.coral, color: '#fff', border: 'none', borderRadius: 999, width: 32, height: 32, cursor: 'pointer', fontWeight: 700 }}>✕</button>
-            </div>
-            {openStory.paragraphs.map((p, i) => (
-              <div key={i} style={{ marginBottom: 14, padding: 12, background: i % 2 ? C.soft : '#fff', borderLeft: `3px solid ${C.mint}`, borderRadius: 8 }}>
-                <div className="body-f" style={{ fontSize: 14, lineHeight: 1.6, color: C.ink, marginBottom: 6 }}>🇻🇳 {p.vi}</div>
-                <div className="body-f" style={{ fontSize: 13, lineHeight: 1.6, color: C.sub, fontStyle: 'italic' }}>🇬🇧 {p.en}</div>
-              </div>
-            ))}
-            {openStory.moral_vi && (
-              <div style={{ padding: 14, background: '#FFF4D1', borderRadius: 12, borderLeft: `4px solid ${C.gold}`, marginTop: 8 }}>
-                <div className="display" style={{ fontSize: 12, fontWeight: 700, color: C.gold, marginBottom: 4 }}>💡 {L('Bài học', 'Moral')}</div>
-                <div className="body-f" style={{ fontSize: 13 }}>{L(openStory.moral_vi, openStory.moral_en || openStory.moral_vi)}</div>
-              </div>
-            )}
-            {openStory.vocab_focus && openStory.vocab_focus.length > 0 && (
-              <div style={{ marginTop: 12, padding: 12, background: '#E5FAEB', borderRadius: 12 }}>
-                <div className="display" style={{ fontSize: 12, fontWeight: 700, color: C.mint, marginBottom: 6 }}>🔤 {L('Từ chính', 'Key vocab')}</div>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {openStory.vocab_focus.map(w => <Pill key={w} color={C.mint}>{w}</Pill>)}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      <div style={{ background: 'linear-gradient(135deg, #845EC2, #FF6B9D)', color: '#fff', padding: 14, borderRadius: 16, marginBottom: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-        <div className="body-f" style={{ fontSize: 13, fontWeight: 600 }}>
-          ✨ {L(`${CURATED_RESOURCES.length} tài nguyên đã chọn lọc · cập nhật hằng tháng`, `${CURATED_RESOURCES.length} curated resources · refreshed monthly`)}
-        </div>
-        <div className="body-f" style={{ fontSize: 11, opacity: 0.9 }}>📅 {L('Cập nhật', 'Refreshed')}: {LAST_REFRESHED}</div>
-      </div>
-
-      {/* Pillar filter */}
-      <div style={{ marginBottom: 12 }}>
-        <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{L('Trụ cột', 'Pillar')}</div>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          <button onClick={() => setFilterPillar(null)} className="btn-bounce body-f" style={{
-            background: !filterPillar ? C.ink : '#fff', color: !filterPillar ? '#fff' : C.ink,
-            border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
-          }}>{L('Tất cả', 'All')}</button>
-          {PILLARS.map(p => (
-            <button key={p.id} onClick={() => setFilterPillar(p.id)} className="btn-bounce body-f" style={{
-              background: filterPillar === p.id ? p.color : '#fff', color: filterPillar === p.id ? '#fff' : p.color,
-              border: `2px solid ${p.color}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
-            }}>{L(p.vi, p.en)}</button>
-          ))}
-        </div>
-      </div>
-
-      {/* Age filter */}
-      <div style={{ marginBottom: 12 }}>
-        <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{t('age')}</div>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          <button onClick={() => setFilterAge(null)} className="btn-bounce body-f" style={{
-            background: !filterAge ? C.ink : '#fff', color: !filterAge ? '#fff' : C.ink,
-            border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
-          }}>{L('Mọi tuổi', 'All ages')}</button>
-          {[6, 8, 10, 12, 14, 16].map(a => (
-            <button key={a} onClick={() => setFilterAge(a)} className="btn-bounce body-f" style={{
-              background: filterAge === a ? C.purple : '#fff', color: filterAge === a ? '#fff' : C.purple,
-              border: `2px solid ${C.purple}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
-            }}>{a} {L('tuổi', 'y')}</button>
-          ))}
-        </div>
-      </div>
-
-      {/* Type filter */}
-      <div style={{ marginBottom: 18 }}>
-        <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{L('Loại', 'Type')}</div>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          <button onClick={() => setFilterType(null)} className="btn-bounce body-f" style={{
-            background: !filterType ? C.ink : '#fff', color: !filterType ? '#fff' : C.ink,
-            border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
-          }}>{L('Tất cả', 'All')}</button>
-          {Object.entries(typeEmojis).map(([t, em]) => (
-            <button key={t} onClick={() => setFilterType(t)} className="btn-bounce body-f" style={{
-              background: filterType === t ? C.coral : '#fff', color: filterType === t ? '#fff' : C.coral,
-              border: `2px solid ${C.coral}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12,
-            }}>{em} {t}</button>
-          ))}
-        </div>
-      </div>
-
-      <div className="body-f" style={{ fontSize: 12, color: C.mute, marginBottom: 14 }}>
-        {filtered.length} {L('tài nguyên', 'resources')}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14 }}>
-        {filtered.map(r => {
-          const c = pillarColors[r.pillar];
-          const pillar = PILLARS.find(p => p.id === r.pillar);
-          return (
-            <Card key={r.id} accent={c} padding={16}>
-              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 8 }}>
-                <div style={{ fontSize: 28 }}>{typeEmojis[r.type]}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 4 }}>
-                    <Pill color={c}>{pillar ? L(pillar.vi, pillar.en) : r.pillar}</Pill>
-                    <Pill color={C.purple}>{r.age_min}-{r.age_max}{L(' tuổi', 'y')}</Pill>
-                    {r.duration_min && <Pill color={C.mute}>⏱ {r.duration_min}p</Pill>}
-                  </div>
-                  <div className="display" style={{ fontSize: 15, fontWeight: 700, marginTop: 4, lineHeight: 1.3 }}>{L(r.title_vi, r.title_en)}</div>
-                  <div className="body-f" style={{ fontSize: 11, color: C.mute, fontWeight: 600 }}>{r.source}</div>
-                </div>
-              </div>
-              <div className="body-f" style={{ fontSize: 12, color: C.sub, lineHeight: 1.5, marginBottom: 10 }}>{L(r.why_vi, r.why_en)}</div>
-              {r.prompt_vi && (
-                <div style={{ padding: 10, background: '#FFF4D1', borderRadius: 10, marginBottom: 10, borderLeft: `3px solid ${C.gold}` }}>
-                  <div className="body-f" style={{ fontSize: 11, fontWeight: 700, color: C.gold, marginBottom: 4 }}>💭 {L('Câu hỏi suy nghĩ', 'Reflection prompt')}</div>
-                  <div className="body-f" style={{ fontSize: 12, color: C.ink, fontStyle: 'italic' }}>{L(r.prompt_vi, r.prompt_en)}</div>
-                </div>
-              )}
-              <a href={r.url} target="_blank" rel="noreferrer" className="body-f btn-bounce" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: c, fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>🔗 {L('Mở link', 'Open link')}</a>
-            </Card>
-          );
-        })}
-      </div>
-
-      {filtered.length === 0 && (
-        <div className="body-f" style={{ textAlign: 'center', padding: 40, color: C.mute, fontStyle: 'italic' }}>
-          {L('Không có tài nguyên phù hợp với filter này. Thử bỏ bớt filter.', 'No resources match these filters. Try removing some.')}
-        </div>
-      )}
     </div>
   );
 }
@@ -4989,11 +4909,19 @@ function FamilyBridgeTab({ kids, familyJournal, setFamilyJournalP, weeklyReviews
 // ============================================================
 // SKILL: ENGLISH 4 SKILLS — Listen / Speak / Read / Write
 // ============================================================
-function EnglishSkillsTab({ kids, englishProgress, setEnglishProgressP, activeKidId, t, L, lang }) {
+function EnglishSkillsTab({ kids, englishProgress, setEnglishProgressP, activeKidId, t, L, lang, readStories, setReadStoriesP }) {
   const [selectedKid, setSelectedKid] = React.useState(activeKidId || kids[0]?.id);
   const [mode, setMode] = React.useState('listen'); // listen | speak | read | write
   const [level, setLevel] = React.useState<CEFRLevel>('A1');
   const [browserCheck, setBrowserCheck] = React.useState({ tts: false, asr: false });
+
+  // D-035 Phase 3b (2026-05-15): bilingual stories MOVED here from LibraryTab.
+  // Stories belong with English pedagogy — kid reads VN+EN paragraph-aligned.
+  // CEFRLevel K preserved (Như Ý 5t).
+  const [storyLevel, setStoryLevel] = React.useState<CEFRLevel | null>(null);
+  const [openStory, setOpenStory] = React.useState<Story | null>(null);
+  const visibleStories = storyLevel ? getStoriesByLevel(storyLevel) : ALL_STORIES;
+  const safeReadStories = readStories ?? [];
 
   const kid = kids.find(k => k.id === selectedKid);
 
@@ -5075,6 +5003,89 @@ function EnglishSkillsTab({ kids, englishProgress, setEnglishProgressP, activeKi
       {mode === 'speak' && <SpeakPanel level={level} kidProg={kidProg} updateKidProg={updateKidProg} L={L} lang={lang} asrOk={browserCheck.asr} />}
       {mode === 'read' && <ReadPanel level={level} kidProg={kidProg} updateKidProg={updateKidProg} L={L} lang={lang} />}
       {mode === 'write' && <WritePanel level={level} kidProg={kidProg} updateKidProg={updateKidProg} kid={kid} L={L} lang={lang} />}
+
+      {/* D-035 Phase 3b: Truyện song ngữ — moved here from LibraryTab */}
+      <Card style={{ marginTop: 24, background: 'linear-gradient(135deg, #E5FAEB 0%, #F0E6FF 100%)', border: `2px solid ${C.mint}` }}>
+        <h3 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          📖 {L('Truyện song ngữ', 'Bilingual Stories')}
+        </h3>
+        <div className="body-f" style={{ fontSize: 12, color: C.sub, marginBottom: 14 }}>
+          {L(`${ALL_STORIES.length} truyện VN ↔ EN · từ mầm non đến cấp 2 · đọc song song để học từ vựng + ngữ pháp`,
+             `${ALL_STORIES.length} stories VN ↔ EN · kindergarten to secondary · paragraph-aligned bilingual reading`)}
+        </div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+          <button onClick={() => setStoryLevel(null)} className="btn-bounce body-f" style={{ background: !storyLevel ? C.ink : '#fff', color: !storyLevel ? '#fff' : C.ink, border: `2px solid ${C.ink}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{L('Tất cả', 'All')}</button>
+          {(['K', 'A1', 'A2', 'B1'] as const).map(lv => (
+            <button key={lv} onClick={() => setStoryLevel(lv)} className="btn-bounce body-f" style={{ background: storyLevel === lv ? C.mint : '#fff', color: storyLevel === lv ? '#fff' : C.mint, border: `2px solid ${C.mint}`, padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>{lv === 'K' ? L('K · Mầm non', 'K · Kindergarten') : lv === 'A1' ? L('A1 · 7-8t', 'A1 · 7-8y') : lv === 'A2' ? L('A2 · 9-11t', 'A2 · 9-11y') : L('B1 · 12-15t', 'B1 · 12-15y')}</button>
+          ))}
+        </div>
+        <div className="body-f" style={{ fontSize: 12, color: C.mint, fontWeight: 700, marginBottom: 8 }}>
+          📖 {L(`Đã đọc ${safeReadStories.filter(id => visibleStories.some(s => s.id === id)).length}/${visibleStories.length} truyện`, `Read ${safeReadStories.filter(id => visibleStories.some(s => s.id === id)).length}/${visibleStories.length} stories`)}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
+          {visibleStories.slice(0, 12).map(story => {
+            const isRead = safeReadStories.includes(story.id);
+            return (
+              <button key={story.id} onClick={() => { setOpenStory(story); if (!isRead && setReadStoriesP) setReadStoriesP([...safeReadStories, story.id]); }} className="card-hover btn-bounce" style={{ textAlign: 'left', padding: 14, background: isRead ? '#F0FFF0' : '#fff', borderRadius: 14, border: `2px solid ${isRead ? C.mint : C.border}`, cursor: 'pointer', position: 'relative' }}>
+                {isRead && <div style={{ position: 'absolute', top: 8, right: 8, fontSize: 14 }}>✅</div>}
+                <div style={{ display: 'flex', gap: 4, marginBottom: 6, flexWrap: 'wrap' }}>
+                  <Pill color={C.mint}>{story.level}</Pill>
+                  <Pill color={C.purple}>{story.genre}</Pill>
+                  <Pill color={C.mute}>⏱ {story.reading_minutes}p</Pill>
+                  {isRead && <Pill color={C.mint}>✓ {L('Đã đọc', 'Read')}</Pill>}
+                </div>
+                <div className="display" style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.3, marginBottom: 4 }}>{L(story.title_vi, story.title_en)}</div>
+                <div className="body-f" style={{ fontSize: 11, color: C.sub, lineHeight: 1.4 }}>{L(story.paragraphs[0]?.vi || '', story.paragraphs[0]?.en || '').slice(0, 80)}…</div>
+              </button>
+            );
+          })}
+        </div>
+        {visibleStories.length > 12 && (
+          <div className="body-f" style={{ fontSize: 11, color: C.mute, textAlign: 'center', marginTop: 10, fontStyle: 'italic' }}>
+            {L(`+${visibleStories.length - 12} truyện nữa — chọn level để xem hết`, `+${visibleStories.length - 12} more stories — pick a level to see them`)}
+          </div>
+        )}
+      </Card>
+
+      {/* Story modal — moved here from LibraryTab */}
+      {openStory && (
+        <div onClick={() => setOpenStory(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 18, padding: 24, maxWidth: 760, maxHeight: '85vh', overflow: 'auto', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
+              <div>
+                <div style={{ display: 'flex', gap: 4, marginBottom: 6, flexWrap: 'wrap' }}>
+                  <Pill color={C.mint}>{openStory.level}</Pill>
+                  <Pill color={C.purple}>{openStory.genre}</Pill>
+                  <Pill color={C.mute}>⏱ {openStory.reading_minutes} {L('phút', 'min')}</Pill>
+                </div>
+                <h2 className="display" style={{ fontSize: 22, fontWeight: 700, margin: '4px 0 0' }}>{L(openStory.title_vi, openStory.title_en)}</h2>
+              </div>
+              <button onClick={() => setOpenStory(null)} className="btn-bounce" style={{ background: C.coral, color: '#fff', border: 'none', borderRadius: 999, width: 32, height: 32, cursor: 'pointer', fontWeight: 700 }}>✕</button>
+            </div>
+            {openStory.paragraphs.map((p, i) => (
+              <div key={i} style={{ marginBottom: 14, padding: 12, background: i % 2 ? C.soft : '#fff', borderLeft: `3px solid ${C.mint}`, borderRadius: 8 }}>
+                <div className="body-f" style={{ fontSize: 14, lineHeight: 1.6, color: C.ink, marginBottom: 6 }}>🇻🇳 {p.vi}</div>
+                <div className="body-f" style={{ fontSize: 13, lineHeight: 1.6, color: C.sub, fontStyle: 'italic' }}>🇬🇧 {p.en}</div>
+              </div>
+            ))}
+            {openStory.moral_vi && (
+              <div style={{ padding: 14, background: '#FFF4D1', borderRadius: 12, borderLeft: `4px solid ${C.gold}`, marginTop: 8 }}>
+                <div className="display" style={{ fontSize: 12, fontWeight: 700, color: C.gold, marginBottom: 4 }}>💡 {L('Bài học', 'Moral')}</div>
+                <div className="body-f" style={{ fontSize: 13, color: C.ink, lineHeight: 1.5, marginBottom: 4 }}>🇻🇳 {openStory.moral_vi}</div>
+                {openStory.moral_en && <div className="body-f" style={{ fontSize: 12, color: C.sub, fontStyle: 'italic', lineHeight: 1.5 }}>🇬🇧 {openStory.moral_en}</div>}
+              </div>
+            )}
+            {openStory.vocab_focus && openStory.vocab_focus.length > 0 && (
+              <div style={{ padding: 14, background: '#E5FAEB', borderRadius: 12, marginTop: 8 }}>
+                <div className="display" style={{ fontSize: 12, fontWeight: 700, color: C.mint, marginBottom: 6 }}>📚 {L('Từ vựng trọng tâm', 'Key vocabulary')}</div>
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                  {openStory.vocab_focus.map(w => <Pill key={w} color={C.mint}>{w}</Pill>)}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

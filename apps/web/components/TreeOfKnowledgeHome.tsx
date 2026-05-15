@@ -33,7 +33,7 @@ const DEFAULT_NAV: NavItem[] = [
   { id: 'overview',    label: 'Tổng quan',      label_en: 'Overview',    tab: 'overview',    icon: '📊', glow: '#4FB3E8' },
   { id: 'quiz',        label: 'Quiz',           label_en: 'Quiz',        tab: 'quiz',        icon: '❓', glow: '#00BFFF' },
   { id: 'library',     label: 'Thư viện',       label_en: 'Library',     tab: 'library',     icon: '📚', glow: '#845EC2' },
-  { id: 'english',     label: 'Tiếng Anh',      label_en: 'English',     tab: 'english',     icon: '🇬🇧', glow: '#845EC2' },
+  { id: 'english',     label: 'Tiếng Anh',      label_en: 'English',     tab: 'english-skills', icon: '🇬🇧', glow: '#845EC2' },
   { id: 'experiences', label: 'Trải nghiệm',    label_en: 'Experiences', tab: 'experiences', icon: '🌍', glow: '#00D4AA' },
   { id: 'journal',     label: 'Nhật ký',        label_en: 'Journal',     tab: 'journal',     icon: '📔', glow: '#FFD43B' },
   // Row 2 — learning & navigation
