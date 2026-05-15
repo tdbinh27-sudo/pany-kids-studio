@@ -12,6 +12,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import HeroGreeting from '@/components/HeroGreeting';
+import TreeHero from '@/components/TreeHero';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kids.panyvn.app';
 
@@ -88,46 +89,45 @@ const faqs = [
 export default function SellPage() {
   return (
     <div style={{ fontFamily: 'system-ui, -apple-system, sans-serif', color: BRAND.text, background: '#fff' }}>
-      {/* HERO */}
-      <section style={{ background: `linear-gradient(135deg, #FFE5F1 0%, ${BRAND.soft} 100%)`, padding: '64px 24px 80px', textAlign: 'center' }}>
-        <div style={{ maxWidth: 720, margin: '0 auto' }}>
-          <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'center' }}>
-            <HeroGreeting variant="inline" mode="anonymous" />
-          </div>
-          <div style={{ display: 'inline-block', background: '#FFFBEB', color: '#92400E', padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
-            🎁 MIỄN PHÍ · GIÁO ÁN CẬP NHẬT MỖI TUẦN
-          </div>
-          <h1 style={{ fontSize: 40, fontWeight: 800, lineHeight: 1.15, margin: '0 0 16px', color: BRAND.purple }}>
-            Pany Kids Studio
-          </h1>
-          <p style={{ fontSize: 20, lineHeight: 1.5, color: BRAND.text, margin: '0 0 12px' }}>
-            Studio học tập gia đình cho <strong>5 con × 12 trụ cột × 5-16 tuổi</strong>.
-          </p>
-          <p style={{ fontSize: 16, color: BRAND.mute, margin: '0 0 32px' }}>
-            Cô Pany — trợ lý AI Claude Sonnet 4.6 đồng hành cùng các con mỗi ngày.<br />
-            Setup 5 phút, dùng được ngay trên trình duyệt + điện thoại.
-          </p>
-          <Link
-            href="/sell/register"
-            style={{
-              display: 'inline-block',
-              background: BRAND.purple,
-              color: '#fff',
-              padding: '16px 36px',
-              borderRadius: 999,
-              fontSize: 18,
-              fontWeight: 700,
-              textDecoration: 'none',
-              boxShadow: '0 8px 24px rgba(132,94,194,0.35)',
-            }}
-          >
-            🌸 Đăng ký miễn phí →
-          </Link>
-          <p style={{ fontSize: 13, color: BRAND.mute, marginTop: 12 }}>
-            Hoặc nhắn Zalo: <a href="tel:0983179109" style={{ color: BRAND.purple }}>0983 179 109</a>
-          </p>
+      {/* HERO — D-035 Tree of Knowledge immersive aesthetic */}
+      <TreeHero minHeight={720}>
+        <div style={{ marginBottom: 24 }}>
+          <HeroGreeting variant="hero" mode="anonymous" subtitle="Cây tri thức cho 5 con × 12 trụ cột × 5-16 tuổi" />
         </div>
-      </section>
+        <div style={{ display: 'inline-block', background: 'rgba(255,212,59,0.15)', color: '#FFD43B', padding: '8px 18px', borderRadius: 999, fontSize: 13, fontWeight: 700, marginBottom: 20, border: '1px solid rgba(255,212,59,0.35)', backdropFilter: 'blur(8px)', letterSpacing: 0.5 }}>
+          🎁 MIỄN PHÍ DÀI HẠN · GIÁO ÁN CẬP NHẬT MỖI TUẦN
+        </div>
+        <h1 style={{ fontSize: 52, fontWeight: 800, lineHeight: 1.1, margin: '0 0 18px', color: '#E8F4FB', textShadow: '0 0 28px rgba(79,179,232,0.5)' }}>
+          Pany Kids Studio
+        </h1>
+        <p style={{ fontSize: 22, lineHeight: 1.5, color: '#A6CFE5', margin: '0 0 14px', maxWidth: 680, fontWeight: 500 }}>
+          Studio học tập gia đình cho <strong style={{ color: '#E8F4FB' }}>5 con × 12 trụ cột × 5-16 tuổi</strong>
+        </p>
+        <p style={{ fontSize: 16, lineHeight: 1.6, color: '#7FB3D5', margin: '0 0 36px', maxWidth: 600 }}>
+          Cô Pany — trợ lý AI Claude Sonnet 4.6 đồng hành cùng các con mỗi ngày.<br />
+          Setup 5 phút · dùng được ngay trên trình duyệt + điện thoại.
+        </p>
+        <Link
+          href="/sell/register"
+          style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, #4FB3E8 0%, #00BFFF 100%)',
+            color: '#0A1628',
+            padding: '18px 42px',
+            borderRadius: 999,
+            fontSize: 18,
+            fontWeight: 800,
+            textDecoration: 'none',
+            boxShadow: '0 0 36px rgba(79,179,232,0.55), 0 8px 24px rgba(0,0,0,0.35)',
+            border: '1px solid rgba(79,179,232,0.85)',
+          }}
+        >
+          🌳 Trồng cây cho con — Miễn phí →
+        </Link>
+        <p style={{ fontSize: 13, color: '#7FB3D5', marginTop: 16 }}>
+          Hoặc nhắn Zalo: <a href="tel:0983179109" style={{ color: '#4FB3E8', textDecoration: 'underline' }}>0983 179 109</a>
+        </p>
+      </TreeHero>
 
       {/* FEATURES */}
       <section style={{ padding: '64px 24px', maxWidth: 1100, margin: '0 auto' }}>

@@ -22,21 +22,23 @@
 
 export const runtime = 'edge';
 
+// D-035 Tree of Knowledge dark immersive aesthetic
 const BRAND = {
-  bgFrom: '#FFE5F1',
-  bgMid: '#F9F4FF',
-  bgTo: '#E5DBFF',
-  titleFrom: '#845EC2',
-  titleTo: '#FF6B9D',
-  ctaFrom: '#845EC2',
-  ctaTo: '#6E4BB0',
-  text: '#2D1B4E',
-  mute: '#666',
+  bgFrom: '#0E2542',      // navy radial center
+  bgMid: '#0A1628',       // navy mid
+  bgTo: '#03060D',        // near-black edge
+  titleFrom: '#4FB3E8',   // cyan luminescence
+  titleTo: '#00BFFF',     // electric blue
+  ctaFrom: '#4FB3E8',
+  ctaTo: '#00BFFF',
+  text: '#E8F4FB',        // light cyan-white
+  mute: '#7FB3D5',        // muted blue-gray
   amber: '#FFD43B',
   pink: '#FF6B9D',
   sky: '#4DABF7',
-  mint: '#51CF66',
+  mint: '#00D4AA',        // teal
   purple: '#845EC2',
+  glow: '#4FB3E8',
 };
 
 // XML/SVG-safe escape — prevents injection via query params.
@@ -70,11 +72,11 @@ function buildPersonalization(params: URLSearchParams): Personalization {
   const family = params.get('family')?.trim();
   const headline = params.get('headline')?.trim();
 
-  // Default state — mirrors static og-image.svg
+  // Default state — D-035 Tree of Knowledge dark mode
   let badge = '🎁 MIỄN PHÍ · CẬP NHẬT MỖI TUẦN';
   let title = 'Pany Kids Studio';
-  let subtitle1 = 'Studio học tập gia đình · 5-16 tuổi · 5 học viên';
-  let subtitle2 = '12 trụ cột phát triển · Trợ lý AI Cô Pany · Setup 5 phút';
+  let subtitle1 = 'Cây tri thức của con · 5-16 tuổi · 5 học viên';
+  let subtitle2 = '12 cành phát triển · Cô Pany AI · Cha mẹ là tia nắng nuôi cây';
 
   // Priority: explicit headline > family > from+kids > from > kids > default
   if (headline) {
@@ -110,11 +112,11 @@ function buildPersonalization(params: URLSearchParams): Personalization {
 
   return {
     badge: escapeXml(badge),
-    emojiRow: '🌸 🚀 🎨 🌟 🧠',
+    emojiRow: '🌳 🌸 🍎 🌿 ✨',
     title: escapeXml(title),
     subtitle1: escapeXml(subtitle1),
     subtitle2: escapeXml(subtitle2),
-    cta: 'kids.panyvn.app/dangky →',
+    cta: '🌳 kids.panyvn.app/dangky →',
   };
 }
 
@@ -122,55 +124,72 @@ function renderSvg(p: Personalization): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <radialGradient id="bg" cx="50%" cy="50%" r="65%">
       <stop offset="0%" stop-color="${BRAND.bgFrom}"/>
       <stop offset="50%" stop-color="${BRAND.bgMid}"/>
       <stop offset="100%" stop-color="${BRAND.bgTo}"/>
-    </linearGradient>
+    </radialGradient>
     <linearGradient id="title" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="${BRAND.titleFrom}"/>
       <stop offset="100%" stop-color="${BRAND.titleTo}"/>
     </linearGradient>
-    <linearGradient id="cta" x1="0%" y1="0%" x2="0%" y2="100%">
+    <linearGradient id="cta" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="${BRAND.ctaFrom}"/>
       <stop offset="100%" stop-color="${BRAND.ctaTo}"/>
     </linearGradient>
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
-      <feOffset dx="0" dy="4"/>
-      <feComponentTransfer><feFuncA type="linear" slope="0.18"/></feComponentTransfer>
+    <radialGradient id="canopy" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="${BRAND.glow}" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="${BRAND.bgMid}" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
       <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>
 
   <rect width="1200" height="630" fill="url(#bg)"/>
 
-  <circle cx="100" cy="120" r="30" fill="${BRAND.amber}" opacity="0.5"/>
-  <circle cx="1050" cy="80" r="22" fill="${BRAND.pink}" opacity="0.55"/>
-  <circle cx="1120" cy="500" r="36" fill="${BRAND.sky}" opacity="0.45"/>
-  <circle cx="80" cy="540" r="26" fill="${BRAND.mint}" opacity="0.55"/>
-  <circle cx="200" cy="60" r="14" fill="${BRAND.purple}" opacity="0.5"/>
-  <circle cx="980" cy="560" r="18" fill="${BRAND.amber}" opacity="0.6"/>
+  <!-- Canopy halo behind title -->
+  <ellipse cx="600" cy="300" rx="500" ry="280" fill="url(#canopy)"/>
 
+  <!-- Data particles -->
+  <g fill="${BRAND.glow}" opacity="0.6">
+    <circle cx="100" cy="120" r="2.5"/>
+    <circle cx="200" cy="80" r="2"/>
+    <circle cx="320" cy="160" r="2.2"/>
+    <circle cx="850" cy="100" r="2"/>
+    <circle cx="980" cy="180" r="2.5"/>
+    <circle cx="1080" cy="120" r="2"/>
+    <circle cx="150" cy="500" r="2"/>
+    <circle cx="1050" cy="480" r="2.5"/>
+  </g>
+
+  <!-- Brand badge top-left -->
   <g transform="translate(60, 60)">
-    <rect width="220" height="42" rx="21" fill="#FFFBEB" stroke="#FBBF24" stroke-width="2"/>
-    <text x="110" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="700" fill="#92400E" text-anchor="middle">${p.badge}</text>
+    <rect width="280" height="44" rx="22" fill="rgba(255,212,59,0.12)" stroke="${BRAND.amber}" stroke-width="1.5" stroke-opacity="0.6"/>
+    <text x="140" y="29" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="${BRAND.amber}" text-anchor="middle">${p.badge}</text>
   </g>
 
-  <text x="600" y="200" font-family="system-ui, -apple-system, sans-serif" font-size="84" text-anchor="middle">${p.emojiRow}</text>
+  <!-- Hero emoji row -->
+  <text x="600" y="200" font-family="system-ui, -apple-system, sans-serif" font-size="64" text-anchor="middle" opacity="0.85" filter="url(#softGlow)">🌳 🌸 🍎 🌿 ✨</text>
 
-  <text x="600" y="310" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="900" fill="url(#title)" text-anchor="middle" filter="url(#softShadow)">${p.title}</text>
+  <!-- Main title with cyan glow -->
+  <text x="600" y="310" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="900" fill="url(#title)" text-anchor="middle" filter="url(#softGlow)">${p.title}</text>
 
-  <text x="600" y="372" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="600" fill="${BRAND.text}" text-anchor="middle">${p.subtitle1}</text>
+  <!-- Subtitle 1 -->
+  <text x="600" y="372" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="600" fill="${BRAND.text}" text-anchor="middle">${p.subtitle1}</text>
 
-  <text x="600" y="416" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="400" fill="${BRAND.mute}" text-anchor="middle">${p.subtitle2}</text>
+  <!-- Subtitle 2 -->
+  <text x="600" y="412" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="400" fill="${BRAND.mute}" text-anchor="middle">${p.subtitle2}</text>
 
-  <g transform="translate(400, 470)">
-    <rect width="400" height="72" rx="36" fill="url(#cta)" filter="url(#softShadow)"/>
-    <text x="200" y="46" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF" text-anchor="middle">${p.cta}</text>
+  <!-- CTA button cyan-gradient -->
+  <g transform="translate(380, 460)">
+    <rect width="440" height="72" rx="36" fill="url(#cta)" stroke="${BRAND.glow}" stroke-width="1" stroke-opacity="0.8" filter="url(#softGlow)"/>
+    <text x="220" y="46" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" fill="${BRAND.bgMid}" text-anchor="middle">${p.cta}</text>
   </g>
 
-  <text x="600" y="592" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="${BRAND.purple}" text-anchor="middle">PANY Vietnam · 2026 · Tuân thủ PDPL Việt Nam · panyvn.app</text>
+  <!-- Footer line -->
+  <text x="600" y="592" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="${BRAND.glow}" text-anchor="middle" opacity="0.7">PANY Vietnam · 2026 · Tuân thủ PDPL Việt Nam · panyvn.app</text>
 </svg>`;
 }
 
