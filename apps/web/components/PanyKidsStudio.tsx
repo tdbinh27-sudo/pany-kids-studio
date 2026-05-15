@@ -587,6 +587,26 @@ export default function PanyKidsStudio() {
       setSidebarOpen(isDesktop && activeTab !== 'overview');
     }
   }, [activeTab]);
+
+  // D-035 Phase 3a: browser back button returns to Overview (Tree home) instead of exiting app.
+  // Strategy: when activeTab changes away from 'overview', push a history state.
+  // popstate event listener restores activeTab to 'overview'. Browser stays on dashboard URL.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (activeTab !== 'overview') {
+      window.history.pushState({ tab: activeTab }, '', window.location.pathname);
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handlePopState = (e: PopStateEvent) => {
+      // Always return to Overview on back — single-level navigation by design.
+      setActiveTab('overview');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
   const [quizState, setQuizState] = useState({ kidId: null, qIdx: 0, score: 0, answered: null, pillar: null, age: null });
   const [showLogin, setShowLogin] = useState(false);
 
@@ -1134,14 +1154,7 @@ function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLo
           <div className="body-f" style={{ color: '#FFE5F1', fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 8, fontWeight: 600 }}>
             {t('appSubtitle')}
           </div>
-          {/* D-035 Tree of Knowledge — dynamic VN greeting (time-of-day + user mode) */}
-          <div style={{ marginTop: 12 }}>
-            <HeroGreeting
-              variant="inline"
-              mode={activeKid ? 'kid' : 'parent'}
-              displayName={activeKid ? activeKid.name : 'bố Bình'}
-            />
-          </div>
+          {/* D-035 Phase 3a: header greeting removed — Tree home greeting is canonical */}
           </div>
         </div>
 
