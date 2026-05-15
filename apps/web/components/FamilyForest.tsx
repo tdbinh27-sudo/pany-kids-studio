@@ -31,12 +31,16 @@ export type FamilyKid = {
   streakDays?: number;
   /** Optional preferred display order (otherwise sorted by age desc) */
   order?: number;
+  /** Custom avatar photo as base64 data URL (parent-uploaded) */
+  photoDataUrl?: string;
 };
 
 export type FamilyForestProps = {
   kids: FamilyKid[];
   /** Click handler — parent invokes drill-down to per-kid view */
   onSelectKid?: (kid: FamilyKid) => void;
+  /** Callback when parent uploads a new photo for a kid (base64 data URL) */
+  onUpdateKidPhoto?: (kidId: string, photoDataUrl: string | null) => void;
   /** Optional title above the forest */
   title?: string;
   /** Subtitle line */
@@ -93,10 +97,48 @@ const BRAND = {
   textMute: '#7FB3D5',
 };
 
-function KidTree({ kid, onClick }: { kid: FamilyKid; onClick?: () => void }) {
+function KidTree({
+  kid,
+  onClick,
+  onUpdatePhoto,
+}: {
+  kid: FamilyKid;
+  onClick?: () => void;
+  onUpdatePhoto?: (kidId: string, photoDataUrl: string | null) => void;
+}) {
   const stage = deriveStage(kid);
   const w = 160;
   const h = stage.heightPx;
+
+  const handleFilePick = (file: File) => {
+    if (!onUpdatePhoto) return;
+    // Cap upload at 2MB to protect localStorage budget; resize via canvas if needed.
+    if (file.size > 2 * 1024 * 1024) {
+      // Resize down via canvas to 320x320 max
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 320;
+          const scale = Math.min(maxDim / img.width, maxDim / img.height, 1);
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            onUpdatePhoto(kid.id, canvas.toDataURL('image/jpeg', 0.85));
+          }
+        };
+        img.src = String(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = () => onUpdatePhoto(kid.id, String(reader.result));
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Deterministic leaf positions (hash kid.id) so layout is stable across renders
   const seed = kid.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
@@ -218,6 +260,92 @@ function KidTree({ kid, onClick }: { kid: FamilyKid; onClick?: () => void }) {
         })}
       </svg>
 
+      {/* Avatar circle (photo OR emoji placeholder) — overlays top of tree */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 12,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 56,
+          height: 56,
+          borderRadius: '50%',
+          background: kid.photoDataUrl
+            ? `url(${kid.photoDataUrl}) center/cover`
+            : `linear-gradient(135deg, ${BRAND.cyan}cc, ${BRAND.electricBlue}cc)`,
+          border: `2px solid ${BRAND.cyan}`,
+          boxShadow: `0 0 16px ${BRAND.cyan}88`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 28,
+          color: '#fff',
+          zIndex: 5,
+        }}
+        aria-label={`Ảnh đại diện ${kid.name}`}
+      >
+        {!kid.photoDataUrl && <span aria-hidden="true">{stage.emoji}</span>}
+      </div>
+
+      {/* Photo upload + clear controls (parent-only, shown when handler provided) */}
+      {onUpdatePhoto && (
+        <div style={{ position: 'absolute', top: 4, right: 4, display: 'flex', gap: 4, zIndex: 6 }}>
+          <label
+            title="Tải ảnh con lên"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              background: 'rgba(10,22,40,0.85)',
+              border: `1px solid ${BRAND.cyan}88`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              fontSize: 14,
+            }}
+          >
+            <span aria-hidden="true">📷</span>
+            <input
+              type="file"
+              accept="image/*"
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFilePick(file);
+                e.currentTarget.value = ''; // allow re-selecting same file
+              }}
+              style={{ display: 'none' }}
+            />
+          </label>
+          {kid.photoDataUrl && (
+            <button
+              type="button"
+              title="Xóa ảnh"
+              onClick={(e) => {
+                e.stopPropagation();
+                onUpdatePhoto(kid.id, null);
+              }}
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: '50%',
+                background: 'rgba(10,22,40,0.85)',
+                border: `1px solid ${BRAND.pink}88`,
+                cursor: 'pointer',
+                color: BRAND.pink,
+                fontSize: 14,
+                padding: 0,
+                lineHeight: 1,
+              }}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Footer info */}
       <div style={{ marginTop: 10 }}>
         <div style={{ fontSize: 16, fontWeight: 700, color: BRAND.textLight, lineHeight: 1.2 }}>
@@ -240,6 +368,7 @@ function KidTree({ kid, onClick }: { kid: FamilyKid; onClick?: () => void }) {
 export default function FamilyForest({
   kids,
   onSelectKid,
+  onUpdateKidPhoto,
   title = '🌳 Vườn ươm gia đình',
   subtitle,
 }: FamilyForestProps) {
@@ -309,6 +438,7 @@ export default function FamilyForest({
             key={kid.id}
             kid={kid}
             onClick={onSelectKid ? () => onSelectKid(kid) : undefined}
+            onUpdatePhoto={onUpdateKidPhoto}
           />
         ))}
       </div>

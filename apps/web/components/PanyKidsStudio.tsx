@@ -16,6 +16,7 @@ import VietnamMap from '@/components/VietnamMap';
 import AISearchTab from '@/components/AISearch';
 import HeroGreeting from '@/components/HeroGreeting';
 import FamilyForest, { type FamilyKid } from '@/components/FamilyForest';
+import TreeOfKnowledgeHome from '@/components/TreeOfKnowledgeHome';
 import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
 import { QUIZ_BANK } from '@/lib/quiz';
 import { RIASEC_TYPES, RIASEC_JUNIOR_8_12, RIASEC_JUNIOR_13_15, MOOD_OPTIONS, CREATIVE_PROMPTS, EXERCISE_CHALLENGES, scoreRiasec } from '@/lib/riasec-junior';
@@ -911,29 +912,46 @@ export default function PanyKidsStudio() {
       {confettiOn && <ConfettiBurst />}
 
       <Header lang={lang} setLang={setLangP} t={t} kids={kids} activeKidId={activeKidId} setActiveKidId={setActiveKidId} setShowLogin={setShowLogin} parentLocked={parentLocked} parentUnlocked={parentUnlocked} setParentUnlocked={setParentUnlocked} L={L} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-      {/* D-035 Family Forest — parent-mode hero (between Header + tabs) */}
-      {isParentMode && kids && kids.length > 0 && activeTab === 'overview' && (
-        <div style={{ maxWidth: 1400, margin: '20px auto 0', padding: '0 16px', marginLeft: sidebarOpen ? 240 : 'auto', transition: 'margin-left 0.25s ease-out' }} className="main-content">
-          <FamilyForest
-            kids={kids.map((k: any): FamilyKid => ({
-              id: String(k.id),
-              name: String(k.name ?? 'Con'),
-              age: Number(k.age ?? 5),
-              level: Math.round((getOverall(k) ?? 0)),
-              streakDays: streaks?.[k.id]?.count ?? 0,
-            }))}
-            onSelectKid={(kid) => setActiveKidId(kid.id)}
-            subtitle={`${kids.length} cây phát triển · Bố/mẹ là tia nắng — chọn 1 cây để xem chi tiết`}
-          />
-        </div>
-      )}
-
       <TabNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} L={L} />
       <MobileTabBar activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
 
       <main style={{ maxWidth: 1400, padding: '20px 16px 80px', marginLeft: sidebarOpen ? 240 : 0, transition: 'margin-left 0.25s ease-out' }} className="main-content">
-        {activeTab === 'overview'    && <OverviewTab     kids={kids} getOverall={getOverall} getYearProgress={getYearProgress} getPillarProgress={getPillarProgress} streaks={streaks} unlockedBadges={unlockedBadges} completedQuests={completedQuests} setCompletedQuestsP={setCompletedQuestsP} t={t} L={L} />}
+        {/* D-035: Overview tab = Tree of Knowledge home + Family Forest (parent mode) */}
+        {activeTab === 'overview'    && (
+          <>
+            <TreeOfKnowledgeHome
+              onNavigate={(tabId) => setActiveTab(tabId)}
+              lang={lang}
+            >
+              <HeroGreeting
+                variant="hero"
+                mode={activeKid ? 'kid' : 'parent'}
+                displayName={activeKid ? activeKid.name : 'bố Bình'}
+                subtitle="Chạm vào điểm sáng trên cây để bắt đầu khám phá"
+              />
+            </TreeOfKnowledgeHome>
+            {isParentMode && kids && kids.length > 0 && (
+              <div style={{ marginTop: 32 }}>
+                <FamilyForest
+                  kids={kids.map((k: any): FamilyKid => ({
+                    id: String(k.id),
+                    name: String(k.name ?? 'Con'),
+                    age: Number(k.age ?? 5),
+                    level: Math.round((getOverall(k) ?? 0)),
+                    streakDays: streaks?.[k.id]?.count ?? 0,
+                    photoDataUrl: k.photoDataUrl,
+                  }))}
+                  onSelectKid={(kid) => setActiveKidId(kid.id)}
+                  onUpdateKidPhoto={(kidId, photoDataUrl) => {
+                    const updated = kids.map((k: any) => k.id === kidId ? { ...k, photoDataUrl } : k);
+                    setKidsP(updated);
+                  }}
+                  subtitle={`${kids.length} cây phát triển · Bố/mẹ là tia nắng — chạm 📷 để gắn ảnh thật của con`}
+                />
+              </div>
+            )}
+          </>
+        )}
         {activeTab === 'roadmap'     && <RoadmapTab      kids={kids} progress={progress} toggleObjective={toggleObjective} expandedYear={expandedYear} setExpandedYear={setExpandedYear} openEval={openEval} getQuarterProgress={getQuarterProgress} t={t} L={L} lang={lang} />}
         {activeTab === 'calendar'    && <CalendarTab     kids={kids} weeklyTasks={weeklyTasks} setTasksP={setTasksP} streaks={streaks} checkInToday={checkInToday} t={t} L={L} />}
         {activeTab === 'skilltree'   && <SkillTreeTab    kids={kids} getPillarProgress={getPillarProgress} t={t} L={L} />}
