@@ -914,11 +914,13 @@ export default function PanyKidsStudio() {
       {confettiOn && <ConfettiBurst />}
 
       <Header lang={lang} setLang={setLangP} t={t} kids={kids} activeKidId={activeKidId} setActiveKidId={setActiveKidId} setShowLogin={setShowLogin} parentLocked={parentLocked} parentUnlocked={parentUnlocked} setParentUnlocked={setParentUnlocked} L={L} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      {/* D-035 Phase 2c: hide TabNav on Overview — Tree home nav grid replaces it */}
+      {/* D-035 Phase 2c: hide TabNav + MobileTabBar on Overview — Tree home nav grid replaces both */}
       {activeTab !== 'overview' && (
-        <TabNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} L={L} />
+        <>
+          <TabNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} L={L} />
+          <MobileTabBar activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
+        </>
       )}
-      <MobileTabBar activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
 
       <main style={{ maxWidth: 1400, padding: '20px 16px 80px', marginLeft: sidebarOpen ? 240 : 0, transition: 'margin-left 0.25s ease-out' }} className="main-content">
         {/* D-035: Overview tab = Tree of Knowledge home + Family Forest (parent mode) */}
