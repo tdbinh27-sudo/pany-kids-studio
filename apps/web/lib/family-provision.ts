@@ -45,7 +45,9 @@ export type ProvisionFamilyResult = {
   app_link?: string;
   kids_created?: number;
   email_sent?: boolean;
+  email_error?: string;
   telegram_sent?: boolean;
+  telegram_error?: string;
   error?: string;
   errorCode?:
     | 'EMAIL_EXISTS'
@@ -402,6 +404,16 @@ export async function provisionFamily(
     textContent: email.text,
   });
 
+  if (!emailResult.ok) {
+    console.error('[family-provision] sendFamilyEmail FAILED', {
+      skipped: emailResult.skipped,
+      error: emailResult.error,
+      hasApiKey: Boolean(process.env.BREVO_API_KEY),
+      apiKeyLen: (process.env.BREVO_API_KEY ?? '').length,
+      sender: process.env.BREVO_SENDER_EMAIL ?? '(default)',
+    });
+  }
+
   // ─── 11. Telegram alert to anh ──────────────────────────────────
   const tgResult = await sendFamilyTelegramAlert({
     text: buildFamilyProvisionedAlert({
@@ -436,5 +448,7 @@ export async function provisionFamily(
     kids_created: kidsCreated,
     email_sent: emailResult.ok,
     telegram_sent: tgResult.ok,
+    email_error: emailResult.ok ? undefined : (emailResult.error ?? 'unknown'),
+    telegram_error: tgResult.ok ? undefined : (tgResult.error ?? 'unknown'),
   };
 }
