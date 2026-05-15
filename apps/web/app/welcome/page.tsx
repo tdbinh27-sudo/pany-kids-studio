@@ -144,6 +144,107 @@ export default function WelcomePage() {
         </div>
       </section>
 
+      {/* TREE LIFECYCLE PROGRESSION — D-035 Phase 3d */}
+      <section style={{ background: '#0A1628', padding: '72px 24px', position: 'relative', overflow: 'hidden' }}>
+        {/* Soft radial glow backdrop */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'radial-gradient(ellipse at center top, rgba(79,179,232,0.18) 0%, transparent 60%)',
+            pointerEvents: 'none',
+          }}
+        />
+        <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
+          <h2 style={{ fontSize: 32, fontWeight: 800, textAlign: 'center', color: '#E8F4FB', margin: '0 0 12px', textShadow: '0 0 20px rgba(79,179,232,0.4)' }}>
+            Hành trình cây tri thức
+          </h2>
+          <p style={{ textAlign: 'center', color: '#7FB3D5', fontSize: 16, margin: '0 0 48px', maxWidth: 640, marginLeft: 'auto', marginRight: 'auto' }}>
+            6 giai đoạn từ <strong style={{ color: '#A6CFE5' }}>hạt giống đăng ký</strong> đến <strong style={{ color: '#FFD43B' }}>quả ngọt định hướng nghề</strong> — bố/mẹ là tia nắng đồng hành mỗi ngày.
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
+              gap: 16,
+            }}
+          >
+            {[
+              { n: 1, img: 'stage-1-seed.jpg', label: 'Hạt giống', sub: 'Tuần 1 · Đăng ký + chọn lộ trình' },
+              { n: 2, img: 'stage-2-sprout.jpg', label: 'Mầm', sub: 'Tháng 1 · Quest + Story đầu tiên' },
+              { n: 3, img: 'stage-3-sapling.jpg', label: 'Cây non', sub: '3-12 tháng · Hình thành thói quen' },
+              { n: 4, img: 'stage-4-mature.jpg', label: 'Trưởng thành', sub: '1-3 năm · 12 trụ cột song song' },
+              { n: 5, img: 'stage-5-flowering.jpg', label: 'Ra hoa', sub: '3-5 năm · Đam mê & năng khiếu rõ' },
+              { n: 6, img: 'stage-6-fruit.jpg', label: 'Kết trái', sub: '5-10 năm · Định hướng nghề' },
+            ].map((stage) => (
+              <div
+                key={stage.n}
+                style={{
+                  background: 'linear-gradient(180deg, rgba(79,179,232,0.08) 0%, rgba(10,22,40,0.6) 100%)',
+                  borderRadius: 16,
+                  border: '1px solid rgba(79,179,232,0.25)',
+                  padding: 14,
+                  textAlign: 'center',
+                  transition: 'transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                }}
+              >
+                <div style={{ position: 'relative', width: '100%', aspectRatio: '1 / 1', marginBottom: 12, borderRadius: 12, overflow: 'hidden', background: '#000' }}>
+                  <img
+                    src={`/tree-stages/${stage.img}`}
+                    alt={`Giai đoạn ${stage.n}: ${stage.label}`}
+                    loading="lazy"
+                    decoding="async"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 8,
+                      left: 8,
+                      background: 'rgba(0,191,255,0.85)',
+                      color: '#0A1628',
+                      width: 28,
+                      height: 28,
+                      borderRadius: 999,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 14,
+                      fontWeight: 800,
+                      boxShadow: '0 0 12px rgba(79,179,232,0.6)',
+                    }}
+                  >
+                    {stage.n}
+                  </div>
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: '#E8F4FB', marginBottom: 4 }}>{stage.label}</div>
+                <div style={{ fontSize: 12, color: '#7FB3D5', lineHeight: 1.45 }}>{stage.sub}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 40 }}>
+            <Link
+              href="/dangky"
+              style={{
+                display: 'inline-block',
+                background: 'linear-gradient(135deg, #4FB3E8 0%, #00BFFF 100%)',
+                color: '#0A1628',
+                padding: '14px 32px',
+                borderRadius: 999,
+                fontSize: 16,
+                fontWeight: 800,
+                textDecoration: 'none',
+                boxShadow: '0 0 24px rgba(79,179,232,0.4)',
+              }}
+            >
+              🌱 Gieo hạt giống đầu tiên cho con →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* WHAT'S INSIDE — peek */}
       <section style={{ padding: '64px 24px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
