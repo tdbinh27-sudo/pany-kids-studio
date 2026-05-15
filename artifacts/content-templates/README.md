@@ -10,7 +10,8 @@
 | `quest-template.md` | Daily Quest (`lib/quests.ts`) | 1 JSON entry/quest | D-028 (Trục 6) |
 | `bilingual-story-template.md` | Bilingual Story (`lib/bilingual-stories.ts`) | 1 JSON entry/story | D-028 |
 | `math-question-template.md` | Math Quiz (`lib/math-quiz.ts`) | 1 JSON entry/question | D-028 |
-| `career-qna-template.md` | Career Q&A (`lib/career-qna.ts`) | 1 JSON entry/Q&A | D-019, D-028 |
+| `career-qna-template.md` ✅ NEW | Career Q&A (`lib/career-qna.ts`) | 1 JSON entry/Q&A với expert + sources verified | D-019, D-028 |
+| `curriculum-entry-template.md` ✅ NEW | Curriculum entry (`lib/age-curriculum.ts`) | 1 full age entry (5-7 subjects expand) | D-028 backbone |
 
 ## 🎯 Quy trình CTV → bố review → ship
 

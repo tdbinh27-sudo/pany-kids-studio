@@ -10,6 +10,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { getSampleContentForAge, getSeedStats } from '@/lib/seed-content';
 
 const BRAND = {
   purple: '#845EC2',
@@ -221,6 +222,16 @@ export default function AdminDashboard() {
           )}
         </Section>
 
+        {/* SECTION 4.5 — Seed content preview (DD, skeleton mode only) */}
+        {stats && !stats.configured && (
+          <Section
+            title="📦 Sample content preview (DD seed-content mode)"
+            subtitle={`${getSeedStats().quests} quests + ${getSeedStats().stories} stories + ${getSeedStats().math} math + ${getSeedStats().links} curated links sẵn sàng. Demo nội dung thật khi DB chưa setup.`}
+          >
+            <SampleContentPreview />
+          </Section>
+        )}
+
         {/* SECTION 5 — Recent families */}
         <Section title="🏡 Recent families (latest 20)" subtitle="Gia đình mới đăng ký gần nhất">
           {families.length === 0 ? (
@@ -311,6 +322,94 @@ function Banner({ color, bg, children }: { color: string; bg: string; children: 
   );
 }
 
+function SampleContentPreview() {
+  const [selectedAge, setSelectedAge] = useState<number>(11);
+  const sample = getSampleContentForAge(selectedAge);
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: BRAND.mute, textTransform: 'uppercase', letterSpacing: 1, alignSelf: 'center' }}>Xem mẫu cho tuổi:</span>
+        {[5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(a => (
+          <button
+            key={a}
+            onClick={() => setSelectedAge(a)}
+            style={{
+              padding: '4px 10px',
+              borderRadius: 999,
+              border: `1px solid ${selectedAge === a ? BRAND.purple : BRAND.border}`,
+              background: selectedAge === a ? BRAND.purple : '#fff',
+              color: selectedAge === a ? '#fff' : BRAND.text,
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            {a}t
+          </button>
+        ))}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+        {/* Quests */}
+        <div style={previewCardStyle}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: BRAND.mute, textTransform: 'uppercase', marginBottom: 8 }}>📚 Quests ({sample.quests.length})</div>
+          {sample.quests.length === 0 ? (
+            <p style={{ fontSize: 13, color: BRAND.mute, margin: 0 }}>Chưa có sample.</p>
+          ) : sample.quests.map(q => (
+            <div key={q.id} style={{ marginBottom: 8, fontSize: 13 }}>
+              <span style={{ marginRight: 6 }}>{q.emoji}</span>
+              <strong>{q.title_vi}</strong>
+              <div style={{ fontSize: 11, color: BRAND.mute }}>{q.pillar} · {q.estMin}p · {q.needsParent ? 'có bố/mẹ' : 'tự làm'}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Stories */}
+        <div style={previewCardStyle}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: BRAND.mute, textTransform: 'uppercase', marginBottom: 8 }}>📖 Stories ({sample.stories.length})</div>
+          {sample.stories.length === 0 ? (
+            <p style={{ fontSize: 13, color: BRAND.mute, margin: 0 }}>Chưa có sample.</p>
+          ) : sample.stories.map(s => (
+            <div key={s.id} style={{ marginBottom: 8, fontSize: 13 }}>
+              <strong>{s.title_vi}</strong> <span style={{ background: BRAND.amber + '22', color: '#92400E', padding: '1px 6px', borderRadius: 4, fontSize: 11 }}>{s.level}</span>
+              <div style={{ fontSize: 11, color: BRAND.mute, fontStyle: 'italic' }}>{s.hook_vi}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Math */}
+        <div style={previewCardStyle}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: BRAND.mute, textTransform: 'uppercase', marginBottom: 8 }}>🔢 Math ({sample.math.length})</div>
+          {sample.math.length === 0 ? (
+            <p style={{ fontSize: 13, color: BRAND.mute, margin: 0 }}>Chưa có sample.</p>
+          ) : sample.math.map(m => (
+            <div key={m.id} style={{ marginBottom: 8, fontSize: 13 }}>
+              <span style={{ background: BRAND.sky + '22', color: BRAND.sky, padding: '1px 6px', borderRadius: 4, fontSize: 11 }}>{m.level}</span>
+              <span style={{ marginLeft: 6 }}>{m.question_vi}</span>
+              <div style={{ fontSize: 11, color: BRAND.mute }}>Đáp án: <strong>{m.answer}</strong></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Curated Links */}
+        <div style={previewCardStyle}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: BRAND.mute, textTransform: 'uppercase', marginBottom: 8 }}>🔗 Curated Links ({sample.links.length})</div>
+          {sample.links.length === 0 ? (
+            <p style={{ fontSize: 13, color: BRAND.mute, margin: 0 }}>Chưa có link cho tuổi này.</p>
+          ) : sample.links.map(l => (
+            <div key={l.id} style={{ marginBottom: 8, fontSize: 13 }}>
+              <a href={l.url} target="_blank" rel="noopener noreferrer" style={{ color: BRAND.purple, textDecoration: 'none', fontWeight: 600 }}>{l.title_vi}</a>
+              <div style={{ fontSize: 11, color: BRAND.mute }}>{l.source} · {l.cost}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SourcePill({ source, count }: { source: string; count: number }) {
   const emoji = source === 'fb' ? '📘' : source === 'zalo' ? '💬' : source === 'friend-ref' ? '🤝' : source === 'parent-group' ? '👨‍👩‍👧' : source === 'dangky-direct' ? '🔗' : '❓';
   return (
@@ -352,3 +451,9 @@ const thStyle: React.CSSProperties = {
   textTransform: 'uppercase', letterSpacing: 1, color: BRAND.mute,
 };
 const tdStyle: React.CSSProperties = { padding: '12px 10px', verticalAlign: 'top' };
+const previewCardStyle: React.CSSProperties = {
+  background: '#fff',
+  border: `1px solid ${BRAND.border}`,
+  borderRadius: 12,
+  padding: 16,
+};
