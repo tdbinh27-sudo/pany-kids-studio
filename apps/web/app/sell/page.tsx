@@ -11,6 +11,7 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import HeroGreeting from '@/components/HeroGreeting';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kids.panyvn.app';
 
@@ -90,6 +91,9 @@ export default function SellPage() {
       {/* HERO */}
       <section style={{ background: `linear-gradient(135deg, #FFE5F1 0%, ${BRAND.soft} 100%)`, padding: '64px 24px 80px', textAlign: 'center' }}>
         <div style={{ maxWidth: 720, margin: '0 auto' }}>
+          <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'center' }}>
+            <HeroGreeting variant="inline" mode="anonymous" />
+          </div>
           <div style={{ display: 'inline-block', background: '#FFFBEB', color: '#92400E', padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
             🎁 MIỄN PHÍ · GIÁO ÁN CẬP NHẬT MỖI TUẦN
           </div>

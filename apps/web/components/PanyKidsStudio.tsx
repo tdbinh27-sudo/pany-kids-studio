@@ -14,6 +14,7 @@ import { storage } from '@/lib/storage';
 import ChatBot from '@/components/ChatBot';
 import VietnamMap from '@/components/VietnamMap';
 import AISearchTab from '@/components/AISearch';
+import HeroGreeting from '@/components/HeroGreeting';
 import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
 import { QUIZ_BANK } from '@/lib/quiz';
 import { RIASEC_TYPES, RIASEC_JUNIOR_8_12, RIASEC_JUNIOR_13_15, MOOD_OPTIONS, CREATIVE_PROMPTS, EXERCISE_CHALLENGES, scoreRiasec } from '@/lib/riasec-junior';
@@ -1086,6 +1087,14 @@ function Header({ lang, setLang, t, kids, activeKidId, setActiveKidId, setShowLo
           </h1>
           <div className="body-f" style={{ color: '#FFE5F1', fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 8, fontWeight: 600 }}>
             {t('appSubtitle')}
+          </div>
+          {/* D-035 Tree of Knowledge — dynamic VN greeting (time-of-day + user mode) */}
+          <div style={{ marginTop: 12 }}>
+            <HeroGreeting
+              variant="inline"
+              mode={activeKid ? 'kid' : 'parent'}
+              displayName={activeKid ? activeKid.name : 'bố Bình'}
+            />
           </div>
           </div>
         </div>

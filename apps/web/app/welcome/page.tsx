@@ -9,6 +9,7 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import HeroGreeting from '@/components/HeroGreeting';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kids.panyvn.app';
 
@@ -73,6 +74,9 @@ export default function WelcomePage() {
       {/* HERO */}
       <section style={{ background: `linear-gradient(135deg, #FFE5F1 0%, ${BRAND.soft} 100%)`, padding: '64px 24px 80px', textAlign: 'center' }}>
         <div style={{ maxWidth: 720, margin: '0 auto' }}>
+          <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'center' }}>
+            <HeroGreeting variant="inline" mode="anonymous" subtitle="Studio học tập 24/7 · Cô Pany đồng hành" />
+          </div>
           <div style={{ fontSize: 56, marginBottom: 16 }}>🌸</div>
           <h1 style={{ fontSize: 38, fontWeight: 800, lineHeight: 1.2, margin: '0 0 16px', color: BRAND.purple }}>
             Chào mừng đến với<br />Pany Kids Studio
