@@ -10,6 +10,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import HeroGreeting from '@/components/HeroGreeting';
+import TreeHero from '@/components/TreeHero';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kids.panyvn.app';
 
@@ -71,43 +72,41 @@ const storyPoints = [
 export default function WelcomePage() {
   return (
     <div style={{ fontFamily: 'system-ui, -apple-system, sans-serif', color: BRAND.text, background: '#fff' }}>
-      {/* HERO */}
-      <section style={{ background: `linear-gradient(135deg, #FFE5F1 0%, ${BRAND.soft} 100%)`, padding: '64px 24px 80px', textAlign: 'center' }}>
-        <div style={{ maxWidth: 720, margin: '0 auto' }}>
-          <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'center' }}>
-            <HeroGreeting variant="inline" mode="anonymous" subtitle="Studio học tập 24/7 · Cô Pany đồng hành" />
-          </div>
-          <div style={{ fontSize: 56, marginBottom: 16 }}>🌸</div>
-          <h1 style={{ fontSize: 38, fontWeight: 800, lineHeight: 1.2, margin: '0 0 16px', color: BRAND.purple }}>
-            Chào mừng đến với<br />Pany Kids Studio
-          </h1>
-          <p style={{ fontSize: 18, lineHeight: 1.6, color: BRAND.text, margin: '0 0 8px' }}>
-            Studio học tập gia đình cho con từ <strong>5 đến 16 tuổi</strong>.
-          </p>
-          <p style={{ fontSize: 16, lineHeight: 1.6, color: BRAND.mute, margin: '0 0 32px' }}>
-            Trợ lý AI Cô Pany đồng hành mỗi ngày · 12 trụ cột phát triển · Song ngữ Việt-Anh
-          </p>
-          <Link
-            href="/dangky"
-            style={{
-              display: 'inline-block',
-              background: BRAND.purple,
-              color: '#fff',
-              padding: '16px 36px',
-              borderRadius: 999,
-              fontSize: 18,
-              fontWeight: 700,
-              textDecoration: 'none',
-              boxShadow: '0 8px 24px rgba(132,94,194,0.35)',
-            }}
-          >
-            🌸 Đăng ký miễn phí →
-          </Link>
-          <p style={{ fontSize: 13, color: BRAND.mute, marginTop: 16 }}>
-            Miễn phí dài hạn · Không cần thẻ tín dụng · Setup tự động qua email
-          </p>
+      {/* HERO — D-035 Tree of Knowledge immersive aesthetic */}
+      <TreeHero minHeight={760}>
+        <div style={{ marginBottom: 28 }}>
+          <HeroGreeting variant="hero" mode="anonymous" subtitle="Cô Pany đồng hành 24/7 · Học tập như một cái cây phát triển mỗi ngày" />
         </div>
-      </section>
+        <h1 style={{ fontSize: 52, fontWeight: 800, lineHeight: 1.15, margin: '0 0 16px', color: '#E8F4FB', textShadow: '0 0 24px rgba(79,179,232,0.45)' }}>
+          Pany Kids Studio
+        </h1>
+        <p style={{ fontSize: 22, lineHeight: 1.5, color: '#A6CFE5', margin: '0 0 12px', fontWeight: 500 }}>
+          <strong style={{ color: '#E8F4FB' }}>Cây tri thức</strong> của con · 5 đến 16 tuổi
+        </p>
+        <p style={{ fontSize: 16, lineHeight: 1.6, color: '#7FB3D5', margin: '0 0 36px', maxWidth: 620 }}>
+          12 cành tri thức phát triển mỗi ngày · Trợ lý AI Cô Pany song hành · Cha mẹ là tia nắng nuôi cây
+        </p>
+        <Link
+          href="/dangky"
+          style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, #4FB3E8 0%, #00BFFF 100%)',
+            color: '#0A1628',
+            padding: '18px 42px',
+            borderRadius: 999,
+            fontSize: 18,
+            fontWeight: 800,
+            textDecoration: 'none',
+            boxShadow: '0 0 32px rgba(79,179,232,0.5), 0 8px 24px rgba(0,0,0,0.3)',
+            border: '1px solid rgba(79,179,232,0.8)',
+          }}
+        >
+          🌳 Trồng cây cho con — Miễn phí →
+        </Link>
+        <p style={{ fontSize: 13, color: '#7FB3D5', marginTop: 18 }}>
+          Miễn phí dài hạn · Không cần thẻ tín dụng · Setup tự động qua email
+        </p>
+      </TreeHero>
 
       {/* TRUST SIGNALS */}
       <section style={{ padding: '48px 24px', background: '#fff' }}>
