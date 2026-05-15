@@ -917,41 +917,44 @@ export default function PanyKidsStudio() {
 
       <main style={{ maxWidth: 1400, padding: '20px 16px 80px', marginLeft: sidebarOpen ? 240 : 0, transition: 'margin-left 0.25s ease-out' }} className="main-content">
         {/* D-035: Overview tab = Tree of Knowledge home + Family Forest (parent mode) */}
-        {activeTab === 'overview'    && (
-          <>
-            <TreeOfKnowledgeHome
-              onNavigate={(tabId) => setActiveTab(tabId)}
-              lang={lang}
-            >
-              <HeroGreeting
-                variant="hero"
-                mode={activeKid ? 'kid' : 'parent'}
-                displayName={activeKid ? activeKid.name : 'bố Bình'}
-                subtitle="Chạm vào điểm sáng trên cây để bắt đầu khám phá"
-              />
-            </TreeOfKnowledgeHome>
-            {isParentMode && kids && kids.length > 0 && (
-              <div style={{ marginTop: 32 }}>
-                <FamilyForest
-                  kids={kids.map((k: any): FamilyKid => ({
-                    id: String(k.id),
-                    name: String(k.name ?? 'Con'),
-                    age: Number(k.age ?? 5),
-                    level: Math.round((getOverall(k) ?? 0)),
-                    streakDays: streaks?.[k.id]?.count ?? 0,
-                    photoDataUrl: k.photoDataUrl,
-                  }))}
-                  onSelectKid={(kid) => setActiveKidId(kid.id)}
-                  onUpdateKidPhoto={(kidId, photoDataUrl) => {
-                    const updated = kids.map((k: any) => k.id === kidId ? { ...k, photoDataUrl } : k);
-                    setKidsP(updated);
-                  }}
-                  subtitle={`${kids.length} cây phát triển · Bố/mẹ là tia nắng — chạm 📷 để gắn ảnh thật của con`}
+        {activeTab === 'overview'    && (() => {
+          const currentKid = activeKidId ? kids.find((k: any) => k.id === activeKidId) : null;
+          return (
+            <>
+              <TreeOfKnowledgeHome
+                onNavigate={(tabId: string) => setActiveTab(tabId)}
+                lang={lang}
+              >
+                <HeroGreeting
+                  variant="hero"
+                  mode={currentKid ? 'kid' : 'parent'}
+                  displayName={currentKid ? currentKid.name : 'bố Bình'}
+                  subtitle="Chạm vào điểm sáng trên cây để bắt đầu khám phá"
                 />
-              </div>
-            )}
-          </>
-        )}
+              </TreeOfKnowledgeHome>
+              {isParentMode && kids && kids.length > 0 && (
+                <div style={{ marginTop: 32 }}>
+                  <FamilyForest
+                    kids={kids.map((k: any): FamilyKid => ({
+                      id: String(k.id),
+                      name: String(k.name ?? 'Con'),
+                      age: Number(k.age ?? 5),
+                      level: Math.round((getOverall(k) ?? 0)),
+                      streakDays: streaks?.[k.id]?.count ?? 0,
+                      photoDataUrl: k.photoDataUrl,
+                    }))}
+                    onSelectKid={(kid) => setActiveKidId(kid.id)}
+                    onUpdateKidPhoto={(kidId, photoDataUrl) => {
+                      const updated = kids.map((k: any) => k.id === kidId ? { ...k, photoDataUrl } : k);
+                      setKidsP(updated);
+                    }}
+                    subtitle={`${kids.length} cây phát triển · Bố/mẹ là tia nắng — chạm 📷 để gắn ảnh thật của con`}
+                  />
+                </div>
+              )}
+            </>
+          );
+        })()}
         {activeTab === 'roadmap'     && <RoadmapTab      kids={kids} progress={progress} toggleObjective={toggleObjective} expandedYear={expandedYear} setExpandedYear={setExpandedYear} openEval={openEval} getQuarterProgress={getQuarterProgress} t={t} L={L} lang={lang} />}
         {activeTab === 'calendar'    && <CalendarTab     kids={kids} weeklyTasks={weeklyTasks} setTasksP={setTasksP} streaks={streaks} checkInToday={checkInToday} t={t} L={L} />}
         {activeTab === 'skilltree'   && <SkillTreeTab    kids={kids} getPillarProgress={getPillarProgress} t={t} L={L} />}
