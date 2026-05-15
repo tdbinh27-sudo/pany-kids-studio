@@ -87,7 +87,7 @@ export function buildFamilyWelcomeEmail(input: {
   chatbotName?: string;      // default 'Cô Pany' (D-032; D-030 per-family override)
 }): { subject: string; html: string; text: string } {
   const botName = input.chatbotName ?? 'Cô Pany';
-  const subject = `🌸 Chào mừng ${input.familyName} đến với Pany Kids Studio — 3 tháng miễn phí`;
+  const subject = `🌸 Chào mừng ${input.familyName} đến với Pany Kids Studio — Miễn phí dài hạn`;
 
   const text = `
 Kính chào ${input.parentName},
@@ -100,12 +100,15 @@ Thông tin truy cập:
 - Mật khẩu tạm thời: ${input.tempPassword}
   (Anh/chị đăng nhập xong nên đổi mật khẩu ngay trong Settings)
 
-Gia đình đang dùng GÓI MIỄN PHÍ 3 THÁNG — hết hạn: ${input.trialEndsAt}.
-Toàn bộ tính năng được mở khóa trong thời gian này.
+🎁 Gia đình đang dùng GÓI CHUẨN MIỄN PHÍ — không giới hạn thời gian.
+Giáo án + quest + story được cập nhật mỗi tuần. Toàn bộ tính năng standard mở khóa.
+
+🤖 Trợ lý AI ${botName}: 20 lượt chat/ngày/gia đình (đủ cho hướng dẫn sử dụng).
+Cần trải nghiệm cá nhân hóa hơn (gia sư AI riêng từng con, lộ trình tùy chỉnh,
+analytics chuyên sâu) → nhắn Zalo 0983 179 109 để nâng cấp.
 
 Trong dashboard, ${input.kidsCount} học viên sẽ được tự động tạo theo độ tuổi anh/chị đã nhập.
-Trợ lý AI ${botName} sẽ đồng hành cùng các con — anh/chị có thể đổi tên trợ lý
-trong Settings sau khi đăng nhập.
+Anh/chị có thể đổi tên trợ lý trong Settings sau khi đăng nhập.
 
 📚 Bắt đầu nhanh:
 1. Đăng nhập + đổi mật khẩu
@@ -140,8 +143,8 @@ Pany Kids Studio team
   </div>
 
   <div style="background: #FFFBEB; border-left: 4px solid #FBBF24; padding: 12px 16px; margin: 16px 0;">
-    <p style="margin: 0;"><strong>🎁 Gói MIỄN PHÍ 3 tháng đang hoạt động</strong></p>
-    <p style="margin: 4px 0 0; font-size: 14px; color: #92400E;">Hết hạn: ${input.trialEndsAt} — Toàn bộ tính năng mở khóa</p>
+    <p style="margin: 0;"><strong>🎁 Gói CHUẨN MIỄN PHÍ — không giới hạn thời gian</strong></p>
+    <p style="margin: 4px 0 0; font-size: 14px; color: #92400E;">Giáo án + quest + story cập nhật mỗi tuần. Cô Pany 20 lượt chat/ngày/gia đình. Cần upgrade → nhắn Zalo 0983 179 109.</p>
   </div>
 
   <h3 style="color: #845EC2;">📚 Bắt đầu nhanh:</h3>

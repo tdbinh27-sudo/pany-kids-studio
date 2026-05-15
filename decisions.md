@@ -315,3 +315,38 @@
 - **Reversibility**: nếu sau 2-3 tháng usage data cho thấy phụ huynh prefer "Đại Ka" hơn (vd: feedback từ beta cohort), 1-line revert DEFAULT_BOT_NAME = "Đại Ka". Migration KHÔNG cần data change (founding family explicit override always wins).
 - **EN bilingual**: "Cô Pany" giữ nguyên trong EN (don't translate "Cô"). EN audience hơi awkward 1 lần đầu — nhưng PANY brand exotic VN charm consistent với philosophy D-003 + D-007.
 
+
+### D-033: Standard tier = FREE LONG-TERM (supersedes D-022 3-month trial) ✅ FINAL
+- **Trigger** (2026-05-15, Session 18): Anh thấy "FREE 3 tháng" tạo urgency giả + lo trial expiry friction. Khẳng định lại brand promise: PANY có công nghệ + thời gian → mở bản chuẩn miễn phí dài hạn cho gia đình Việt, không giới hạn ngày.
+- **Decision**: Bỏ toàn bộ copy "MIỄN PHÍ 3 THÁNG" + "trial expires 2026-08-13". Mọi nơi (landing /sell, /welcome, /sell/register, onboarding wizard done card, OG image static + dynamic, welcome email, Telegram alert, admin dashboard Section 2 title): đổi sang variants của "Miễn phí dài hạn · Giáo án cập nhật mỗi tuần".
+- **Why this overrides D-022**:
+  - D-022 (2026-05-13) said "FREE 3 months, NO tier display, review trigger 2026-08-13, $50/mo cost cap". D-033 keeps the cost cap signal + B2B carve-out (D-026) + cost guard `family-stats.ts:isOverCostBudget()`, but flips the time-bounded framing into permanent-bounded resource framing.
+  - Resource bound = D-034 (20 chat/day/family) instead of time bound (3 months). Conserves Anthropic budget while removing artificial deadline.
+- **Implementation map**:
+  - Copy changes across 7 files: `app/sell/page.tsx` (badge + hero CTA + how-it-works #4 + FAQ #1 + final CTA), `app/welcome/page.tsx` (description + trust signal + story #2 + CTA + subtitle), `app/sell/register/page.tsx` (h1 + submit btn), `app/onboarding/page.tsx` (done step banner), `app/admin/dashboard/page.tsx` (Section 2 title + subtitle), `public/og-image.svg` (badge), `app/api/sell/og/route.ts` (default badge string).
+  - Email + Telegram template updates: `lib/family-email.ts` welcome subject + body banner, `lib/family-notifications.ts` new-lead alert trial line.
+  - Schema-level behavior: `lib/family-provision.ts` — `trial_ends_at` set to `+10 years` (effectively unlimited) instead of `+3 months`, `tier` initial value changed `'free-trial'` → `'standard'`. Migration SQL not changed (backward compat with old families' trial_ends_at field).
+- **Upgrade path positioning**: Standard = unlimited time + 20 chat/day/family + content cập nhật mỗi tuần. Upgrade (manual contact via Zalo 0983 179 109) = gia sư AI riêng từng con + lộ trình tùy chỉnh + analytics chuyên sâu + chat không giới hạn.
+- **Admin dashboard impact**: Section "⏰ Trial expiring" relabeled "📈 Active families monitoring (D-033)" — same widget tracks legacy families pre-D-033 to spot upgrade candidates (high usage = candidate for personal-tier upsell).
+- **Reversibility**: If business model needs to reintroduce trial later, flip `trialEndsAt.setFullYear(+10)` back to `setMonth(+3)` in family-provision.ts + revert copy. 1 commit reversible.
+- **Cross-reference**: D-022 (3-month trial — SUPERSEDED), D-026 (B2B enterprise carve-out — still valid), D-034 (rate limit replaces time bound), D-035 (UI dashboard restructure — to be decided in Phase B research).
+
+### D-034: Chat rate limit 20 messages/day per family + upgrade CTA ✅ FINAL
+- **Trigger** (2026-05-15, Session 18): Anh yêu cầu chatbot giới hạn ~20 dòng/ngày/khách + định hướng nâng cấp nếu cần cá nhân hóa. Spec drives cost containment under D-033 free-long-term promise.
+- **Decision**: `/api/chat` enforces 20 messages/day per family (sliding 24h window). Pre-D-034 limit was 100 msg/hour PER KID (~500/h theoretical max for 5-kid family → unsustainable under D-033).
+- **Bucket key strategy**:
+  - Multi-tenant production: `ChatContext.familyId` (UUID from Supabase `families.id`)
+  - Solo single-family fallback (anh's current setup, pre-P1 wire): `"default-family"` shared bucket — all kids in anh's family share 20/day quota
+  - This is conservative: 20 msg ÷ 3 kids ≈ 6-7 msg/kid/day. Sufficient cho hướng dẫn dùng dashboard; encourages kids to dùng Quest/Math/Stories thay vì coi chatbot là chat toy.
+- **Rate-limit exceeded response (HTTP 429)**:
+  - Vietnamese + English variants matched to `ctx.lang`
+  - Reset time hint: "Reset khoảng N tiếng nữa" (computed from oldest timestamp in bucket)
+  - 4 redirect suggestions: Quest hôm nay / Math Quiz (1060 câu) / Bilingual Stories (50 truyện) / La bàn 60 nghề
+  - Upgrade CTA: "Cần gia sư AI riêng + chat không giới hạn? Nhắn Zalo PANY 0983 179 109"
+  - `X-RateLimit-Limit` / `X-RateLimit-Remaining` / `X-RateLimit-Reset` HTTP headers exposed for client telemetry
+  - Successful response also includes `quota.remaining` so frontend can display soft warning before hitting limit
+- **Why per-family not per-kid**: Per-kid (20×5=100/day/family) would defeat budget control. Per-family forces parent to coordinate with kids on quota use → reinforces "Cô Pany = guidance, not entertainment" positioning.
+- **Storage**: In-memory `Map<familyKey, timestamps[]>` (process-local). Acceptable for skeleton + low-traffic phase. Edge case: serverless cold start resets bucket — slight over-allowance, not a security risk. When traffic grows OR multi-region instances → swap to Supabase `family_chat_quota` table with VN-midnight reset (Block 2 wire candidate).
+- **System prompt budget bonus**: 20 msg/day × ~3K tokens/msg × $3/Mtok input + ~500 tok output × $15/Mtok ≈ **$0.27/family/day max**. 100 families = $27/day = $810/mo within D-022's original $50/mo cap WHEN families are 5x more numerous — i.e., this scales with 5x headroom.
+- **Cross-reference**: D-022 (cost cap concept — preserved), D-033 (free long-term framing — partner decision), D-031 (Pany Kids separate Supabase project — quota table goes there).
+

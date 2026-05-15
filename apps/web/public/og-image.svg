@@ -40,8 +40,8 @@
 
   <!-- Brand badge top-left -->
   <g transform="translate(60, 60)">
-    <rect width="140" height="36" rx="18" fill="#FFFBEB" stroke="#FBBF24" stroke-width="2"/>
-    <text x="70" y="24" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#92400E" text-anchor="middle">🎁 MIỄN PHÍ 3 THÁNG</text>
+    <rect width="280" height="36" rx="18" fill="#FFFBEB" stroke="#FBBF24" stroke-width="2"/>
+    <text x="140" y="24" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#92400E" text-anchor="middle">🎁 MIỄN PHÍ · CẬP NHẬT MỖI TUẦN</text>
   </g>
 
   <!-- Hero emoji row -->

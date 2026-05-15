@@ -1,11 +1,12 @@
 /**
  * @file app/sell/page.tsx
  * @description Pany Kids Studio sales landing page.
- *              FREE 3-month trial — no pricing tier display (D-022).
- *              Port-adapted from pany-gia-pha-app/(landing)/sell/page.tsx.
+ *              FREE long-term standard tier (D-033 supersedes D-022).
+ *              Content continuously updated (giáo án/quest/story weekly).
+ *              Upgrade path: personal tutor + custom roadmap — contact only.
  *              Hidden from search engines (robots: noindex).
- * @version 1.0.0-draft
- * @updated 2026-05-13
+ * @version 1.1.0-free-long-term
+ * @updated 2026-05-15
  */
 
 import type { Metadata } from 'next';
@@ -16,11 +17,11 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kids.panyvn.app';
 export const metadata: Metadata = {
   title: 'Pany Kids Studio — Studio học tập gia đình cho trẻ 5-16 tuổi',
   description:
-    'Dashboard học tập 24/7 cho 5 con. 12 trụ cột phát triển. Trợ lý AI Cô Pany đồng hành. Đăng ký miễn phí 3 tháng.',
+    'Dashboard học tập 24/7 cho 5 con. 12 trụ cột phát triển. Trợ lý AI Cô Pany đồng hành. Miễn phí — giáo án & nội dung cập nhật liên tục.',
   alternates: { canonical: `${APP_URL}/sell` },
   robots: { index: false, follow: false }, // hidden until launch
   openGraph: {
-    title: '🌸 Pany Kids Studio — Đăng ký miễn phí 3 tháng',
+    title: '🌸 Pany Kids Studio — Miễn phí · Giáo án cập nhật mỗi tuần',
     description: 'Studio học tập cho gia đình Việt: 12 trụ cột phát triển × 5 học viên × trợ lý AI Cô Pany.',
     url: `${APP_URL}/sell`,
     siteName: 'Pany Kids Studio',
@@ -31,13 +32,13 @@ export const metadata: Metadata = {
         url: `${APP_URL}/og-image.svg`,
         width: 1200,
         height: 630,
-        alt: 'Pany Kids Studio — Đăng ký miễn phí 3 tháng',
+        alt: 'Pany Kids Studio — Miễn phí · Giáo án cập nhật mỗi tuần',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '🌸 Pany Kids Studio — Đăng ký miễn phí 3 tháng',
+    title: '🌸 Pany Kids Studio — Miễn phí · Giáo án cập nhật mỗi tuần',
     description: 'Studio học tập cho gia đình Việt: 12 trụ cột phát triển × 5 học viên.',
     images: [`${APP_URL}/og-image.svg`],
   },
@@ -70,11 +71,11 @@ const howItWorks = [
   { n: 1, title: 'Đăng ký miễn phí', desc: 'Điền form 5 phút (tên, email, SĐT, độ tuổi các con). Hệ thống tự tạo gia đình ngay.' },
   { n: 2, title: 'Đăng nhập + setup', desc: 'Nhận email với link đăng nhập + mật khẩu tạm. Đổi mật khẩu, đặt PIN cho từng con.' },
   { n: 3, title: 'Con khám phá hằng ngày', desc: 'Mỗi con login bằng PIN riêng. Làm quest, đọc truyện, chat Cô Pany. Bố mẹ xem progress.' },
-  { n: 4, title: '3 tháng miễn phí trải nghiệm', desc: 'Toàn bộ tính năng mở khóa. Sau 3 tháng PANY sẽ thông báo phương án tiếp theo dựa trên usage thực tế.' },
+  { n: 4, title: 'Miễn phí dài hạn · nội dung cập nhật mỗi tuần', desc: 'Toàn bộ tính năng standard mở khóa, không giới hạn thời gian. Mỗi tuần PANY cập nhật quest/story/bài học mới. Cô Pany 20 lượt chat/ngày/gia đình (đủ dùng cho hướng dẫn). Cần nâng cấp trải nghiệm cá nhân → liên hệ Zalo.' },
 ];
 
 const faqs = [
-  { q: 'Có thực sự miễn phí hoàn toàn không?', a: 'Đúng vậy. Trong giai đoạn 3 tháng đầu (tới 2026-08-13), toàn bộ tính năng được mở khóa, không thu phí. Sau đó PANY sẽ review usage rồi quyết định phương án tiếp theo — anh/chị sẽ được thông báo trước ít nhất 2 tuần.' },
+  { q: 'Có thực sự miễn phí hoàn toàn không?', a: 'Đúng vậy. Bản chuẩn (standard) miễn phí dài hạn cho mọi gia đình Việt — không giới hạn thời gian, không cần thẻ tín dụng. Nội dung được cập nhật liên tục: quest mới, story mới, bài học mới mỗi tuần. Nếu cần trải nghiệm cá nhân hóa hơn (gia sư AI riêng cho từng con, lộ trình tùy chỉnh, analytics chuyên sâu) → liên hệ PANY để nâng cấp.' },
   { q: 'Con tôi 5 tuổi/16 tuổi có dùng được không?', a: 'Có. Pany Kids hỗ trợ chính xác từng độ tuổi 5-16 (12 single-year tracks). Nội dung được map theo chương trình VN: mầm non lá → lớp 11. Cô Pany tự điều chỉnh ngôn ngữ theo tuổi từng con.' },
   { q: 'Tôi có thể thêm bao nhiêu con vào 1 tài khoản?', a: 'Tối đa 5 học viên/gia đình. Mỗi con có profile + PIN + lộ trình riêng. Nếu anh/chị có nhiều hơn 5 con hoặc là trung tâm/trường — liên hệ phương án enterprise riêng.' },
   { q: 'Cô Pany có thay được tên không?', a: 'Có. Mặc định "Cô Pany" (cảm giác cô giáo trẻ ấm áp). Anh/chị có thể đổi thành "Đại Ka" (anh cả/mentor), "Anh AI", "Bạn AI", hoặc tên tùy chỉnh trong Settings sau khi đăng nhập.' },
@@ -90,7 +91,7 @@ export default function SellPage() {
       <section style={{ background: `linear-gradient(135deg, #FFE5F1 0%, ${BRAND.soft} 100%)`, padding: '64px 24px 80px', textAlign: 'center' }}>
         <div style={{ maxWidth: 720, margin: '0 auto' }}>
           <div style={{ display: 'inline-block', background: '#FFFBEB', color: '#92400E', padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
-            🎁 MIỄN PHÍ 3 THÁNG — Không cần thẻ tín dụng
+            🎁 MIỄN PHÍ · GIÁO ÁN CẬP NHẬT MỖI TUẦN
           </div>
           <h1 style={{ fontSize: 40, fontWeight: 800, lineHeight: 1.15, margin: '0 0 16px', color: BRAND.purple }}>
             Pany Kids Studio
@@ -116,7 +117,7 @@ export default function SellPage() {
               boxShadow: '0 8px 24px rgba(132,94,194,0.35)',
             }}
           >
-            🌸 Đăng ký miễn phí 3 tháng →
+            🌸 Đăng ký miễn phí →
           </Link>
           <p style={{ fontSize: 13, color: BRAND.mute, marginTop: 12 }}>
             Hoặc nhắn Zalo: <a href="tel:0983179109" style={{ color: BRAND.purple }}>0983 179 109</a>
@@ -171,8 +172,8 @@ export default function SellPage() {
       {/* FINAL CTA */}
       <section style={{ background: `linear-gradient(135deg, ${BRAND.purple} 0%, ${BRAND.pink} 100%)`, padding: '64px 24px', textAlign: 'center', color: '#fff' }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 28, fontWeight: 800, margin: '0 0 12px' }}>Sẵn sàng cho 3 tháng đầu tiên?</h2>
-          <p style={{ fontSize: 17, opacity: 0.95, marginBottom: 32 }}>Đăng ký mất 5 phút. Hệ thống tự setup gia đình + gửi email login trong 30 giây.</p>
+          <h2 style={{ fontSize: 28, fontWeight: 800, margin: '0 0 12px' }}>Sẵn sàng học cùng PANY?</h2>
+          <p style={{ fontSize: 17, opacity: 0.95, marginBottom: 32 }}>Miễn phí dài hạn · Đăng ký 5 phút · Hệ thống tự setup gia đình + gửi email login trong 30 giây.</p>
           <Link
             href="/sell/register"
             style={{

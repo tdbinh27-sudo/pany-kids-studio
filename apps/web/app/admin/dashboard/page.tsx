@@ -167,8 +167,8 @@ export default function AdminDashboard() {
           </Grid>
         </Section>
 
-        {/* SECTION 2 — Trial expiring */}
-        <Section title="⏰ Trial expiring (D-022 monitoring)" subtitle="Gia đình sắp hết 3 tháng free → cần CTA upgrade hoặc retain">
+        {/* SECTION 2 — Active families (legacy trial expiry, D-033 reframed) */}
+        <Section title="📈 Active families monitoring (D-033)" subtitle="Standard tier free long-term — không còn áp dụng 3-month trial. Số dưới là families có trial_ends_at cũ (pre-D-033) — anh giữ để theo dõi adoption + upgrade candidate.">
           <Grid>
             <Card label="Hết hạn rồi" value={stats?.trial.expired ?? 0} color={BRAND.red} sub="Cần follow up" />
             <Card label="Trong 7 ngày" value={stats?.trial.expiring_within_7d ?? 0} color={BRAND.pink} sub="High priority" />

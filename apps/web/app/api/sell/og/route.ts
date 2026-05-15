@@ -71,7 +71,7 @@ function buildPersonalization(params: URLSearchParams): Personalization {
   const headline = params.get('headline')?.trim();
 
   // Default state — mirrors static og-image.svg
-  let badge = '🎁 MIỄN PHÍ 3 THÁNG';
+  let badge = '🎁 MIỄN PHÍ · CẬP NHẬT MỖI TUẦN';
   let title = 'Pany Kids Studio';
   let subtitle1 = 'Studio học tập gia đình · 5-16 tuổi · 5 học viên';
   let subtitle2 = '12 trụ cột phát triển · Trợ lý AI Cô Pany · Setup 5 phút';
@@ -100,7 +100,7 @@ function buildPersonalization(params: URLSearchParams): Personalization {
   } else if (from) {
     title = `${clip(from, 22)} mời bạn`;
     subtitle1 = 'dùng Pany Kids Studio cùng gia đình';
-    badge = '🎁 MIỄN PHÍ 3 THÁNG';
+    badge = '🎁 MIỄN PHÍ · CẬP NHẬT MỖI TUẦN';
   } else if (kids) {
     const kidCount = parseInt(kids, 10);
     if (Number.isFinite(kidCount) && kidCount > 0 && kidCount <= 9) {

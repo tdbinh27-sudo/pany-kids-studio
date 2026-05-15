@@ -259,8 +259,11 @@ export async function provisionFamily(
   }
 
   // ─── 4. INSERT families ─────────────────────────────────────────
+  // D-033 (2026-05-15): supersedes D-022. Standard tier = free long-term.
+  // trial_ends_at kept in schema for backward compat — set to +10 years (effectively unlimited)
+  // so legacy admin dashboard "trial expiring" widget never trips for new families.
   const trialEndsAt = new Date();
-  trialEndsAt.setMonth(trialEndsAt.getMonth() + 3); // D-022 free 3 months
+  trialEndsAt.setFullYear(trialEndsAt.getFullYear() + 10);
 
   const { data: family, error: famErr } = await sb
     .from('families')
@@ -268,7 +271,7 @@ export async function provisionFamily(
       slug,
       name: req.family_name || `Gia đình ${req.parent_name}`,
       status: 'active',
-      tier: 'free-trial',
+      tier: 'standard', // D-033 — was 'free-trial' pre-2026-05-15
       trial_started_at: new Date().toISOString(),
       trial_ends_at: trialEndsAt.toISOString(),
     })

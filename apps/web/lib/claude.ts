@@ -26,6 +26,11 @@ export type ChatContext = {
   // P2.5 admin form lets parent-mode users pick: Đại Ka / Cô Pany / Anh AI / Bạn AI / custom.
   botName?: string;
   botName_en?: string; // optional EN variant; falls back to botName if omitted
+  // D-034 (2026-05-15): rate-limit bucket key for /api/chat 20-msg/day enforcement.
+  // Solo single-family deployment (anh's 3 con) → leave undefined, route falls back
+  // to shared "default-family" bucket (all kids share the 20/day quota).
+  // Multi-tenant SaaS (post-P1 Supabase wire) → client passes real family_id UUID.
+  familyId?: string;
 };
 
 /**

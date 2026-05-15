@@ -15,11 +15,11 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kids.panyvn.app';
 export const metadata: Metadata = {
   title: 'Pany Kids Studio — Studio học tập gia đình cho trẻ 5-16 tuổi',
   description:
-    'Bố Bình xây Pany Kids cho 3 con Phúc, An, Như Ý — giờ mở miễn phí cho gia đình Việt khác. 12 trụ cột × trợ lý AI Cô Pany × song ngữ Việt-Anh.',
+    'Bố Bình xây Pany Kids cho 3 con Phúc, An, Như Ý — giờ mở miễn phí dài hạn cho gia đình Việt khác. 12 trụ cột × trợ lý AI Cô Pany × song ngữ Việt-Anh.',
   alternates: { canonical: `${APP_URL}/welcome` },
   openGraph: {
     title: '🌸 Pany Kids Studio — Studio học tập gia đình',
-    description: 'Dashboard 24/7 cho 1-5 con tuổi 5-16. Miễn phí 3 tháng, không cần thẻ.',
+    description: 'Dashboard 24/7 cho 1-5 con tuổi 5-16. Miễn phí · giáo án cập nhật mỗi tuần · không cần thẻ.',
     url: `${APP_URL}/welcome`,
     siteName: 'Pany Kids Studio',
     locale: 'vi_VN',
@@ -40,9 +40,9 @@ const BRAND = {
 };
 
 const trustSignals = [
-  { icon: '🎁', label: 'Miễn phí 3 tháng', sub: 'Không cần thẻ tín dụng' },
+  { icon: '🎁', label: 'Miễn phí dài hạn', sub: 'Không giới hạn thời gian' },
+  { icon: '📚', label: 'Giáo án cập nhật', sub: 'Quest + story mỗi tuần' },
   { icon: '🇻🇳', label: 'Made in Vietnam', sub: 'Tuân thủ PDPL VN' },
-  { icon: '🔒', label: 'Dữ liệu mã hóa', sub: 'Per-family isolation' },
   { icon: '👨‍👩‍👧', label: '1 tài khoản · 5 con', sub: 'Mỗi con PIN riêng' },
 ];
 
@@ -56,8 +56,8 @@ const storyPoints = [
   {
     n: '2',
     icon: '🤝',
-    title: 'Tại sao mở miễn phí cho gia đình khác',
-    body: 'Sau khi 3 con dùng được, em nghĩ phụ huynh khác cũng đang gặp vấn đề tương tự. PANY có công nghệ + thời gian, nên em mở miễn phí 3 tháng đầu cho mọi gia đình Việt thử. Sau 3 tháng (đến 2026-08-13), em sẽ review usage thực tế rồi quyết định phương án tiếp theo — không tự động tính phí, không có thẻ tín dụng từ đầu.',
+    title: 'Tại sao mở miễn phí dài hạn cho gia đình khác',
+    body: 'Sau khi 3 con dùng được, em nghĩ phụ huynh khác cũng đang gặp vấn đề tương tự. PANY có công nghệ + thời gian, nên em mở MIỄN PHÍ DÀI HẠN bản chuẩn cho mọi gia đình Việt — không giới hạn 3 tháng, không cần thẻ tín dụng. Giáo án + quest + story được cập nhật mỗi tuần. Cô Pany 20 lượt chat/ngày/gia đình (đủ dùng cho hướng dẫn). Cần trải nghiệm cá nhân hóa hơn (gia sư riêng từng con, lộ trình tùy chỉnh) → liên hệ Zalo PANY nâng cấp.',
   },
   {
     n: '3',
@@ -97,10 +97,10 @@ export default function WelcomePage() {
               boxShadow: '0 8px 24px rgba(132,94,194,0.35)',
             }}
           >
-            🌸 Đăng ký miễn phí 3 tháng →
+            🌸 Đăng ký miễn phí →
           </Link>
           <p style={{ fontSize: 13, color: BRAND.mute, marginTop: 16 }}>
-            Đăng ký 5 phút · Không cần thẻ tín dụng · Setup tự động qua email
+            Miễn phí dài hạn · Không cần thẻ tín dụng · Setup tự động qua email
           </p>
         </div>
       </section>
@@ -125,7 +125,7 @@ export default function WelcomePage() {
             Câu chuyện Pany Kids
           </h2>
           <p style={{ textAlign: 'center', color: BRAND.mute, marginBottom: 48 }}>
-            Tại sao có dashboard này, tại sao miễn phí 3 tháng, và Pany Kids khác gì.
+            Tại sao có dashboard này, tại sao miễn phí dài hạn, và Pany Kids khác gì.
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {storyPoints.map(s => (

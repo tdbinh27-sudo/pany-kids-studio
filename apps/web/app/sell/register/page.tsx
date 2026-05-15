@@ -135,7 +135,7 @@ export default function RegisterPage() {
       <main style={{ maxWidth: 600, margin: '0 auto', padding: '40px 24px' }}>
         {step === 'form' && (
           <>
-            <h1 style={{ fontSize: 32, fontWeight: 800, color: BRAND.purple, margin: '0 0 8px' }}>🌸 Đăng ký miễn phí 3 tháng</h1>
+            <h1 style={{ fontSize: 32, fontWeight: 800, color: BRAND.purple, margin: '0 0 8px' }}>🌸 Đăng ký miễn phí</h1>
             <p style={{ color: BRAND.mute, marginBottom: 32 }}>Điền form 5 phút — hệ thống tự setup gia đình + gửi email login trong 30 giây.</p>
 
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -200,7 +200,7 @@ export default function RegisterPage() {
               )}
 
               <button type="submit" disabled={submitting} style={{ ...buttonStyle, background: BRAND.purple, color: '#fff', padding: '14px 24px', fontSize: 16, fontWeight: 700, opacity: submitting ? 0.6 : 1 }}>
-                {submitting ? 'Đang xử lý...' : '🌸 Đăng ký miễn phí 3 tháng'}
+                {submitting ? 'Đang xử lý...' : '🌸 Đăng ký miễn phí'}
               </button>
 
               <p style={{ fontSize: 12, color: BRAND.mute, textAlign: 'center', margin: 0 }}>

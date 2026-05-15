@@ -80,7 +80,7 @@ export function buildFamilyProvisionedAlert(input: {
     `🔑 Mật khẩu tạm: ${input.temp_password}`,
     '',
     `📨 Email gửi: ${input.email_sent ? 'OK' : 'FAILED'}`,
-    `⏳ Free trial 3 tháng từ hôm nay`,
+    `🎁 Standard tier · MIỄN PHÍ DÀI HẠN (D-033) · 20 chat/ngày`,
     '',
     `🆔 Family: ${input.family_id}`,
     `🆔 Lead: ${input.signup_id}`,

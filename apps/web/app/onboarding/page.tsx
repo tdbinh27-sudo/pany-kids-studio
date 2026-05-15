@@ -517,9 +517,9 @@ function OnboardingPageInner() {
         {step === 'done' && (
           <Card title="🎉 Hoàn thành onboarding!" subtitle={`${state?.family?.name ?? 'Gia đình'} đã sẵn sàng dùng Pany Kids.`}>
             <div style={{ background: '#FFFBEB', border: `1px solid ${BRAND.amber}`, padding: 20, borderRadius: 12, marginBottom: 24 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#92400E', margin: '0 0 12px' }}>🎁 Free trial 3 tháng đang hoạt động</h3>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#92400E', margin: '0 0 12px' }}>🎁 Tài khoản miễn phí dài hạn đang hoạt động</h3>
               <p style={{ fontSize: 14, color: BRAND.text, margin: 0 }}>
-                Toàn bộ tính năng mở khóa. PANY sẽ review usage và thông báo trước ít nhất 2 tuần trước khi hết hạn.
+                Toàn bộ tính năng bản chuẩn mở khóa, không giới hạn thời gian. Giáo án + quest + story cập nhật mỗi tuần. Cô Pany 20 lượt chat/ngày/gia đình. Cần trải nghiệm cá nhân hóa hơn → nhắn Zalo 0983 179 109.
               </p>
             </div>
 
