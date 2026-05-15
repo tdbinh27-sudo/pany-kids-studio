@@ -579,13 +579,12 @@ export default function PanyKidsStudio() {
   const [confettiOn, setConfettiOn] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // D-035 Phase 2c: sidebar starts CLOSED on Overview (Tree home), open on desktop for other tabs.
-  // User can still toggle via hamburger if they want sidebar visible on Overview.
+  // D-035 Phase 3c (2026-05-15): sidebar default CLOSED on ALL tabs.
+  // Anh feedback: "Vào từng templet em bỏ phần side bar (khách sử dụng back lại
+  // trang chính là được rồi)". Back button + Tree home grid replace sidebar nav.
+  // User can still toggle via hamburger ☰ in header if they want sidebar visible.
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isDesktop = window.innerWidth >= 1024;
-      setSidebarOpen(isDesktop && activeTab !== 'overview');
-    }
+    setSidebarOpen(false);
   }, [activeTab]);
 
   // D-035 Phase 3a: browser back button returns to Overview (Tree home) instead of exiting app.
@@ -1400,9 +1399,97 @@ function TabNav({ activeTab, setActiveTab, t, sidebarOpen, setSidebarOpen, L }) 
 }
 
 function Footer({ t }) {
+  // D-035 Phase 3c: parent display name editable + persisted via localStorage 'pks-parent-display-name'
+  // Same storage key as TreeOfKnowledgeHome footer so both stay in sync.
+  const [parentName, setParentName] = React.useState('');
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [draft, setDraft] = React.useState('');
+
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem('pks-parent-display-name');
+      if (saved) setParentName(saved);
+    } catch {}
+  }, []);
+
+  // Cross-window sync: listen for storage events so footer updates when parent name
+  // is edited from TreeOfKnowledgeHome footer in another tab/component.
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handler = (e: StorageEvent) => {
+      if (e.key === 'pks-parent-display-name') setParentName(e.newValue ?? '');
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+
+  const handleSave = () => {
+    const trimmed = draft.trim();
+    setParentName(trimmed);
+    try {
+      if (trimmed) localStorage.setItem('pks-parent-display-name', trimmed);
+      else localStorage.removeItem('pks-parent-display-name');
+    } catch {}
+    setIsEditing(false);
+  };
+
   return (
     <footer style={{ textAlign: 'center', padding: '40px 20px 24px', color: C.mute }}>
-      <div className="hand" style={{ fontSize: 22, color: C.purple, marginBottom: 4 }}>made with 💖 by bố Bình</div>
+      {isEditing ? (
+        <div className="hand" style={{ fontSize: 22, color: C.purple, marginBottom: 4, display: 'inline-flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+          made with 💖 by
+          <input
+            autoFocus
+            type="text"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSave();
+              if (e.key === 'Escape') setIsEditing(false);
+            }}
+            placeholder="bố Bình"
+            maxLength={40}
+            style={{
+              fontFamily: 'inherit',
+              fontSize: 20,
+              padding: '2px 10px',
+              border: `2px solid ${C.purple}`,
+              borderRadius: 8,
+              background: '#fff',
+              color: C.purple,
+              minWidth: 160,
+              outline: 'none',
+            }}
+          />
+          <button onClick={handleSave} className="btn-bounce body-f" style={{ background: C.purple, color: '#fff', border: 'none', padding: '4px 12px', borderRadius: 8, fontSize: 12, cursor: 'pointer', fontWeight: 700 }}>Lưu</button>
+          <button onClick={() => setIsEditing(false)} className="btn-bounce body-f" style={{ background: '#fff', color: C.mute, border: `1px solid ${C.mute}`, padding: '4px 12px', borderRadius: 8, fontSize: 12, cursor: 'pointer' }}>Hủy</button>
+        </div>
+      ) : (
+        <div className="hand" style={{ fontSize: 22, color: C.purple, marginBottom: 4 }}>
+          made with 💖 by{' '}
+          <button
+            onClick={() => {
+              setDraft(parentName);
+              setIsEditing(true);
+            }}
+            title="Chạm để đổi tên"
+            className="hand"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: C.purple,
+              fontSize: 22,
+              fontWeight: 700,
+              cursor: 'pointer',
+              padding: 0,
+              fontFamily: 'inherit',
+              textDecoration: parentName ? 'none' : 'underline dotted',
+            }}
+          >
+            {parentName || '___'}
+          </button>
+        </div>
+      )}
       <div className="body-f" style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', fontWeight: 600 }}>Pany Kids Studio · v3 · 2026—2031</div>
     </footer>
   );
