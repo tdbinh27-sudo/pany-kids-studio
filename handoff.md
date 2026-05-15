@@ -1,7 +1,83 @@
 # Handoff — Pany Kids Studio
 
-**Last updated:** 2026-05-15 ~08:50 GMT+7 (Session 17 — polish queue cleanup + CC/DD/EE/FF committed)
-**Resume command:** `Continue pany-kids-studio — anh đã xong Block 1` (khi anh xong API key + webhook + feedback + debug-deps)
+**Last updated:** 2026-05-15 ~12:30 GMT+7 (Session 18 — D-035 Tree of Knowledge transformation · Phase 1+2+3a LIVE · 13 commits)
+**Resume command:** `Continue pany-kids-studio Library/English restructure` (Phase 3b next)
+**Production:** https://pany-kids-studio.vercel.app · HEAD `25b5ba9` · all 9 routes ✅
+
+## Session 18 (2026-05-15) — Tree of Knowledge transformation
+
+D-035 chốt sau khi anh review 2 mô hình UX (Cây vs Tàu vũ trụ). Cây primary, Spaceship = Mature Mode (deferred 12+).
+Canonical image: anh's Gemini Imagen pick saved at `public/tree-of-knowledge-hero.jpg` (1920×1072 JPG 459KB from PNG 7.6MB via ffmpeg).
+
+### Phases delivered
+
+| Phase | Commit | What |
+|-------|--------|------|
+| **Phase 0** | `8228fc1` | D-033 free-long-term + D-034 chat 20/day/family rate limit (replaces D-022 3-month trial) |
+| **Phase B research** | `669727d` `7849d22` | 5-model UX research → 2-model deep dive → 4 Gemini prompts ready-to-paste |
+| **Phase 1a** | `94561ea` | TreeHero component + /welcome hero dark immersive aesthetic |
+| **Phase 1 canonical** | `cda7dbc` | Anh's Gemini pick LIVE at `/tree-of-knowledge-hero.jpg` |
+| **Phase 1b** | `68e895b` | /sell hero + OG dynamic dark mode + FamilyForest (6 life-stages SVG) |
+| **Phase 1c greeting** | `ab9ed2e` | HeroGreeting time-aware VN (5 windows) · hydration-safe SSR pattern |
+| **Phase 2** | `eb20d0e` | TreeOfKnowledgeHome as Overview + photo upload per kid in FamilyForest |
+| **Phase 2 hotfix** | `64aa3e9` | ReferenceError activeKid undefined fix |
+| **Phase 2c** | `194c816` `852a75e` | Simplify: remove hotspots overlay + greeting inline + hide TabNav+MobileTabBar + sidebar auto-close |
+| **Phase 3a** | `25b5ba9` | 27 templates grid + HTML5 drag-rearrange + browser back→Overview + footer "Made with ❤️ by ___" editable |
+
+### Decisions logged
+- **D-033** (cumulative D-022 replacement): Free long-term standard tier
+- **D-034**: Chat 20 msg/day/family rate limit + Zalo upgrade CTA
+- **D-035**: UI metaphor primary = 🌳 Cây phát triển + cha mẹ song hành · Spaceship = Mature Mode deferred kid 12+
+
+### Code shipped this session
+- `lib/greeting.ts` (~140 lines): 5 VN time-of-day windows + 3 user modes (kid/parent/anonymous)
+- `components/HeroGreeting.tsx` (~110 lines): holographic overlay hydration-safe
+- `components/TreeHero.tsx` (~150 lines): dark immersive landing hero with 3-tier image fallback
+- `components/TreeOfKnowledgeHome.tsx` (~340 lines): 27-card grid + HTML5 drag + editable footer
+- `components/FamilyForest.tsx` (~340 lines): 1-5 kids as SVG trees with 6 life-stages + photo upload
+- `public/tree-of-knowledge-hero.jpg` (459KB): canonical brand image
+- `public/tree-hero-placeholder.svg` (~3.5KB): CSS-style fallback before canonical image saved
+- `app/api/sell/og/route.ts`: rewritten for D-035 dark mode palette + emoji 🌳🌸🍎🌿✨
+- `app/api/chat/route.ts`: D-034 rate limit + Vietnamese rate-limited message + upgrade CTA
+- 12+ landing/email/notification files: copy migration from "3 tháng" → "miễn phí dài hạn"
+
+## Mai resume (Phase 3b — Library/English restructure)
+
+Anh's 2026-05-15 feedback item #2 deferred for next chunk:
+
+> "Trong template Thư Viện: em đưa phần trụ cột lên trên cùng → rồi tới hỏi đáp chuyên gia; Phần Truyện Song Ngữ → em đưa sang Template Tiếng Anh"
+
+**Estimated ~1-2h work:**
+
+1. Find `LibraryTab` component in `apps/web/components/PanyKidsStudio.tsx`
+2. Reorder sections:
+   - Section 1 NEW: 12 trụ cột phát triển (move to TOP)
+   - Section 2 NEW: Hỏi đáp chuyên gia (Career Q&A — second)
+   - Section 3 OLD curated resources stays
+3. Find bilingual stories rendering inside LibraryTab
+4. Cut → paste into `EnglishSkillsTab` (which currently has 4 skills: Vocab/Speak/Read/Write)
+5. Update LibraryTab to remove story tab/section
+6. Add story tab into EnglishSkillsTab as 5th skill mode (or section)
+7. Test CEFRLevel K preservation (Như Ý 5t access still works)
+8. TS check + commit + deploy
+9. Browser-pilot verify
+
+### Re-resume after Phase 3b
+Future chunks (anh chỉ định khi cần):
+- 6-stage life-cycle progression strip (cần Gemini gen 6 ảnh)
+- Settings tab: parent name management (currently in footer only)
+- Family Forest test với ảnh thật 3 con upload
+- Kid mode: greeting tự đổi sang kid name + filter cards phù hợp tuổi
+
+## Resume Gate (block production claim — anh-only manual)
+
+| # | Action | Effort | Status |
+|---|---|---|---|
+| 1 | 🔴 Rotate Anthropic API key | 2 phút | **STILL PENDING** since Session 16 |
+| 2 | 🔴 Backfill `feedback-week-1.md` Day 1-4 | 30 phút | **STILL PENDING (D-025 gate)** |
+| 3 | ⚠️ Re-link Vercel ↔ GitHub webhook | 2 phút | **STILL PENDING** (manual `vercel deploy --prod` em chạy mỗi commit) |
+| 4 | ⚖️ Chốt Path A/B debug-deps Session 15 | 1 phút | **STILL PENDING** |
+| 5-7 | 🟡 Supabase project + migration + env vars | 30 phút | Block 2 — wire P1 backend live |
 
 ## Session 17 (2026-05-15) — polish queue cleanup
 

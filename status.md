@@ -1,7 +1,53 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-05-15 ~08:55 GMT+7 (Session 17 — polish queue cleanup)
-**Current state:** v3.3-C still live on production (`eeea893`). Local HEAD `dc7df88` = **13 commits ahead** of production (Session 16 batch + Session 17 polish: CC onboarding UI + DD seed preview + EE 2 CTV templates + FF dynamic OG route). Webhook still broken → no auto-deploy. All TypeScript clean. Block 1 Resume Gate (#1-4) still all pending — D-025 feedback backfill is biggest validity risk.
+**Last updated:** 2026-05-15 ~12:35 GMT+7 (Session 18 — D-035 Tree of Knowledge transformation LIVE)
+**Current state:** Production HEAD `25b5ba9` ✅ Phase 1+2+3a complete. Tree of Knowledge as full dashboard home: dark immersive aesthetic + canonical Gemini image + 27 nav grid + drag-rearrange + editable footer. 13 commits Session 18. Block 1 Resume Gate (#1-4) still pending anh-only. Phase 3b deferred: Library/English restructure.
+
+## ⭐ SESSION 18 (2026-05-15) — D-035 Tree of Knowledge transformation
+
+D-033 (free long-term) + D-034 (chat rate limit) + D-035 (UI metaphor primary = Cây) logged.
+Anh's Gemini Imagen pick saved as canonical brand image. 5 phases delivered in one extended session (~5h work).
+
+**Commits Session 18 (13 commits, ~3.5K LOC additions):**
+
+```
+25b5ba9 feat(D-035 Phase 3a): 27 templates grid + drag-rearrange + footer + back-button
+4fe3ebd chore: remove browser-pilot debug artifacts
+852a75e fix(D-035 Phase 2c): also hide MobileTabBar on Overview
+194c816 feat(D-035 Phase 2c): simplify Overview — remove hotspot overlay + sidebar/TabNav
+64aa3e9 hotfix: ReferenceError activeKid is not defined
+eb20d0e feat(D-035 Phase 2): Tree of Knowledge as dashboard home + photo upload per kid
+68e895b feat(D-035 Phase 1b): /sell hero + OG dark mode + Family Forest component
+cda7dbc feat(D-035): canonical Tree of Knowledge hero image LIVE
+94561ea feat(D-035 Phase 1a): /welcome hero refactored to Tree of Knowledge
+ab9ed2e feat(D-035): dynamic VN greeting + HeroGreeting holographic overlay
+7849d22 docs(D-035): 4 Gemini Imagen variants ready to paste
+669727d docs(D-035-candidate): 2-model UX research — Cây vs Tàu vũ trụ
+8228fc1 feat(D-033+D-034): free long-term tier + 20 chat/day/family rate limit
+```
+
+### State by surface
+
+| Surface | Status | What changed |
+|---|---|---|
+| `/welcome` hero | ✅ LIVE | TreeHero dark immersive + canonical image + cyan-glow CTA + Vietnamese hero greeting |
+| `/sell` hero | ✅ LIVE | Same TreeHero + amber-rim badge "MIỄN PHÍ DÀI HẠN · GIÁO ÁN CẬP NHẬT MỖI TUẦN" |
+| `/sell/register` | ✅ LIVE | Copy "Đăng ký miễn phí" (no longer "3 tháng") |
+| `/onboarding` | ✅ LIVE | Banner "Tài khoản miễn phí dài hạn đang hoạt động" |
+| `/admin/dashboard` | ✅ LIVE | Section 2 relabeled "📈 Active families monitoring (D-033)" |
+| `/api/sell/og` | ✅ LIVE | Dynamic SVG D-035 dark palette + emoji 🌳🌸🍎🌿✨ |
+| `/api/chat` | ✅ LIVE | D-034 rate limit 20/day/family + VN/EN limit message + Zalo upgrade CTA |
+| `/` dashboard Overview | ✅ LIVE | TreeOfKnowledgeHome with 27-card grid + drag-rearrange + editable footer |
+| Family Forest (parent mode) | ✅ LIVE | 6 life-stages SVG + photo upload per kid (canvas auto-resize ≤320×320 JPEG Q0.85) |
+
+### Deferred Phase 3b (next chunk)
+- LibraryTab restructure: 12 trụ cột top → Hỏi đáp chuyên gia below
+- Move bilingual stories from LibraryTab → EnglishSkillsTab
+- ~1-2h work, surgical refactor
+
+---
+
+## ⭐ SESSION 17 (2026-05-15) — polish queue cleanup (~30 min)
 
 ## ⭐ SESSION 17 (2026-05-15) — polish queue cleanup (~30 min)
 
