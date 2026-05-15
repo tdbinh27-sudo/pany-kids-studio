@@ -1,7 +1,22 @@
 # Status — Pany Kids Studio
 
-**Last updated:** 2026-05-13 ~17:30 GMT+7 (Session 16 — MAJOR: P0 ship + P2 foundation + P3 skeleton + commercial pipeline)
-**Current state:** v3.3-C still live on production. 5 new commits today on `main` branch (NOT auto-deployed — webhook still broken, anh manual deploy when ready). All code TypeScript clean. Browser-pilot tested 5/5 routes PASS at localhost dev.
+**Last updated:** 2026-05-15 ~08:55 GMT+7 (Session 17 — polish queue cleanup)
+**Current state:** v3.3-C still live on production (`eeea893`). Local HEAD `dc7df88` = **13 commits ahead** of production (Session 16 batch + Session 17 polish: CC onboarding UI + DD seed preview + EE 2 CTV templates + FF dynamic OG route). Webhook still broken → no auto-deploy. All TypeScript clean. Block 1 Resume Gate (#1-4) still all pending — D-025 feedback backfill is biggest validity risk.
+
+## ⭐ SESSION 17 (2026-05-15) — polish queue cleanup (~30 min)
+
+Anh mở sau 2 ngày. Em phát hiện ghost session 5/14 đã build 3 món local nhưng quên commit (CC onboarding UI 614 dòng, DD admin seed preview +105, EE 2 CTV templates). Em review + verify TS clean + commit clean. Sau đó polish queue item FF dynamic OG generator route mới.
+
+**Commits Session 17 (2 commits, ~1.25K insertions, TypeScript clean):**
+
+```
+dc7df88 feat(FF): dynamic OG image generator route /api/sell/og
+0a9b2cc feat(CC+DD+EE): onboarding wizard UI + admin seed preview + 2 CTV templates
+```
+
+Working tree clean. Em chưa push → 13 commits ở local (anh push khi sẵn sàng deploy + fix webhook).
+
+---
 
 ## ⭐ SESSION 16 (2026-05-13) — COMMERCIALIZATION PIPELINE BUILT
 

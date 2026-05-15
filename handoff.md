@@ -1,13 +1,47 @@
 # Handoff — Pany Kids Studio
 
-**Last updated:** 2026-05-13 ~20:30 GMT+7 (Session 16 EOD — closeout + polish + D-032 + BB onboarding API)
-**Resume command (mai 2026-05-14):** `Continue pany-kids-studio — đọc artifacts/session-16-closeout-2026-05-13.md trước rồi tiếp tục theo Resume Gate`
+**Last updated:** 2026-05-15 ~08:50 GMT+7 (Session 17 — polish queue cleanup + CC/DD/EE/FF committed)
+**Resume command:** `Continue pany-kids-studio — anh đã xong Block 1` (khi anh xong API key + webhook + feedback + debug-deps)
 
-## Mai resume (2026-05-14)
+## Session 17 (2026-05-15) — polish queue cleanup
+
+Anh mở lại sau 2 ngày. Em đã commit 4 món polish work nằm rải rác:
+
+| Commit | Item | What |
+|--------|------|------|
+| `0a9b2cc` | **CC** | `app/onboarding/page.tsx` (614 dòng) — 3-step wizard UI wires Z + BB API. Auth qua `?family_id&parent_pin` từ welcome email. |
+| `0a9b2cc` | **DD** | `app/admin/dashboard/page.tsx` (+105 dòng) — Section 4.5 skeleton-mode sample content preview 12 tab tuổi 5-16. Chỉ hiện khi `stats.configured=false`. |
+| `0a9b2cc` | **EE** | 2 CTV templates: `career-qna-template.md` + `curriculum-entry-template.md` — brief CTV expand 80+ Q&A + 5-7 subject/age. |
+| `dc7df88` | **FF** | `app/api/sell/og/route.ts` — dynamic OG image SVG cho per-share URL (FB/Zalo preview). Query: `?from`, `?kids`, `?family`, `?headline`. |
+
+TypeScript clean (`tsc --noEmit` exit 0). Working tree clean. Local HEAD `dc7df88`, **13 commits ahead** of production HEAD `eeea893` (5/10 Session 15 hotfix).
+
+3 hôm trước (5/14) ghost session đã làm CC+DD+EE local nhưng quên commit — em phát hiện sáng nay 5/15, review xong + commit clean với attribution alphabet đúng.
+
+## Resume Gate vẫn còn 7 items (anh làm)
+
+| # | Action | Effort | Status | Tool/URL |
+|---|---|---|---|---|
+| 1 | 🔴 Rotate Anthropic API key | 2 phút | **STILL PENDING** | `console.anthropic.com/settings/keys` |
+| 2 | 🔴 Backfill `feedback-week-1.md` Day 1-4 với 3 con | 30 phút | **STILL PENDING (D-025 gate)** | `artifacts/feedback-week-1.md` |
+| 3 | ⚠️ Re-link Vercel ↔ GitHub webhook | 2 phút | **STILL PENDING** | Vercel → Settings → Git |
+| 4 | ⚖️ Chốt Path A/B cho debug deps (boneyard-js + playwright) | 1 phút | **STILL PENDING** | `package.json` |
+| 5 | 🟡 Tạo Supabase project `pany-kids-prod` (Mumbai) | 10 phút | pending | `vercel-env-setup-2026-05-13.md` BƯỚC 1 |
+| 6 | 🟡 Apply `migration-family-2026-05-14.sql` + `phone_verified` col | 5 phút | pending | Supabase SQL Editor |
+| 7 | 🟡 Setup Vercel env vars | 15-20 phút | pending | env-setup guide |
+
+Khi anh xong **#1-4** (block production claim) → ping em "Bắt đầu P1" → em pickup P1 wire-up.
+Khi anh xong **#5-7** (P1 wire-up gate) → em test `/sell/register` end-to-end live.
+
+**Quan trọng:** Anh chưa push origin/main → 13 commits Session 16+17 đang ở local. Khi anh ready, có 2 path:
+- **Path A (recommended):** Fix Vercel webhook trước → `git push` → auto-deploy mọi commits từ giờ
+- **Path B (immediate):** Manual `vercel deploy --prod` để deploy 13 commits ngay, fix webhook sau
+
+## Mai resume
 
 Đọc 3 file theo thứ tự để có full context:
 
-1. `artifacts/session-16-closeout-2026-05-13.md` — single-file resume packet (đã update v2 với extension)
+1. `artifacts/session-16-closeout-2026-05-13.md` — single-file resume packet (canonical Session 16 plan)
 2. `decisions.md` — 13 decisions D-020 → D-032 (đặc biệt D-032 chatbot rename hybrid)
 3. `handoff.md` (file này) — Resume Gate 7 items below
 
