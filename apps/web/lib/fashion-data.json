@@ -1,0 +1,101 @@
+{
+  "$schema_version": "1.0",
+  "$last_updated": "2026-05-19",
+  "$editable": "Anh edit JSON này → git push → Vercel auto-deploy. KHÔNG cần biết React/TypeScript.",
+  "tiers": [
+    {
+      "id": 1,
+      "emoji": "👶",
+      "age_band": "K (5-6t)",
+      "kid_target": "Y · mầm non",
+      "title_vi": "Chọn nhân vật + đổi màu",
+      "title_en": "Pick character + change colors",
+      "tools": [
+        { "name": "DiceBear Playground", "license": "MIT", "stars": "8.7K", "type": "web-playground" }
+      ],
+      "what_kid_does_vi": "Mở DiceBear, chọn style \"Open Peeps\" hoặc \"Adventurer\" · bấm nút random vài lần · chọn 1 nhân vật Y thích · save PNG vào Portfolio",
+      "what_kid_does_en": "Open DiceBear, pick \"Open Peeps\" or \"Adventurer\" style · randomize · Y picks favorite · save PNG to Portfolio",
+      "artifact_file": "artifacts/fashion-design-track/tier1-dicebear-guide.md",
+      "links": [
+        { "label": "DiceBear Playground", "url": "https://www.dicebear.com/playground/" },
+        { "label": "Open Peeps style", "url": "https://www.dicebear.com/styles/open-peeps/" }
+      ],
+      "milestones": [
+        { "id": "tier1-dicebear-first", "label_vi": "Tạo 1 nhân vật DiceBear đầu tiên + save Portfolio", "label_en": "Create first DiceBear character + save Portfolio" },
+        { "id": "tier1-dicebear-5-chars", "label_vi": "Tạo 5 nhân vật khác nhau", "label_en": "Create 5 different characters" }
+      ]
+    },
+    {
+      "id": 2,
+      "emoji": "🧒",
+      "age_band": "P (7-11t)",
+      "kid_target": "An 9t · lớp 4",
+      "title_vi": "Thiết kế trang phục nhân vật",
+      "title_en": "Design character outfit",
+      "tools": [
+        { "name": "Avataaars Generator", "license": "MIT", "stars": "3K", "type": "web-playground" },
+        { "name": "DiceBear", "license": "MIT", "stars": "8.7K", "type": "web-playground" }
+      ],
+      "what_kid_does_vi": "Mở getavataaars.com · chọn tóc, quần áo, phụ kiện, biểu cảm · download SVG · An có thể tạo 5 nhân vật cho family (bố/mẹ/3 anh em) · save vào Portfolio",
+      "what_kid_does_en": "Open getavataaars.com · pick hair, clothes, accessories, expression · download SVG · An creates 5 family avatars · save to Portfolio",
+      "artifact_file": "artifacts/fashion-design-track/tier2-avataaars-guide.md",
+      "links": [
+        { "label": "Avataaars Generator", "url": "https://getavataaars.com/" },
+        { "label": "GitHub source", "url": "https://github.com/fangpenlin/avataaars-generator" }
+      ],
+      "milestones": [
+        { "id": "tier2-avataaars-first", "label_vi": "Tự thiết kế 1 nhân vật Avataaars", "label_en": "Design first Avataaars character" },
+        { "id": "tier2-family-5-avatars", "label_vi": "Tạo 5 nhân vật family (bố/mẹ/3 con)", "label_en": "Create 5 family avatars" },
+        { "id": "tier2-portfolio-20", "label_vi": "Portfolio đạt 20+ avatars", "label_en": "Portfolio reaches 20+ avatars" }
+      ]
+    },
+    {
+      "id": 3,
+      "emoji": "👨‍🎨",
+      "age_band": "P+ / T (11-15t)",
+      "kid_target": "Phúc 11t · lớp 6",
+      "title_vi": "Cảnh nhân vật trong môi trường",
+      "title_en": "Character scene with environment",
+      "tools": [
+        { "name": "Open Peeps", "license": "CC0 public domain", "type": "svg-asset" },
+        { "name": "Figma free", "license": "Free tier", "type": "figma-asset" },
+        { "name": "PANY scene backdrops", "license": "CC0 (anh-curated)", "type": "svg-asset" }
+      ],
+      "what_kid_does_vi": "Tải Open Peeps SVG (584K combinations) · mở Figma free · kéo nhân vật + outfit + scene (nhà/xe/công viên/trường/cafe/bãi biển/rừng/lớp học) · export PNG → Portfolio",
+      "what_kid_does_en": "Download Open Peeps SVG · open Figma free · drag character + outfit + scene · export PNG → Portfolio",
+      "artifact_file": "artifacts/fashion-design-track/tier3-figma-scene-guide.md",
+      "links": [
+        { "label": "Open Peeps (CC0)", "url": "https://www.openpeeps.com/" },
+        { "label": "Figma free signup", "url": "https://www.figma.com/" }
+      ],
+      "milestones": [
+        { "id": "tier3-figma-first-scene", "label_vi": "Hoàn thành 1 scene Figma đầu tiên", "label_en": "Complete first Figma scene" },
+        { "id": "tier3-family-park-scene", "label_vi": "Scene \"Family ở công viên\" 5 nhân vật", "label_en": "Family park scene 5 characters" },
+        { "id": "tier3-future-self", "label_vi": "Scene \"Phúc tương lai 20 tuổi\" + nghề", "label_en": "Future self scene + career" },
+        { "id": "tier3-portfolio-5-scenes", "label_vi": "Portfolio đạt 5 scenes/quarter", "label_en": "Portfolio reaches 5 scenes/quarter" }
+      ]
+    }
+  ],
+  "environments": [
+    { "emoji": "🏠", "vi": "Nhà", "en": "House" },
+    { "emoji": "🚗", "vi": "Xe", "en": "Car" },
+    { "emoji": "🌳", "vi": "Công viên", "en": "Park" },
+    { "emoji": "🏫", "vi": "Trường học", "en": "School" },
+    { "emoji": "☕", "vi": "Quán cafe", "en": "Café" },
+    { "emoji": "🏖️", "vi": "Bãi biển", "en": "Beach" },
+    { "emoji": "🌲", "vi": "Rừng", "en": "Forest" },
+    { "emoji": "🚀", "vi": "Tương lai", "en": "Future" }
+  ],
+  "careers": [
+    { "vi": "Fashion Designer", "en": "Fashion Designer", "salary_vn": "20-50tr/m mid · 100tr+ senior brand · Local + Zara/H&M VN" },
+    { "vi": "Costume Designer", "en": "Costume Designer", "salary_vn": "15-40tr/m · Phim/TV/Sân khấu · VFC/HK Film" },
+    { "vi": "Character Illustrator", "en": "Character Illustrator", "salary_vn": "15-60tr/m · Game/Animation/Book · VNG/Colorful/POPS" },
+    { "vi": "UI/UX Designer", "en": "UI/UX Designer", "salary_vn": "20-80tr/m · Tech VN siêu hot · MoMo/Tiki/Shopee/VNG" }
+  ],
+  "vn_brands": ["Canifa", "IVY moda", "Yody", "Coolmate", "Routine", "Owen", "Elise", "Saigon Garment"],
+  "ai_agents": [
+    { "name": "UI Designer", "desc_vi": "Pattern thiết kế giao diện · color palette · typography · cho Phúc khi chuyển UI/UX", "desc_en": "UI design patterns · color palette · typography · for Phúc moving to UI/UX path" },
+    { "name": "Brand Guardian", "desc_vi": "Brand identity · logo design · style guide · bổ trợ khi 3 con xây personal brand", "desc_en": "Brand identity · logo design · style guide · for kids building personal brand" },
+    { "name": "Inclusive Visuals Specialist", "desc_vi": "Đại diện đa dạng · tránh stereotype · cho nhân vật/scene phản ánh thực tế VN", "desc_en": "Diverse representation · avoid stereotypes · for VN-authentic characters" }
+  ]
+}

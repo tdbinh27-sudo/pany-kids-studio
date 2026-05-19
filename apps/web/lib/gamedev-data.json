@@ -1,0 +1,91 @@
+{
+  "$schema_version": "1.0",
+  "$last_updated": "2026-05-19",
+  "$editable": "Anh edit JSON này → git push → Vercel auto-deploy. KHÔNG cần biết React/TypeScript.",
+  "tiers": [
+    {
+      "id": 1,
+      "emoji": "🌱",
+      "age_band": "K (5-6t)",
+      "kid_target": "Y · mầm non",
+      "title_vi": "Khám phá lập trình block",
+      "title_en": "Block-based discovery",
+      "tools": [
+        { "name": "Scratch 3.0", "license": "MIT", "stars": "4.8K", "install": "web" }
+      ],
+      "next_step_vi": "Bố mở scratch.mit.edu cùng Y · kéo block \"cờ xanh + di chuyển\" · 15 phút",
+      "next_step_en": "Parent opens scratch.mit.edu with Y · drag green-flag + move blocks · 15 min",
+      "artifact_file": "artifacts/game-dev-track/scratch-track.md",
+      "links": [
+        { "label": "Scratch Editor", "url": "https://scratch.mit.edu/projects/editor/" },
+        { "label": "Scratch Jr (iPad)", "url": "https://www.scratchjr.org/" }
+      ],
+      "milestones": [
+        { "id": "tier1-scratch-first-project", "label_vi": "Hoàn thành 1 dự án Scratch đầu tiên", "label_en": "Complete first Scratch project" },
+        { "id": "tier1-scratch-4-weeks", "label_vi": "Làm Scratch 4 tuần liên tiếp", "label_en": "4 weeks Scratch streak" }
+      ]
+    },
+    {
+      "id": 2,
+      "emoji": "🌿",
+      "age_band": "P (7-11t)",
+      "kid_target": "An 9t · lớp 4",
+      "title_vi": "Làm game đầu tiên với JavaScript",
+      "title_en": "First game with JavaScript",
+      "tools": [
+        { "name": "Kaboom/KaPlay", "license": "MIT", "stars": "2.7K", "install": "web" }
+      ],
+      "next_step_vi": "Mở file kaboom-starter.html trong browser · game chạy ngay · An đổi màu/gravity trong Notepad",
+      "next_step_en": "Open kaboom-starter.html in browser · game runs · An tweaks color/gravity in Notepad",
+      "artifact_file": "artifacts/game-dev-track/kaboom-starter.html",
+      "links": [
+        { "label": "KaPlay Playground", "url": "https://kaplayjs.com/play" },
+        { "label": "Kaboom Docs", "url": "https://kaboomjs.com/" }
+      ],
+      "milestones": [
+        { "id": "tier2-kaboom-run", "label_vi": "Mở được kaboom-starter.html chạy game", "label_en": "Run kaboom-starter.html" },
+        { "id": "tier2-kaboom-modified", "label_vi": "Đổi 1 biến trong Notepad → thấy game khác", "label_en": "Edit 1 var in Notepad → game changes" },
+        { "id": "tier2-kaboom-own-game", "label_vi": "Tự build 1 game đơn giản (jump/dodge/collect)", "label_en": "Build own simple game" }
+      ]
+    },
+    {
+      "id": 3,
+      "emoji": "🌳",
+      "age_band": "P+ / T (11-15t)",
+      "kid_target": "Phúc 11t · lớp 6",
+      "title_vi": "Game thật với Godot, Pygame, Blender",
+      "title_en": "Real games with Godot, Pygame, Blender",
+      "tools": [
+        { "name": "Godot 4.6", "license": "MIT", "stars": "111K", "install": "download" },
+        { "name": "Pygame-CE", "license": "LGPL", "install": "preinstalled" },
+        { "name": "Blender", "license": "GPL", "install": "preinstalled" }
+      ],
+      "next_step_vi": "Phúc chạy pygame-hello.py (đã cài) · sau đó cài Godot từ link bố cung cấp · build Lava Floor game",
+      "next_step_en": "Phúc runs pygame-hello.py (installed) · then installs Godot via parent link · builds Lava Floor",
+      "artifact_file": "artifacts/game-dev-track/godot-first-game.md",
+      "links": [
+        { "label": "Godot Download", "url": "https://godotengine.org/download/windows/" },
+        { "label": "GDQuest Tutorials", "url": "https://www.gdquest.com/" },
+        { "label": "Itch.io (publish)", "url": "https://itch.io/" }
+      ],
+      "milestones": [
+        { "id": "tier3-pygame-run", "label_vi": "Chạy được pygame-hello.py", "label_en": "Run pygame-hello.py" },
+        { "id": "tier3-godot-installed", "label_vi": "Cài Godot + mở Project Manager", "label_en": "Install Godot + open Project Manager" },
+        { "id": "tier3-godot-lava-floor", "label_vi": "Hoàn thành Project 1 Lava Floor", "label_en": "Complete Project 1 Lava Floor" },
+        { "id": "tier3-godot-rocket-dodger", "label_vi": "Hoàn thành Project 2 Rocket Dodger", "label_en": "Complete Project 2 Rocket Dodger" },
+        { "id": "tier3-itchio-publish", "label_vi": "Upload 1 game lên itch.io", "label_en": "Publish 1 game on itch.io" }
+      ]
+    }
+  ],
+  "careers": [
+    { "vi": "Indie Game Developer", "en": "Indie Game Dev", "salary_vn": "15-30tr/m junior · 40-80tr/m senior" },
+    { "vi": "Game Designer", "en": "Game Designer", "salary_vn": "20-50tr/m mid · AAA studio" },
+    { "vi": "Technical Artist", "en": "Tech Artist", "salary_vn": "30-80tr/m · Blender/Maya/Unity pipeline" },
+    { "vi": "Game Programmer", "en": "Game Programmer", "salary_vn": "C++/C# 40-100tr/m senior · VNG/Sky Mavis/Wolffun" }
+  ],
+  "vn_studios": ["VNG", "Sky Mavis (Axie Infinity)", "Wolffun (Tank Heroes)", "Topebox", "Hiker Games", "Sparx*"],
+  "ai_agents": [
+    { "name": "Unity Architect", "desc_vi": "Pattern game architecture · dùng khi Phúc 12t+ chuyển Unity", "desc_en": "Game architecture patterns · when Phúc 12t+ moves to Unity" },
+    { "name": "Blender Add-on Engineer", "desc_vi": "3D asset pipeline · Python add-ons · bổ trợ Blender (đã cài ✅)", "desc_en": "3D asset pipeline · Python add-ons · complements Blender (installed ✅)" }
+  ]
+}

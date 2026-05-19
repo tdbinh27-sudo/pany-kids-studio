@@ -1,0 +1,117 @@
+{
+  "$schema_version": "1.0",
+  "$last_updated": "2026-05-19",
+  "$editable": "Anh edit JSON này → git push → Vercel auto-deploy. Thêm sim mới = thêm object trong simulations array.",
+  "subjects": [
+    {
+      "id": "math",
+      "emoji": "🔢",
+      "title_vi": "Toán học",
+      "title_en": "Math",
+      "age_recommend": "P+T",
+      "pillar_match": "Tư duy + Tài chính",
+      "career_intro_vi": "Toán là ngôn ngữ của tự nhiên · nghề: Data Analyst, Actuary, Quant, Researcher",
+      "career_intro_en": "Math is the language of nature · Data Analyst, Actuary, Quant, Researcher",
+      "simulations": [
+        { "name_vi": "Trò chơi phân số", "name_en": "Fractions Intro", "phet_slug": "fractions-intro", "age": "P" },
+        { "name_vi": "Đồ thị đường thẳng", "name_en": "Graphing Lines", "phet_slug": "graphing-lines", "age": "T" },
+        { "name_vi": "Trò chơi diện tích", "name_en": "Area Builder", "phet_slug": "area-builder", "age": "P" }
+      ]
+    },
+    {
+      "id": "physics",
+      "emoji": "⚛️",
+      "title_vi": "Vật lý",
+      "title_en": "Physics",
+      "age_recommend": "P+T",
+      "pillar_match": "Phần cứng + Tư duy",
+      "career_intro_vi": "Hiểu cách thế giới vận hành · nghề: Engineer, Astronaut, Researcher, Game Physics Dev",
+      "career_intro_en": "Understand how the world works · Engineer, Astronaut, Researcher, Game Physics Dev",
+      "simulations": [
+        { "name_vi": "Lực và chuyển động", "name_en": "Forces and Motion: Basics", "phet_slug": "forces-and-motion-basics", "age": "P" },
+        { "name_vi": "Năng lượng skate park", "name_en": "Energy Skate Park", "phet_slug": "energy-skate-park-basics", "age": "P" },
+        { "name_vi": "Tĩnh điện chà xát", "name_en": "Balloons and Static Electricity", "phet_slug": "balloons-and-static-electricity", "age": "K" }
+      ]
+    },
+    {
+      "id": "chemistry",
+      "emoji": "🧪",
+      "title_vi": "Hóa học",
+      "title_en": "Chemistry",
+      "age_recommend": "P+T",
+      "pillar_match": "Sáng tạo + Tư duy",
+      "career_intro_vi": "Thế giới phân tử · nghề: Chemist, Pharmacist, Food Scientist, Material Engineer",
+      "career_intro_en": "World of molecules · Chemist, Pharmacist, Food Scientist, Material Engineer",
+      "simulations": [
+        { "name_vi": "Cân bằng phương trình", "name_en": "Balancing Chemical Equations", "phet_slug": "balancing-chemical-equations", "age": "T" },
+        { "name_vi": "Xây dựng phân tử", "name_en": "Build a Molecule", "phet_slug": "build-a-molecule", "age": "P" },
+        { "name_vi": "Trạng thái vật chất", "name_en": "States of Matter: Basics", "phet_slug": "states-of-matter-basics", "age": "P" }
+      ]
+    },
+    {
+      "id": "biology",
+      "emoji": "🧬",
+      "title_vi": "Sinh học",
+      "title_en": "Biology",
+      "age_recommend": "P+T",
+      "pillar_match": "Vận động + Sáng tạo",
+      "career_intro_vi": "Sự sống và sức khỏe · nghề: Doctor, Nurse, Biotech, Wildlife Researcher",
+      "career_intro_en": "Life and health · Doctor, Nurse, Biotech, Wildlife Researcher",
+      "simulations": [
+        { "name_vi": "Lựa chọn tự nhiên", "name_en": "Natural Selection", "phet_slug": "natural-selection", "age": "T" },
+        { "name_vi": "Biểu hiện gen", "name_en": "Gene Expression Essentials", "phet_slug": "gene-expression-essentials", "age": "T" },
+        { "name_vi": "Thang pH", "name_en": "pH Scale Basics", "phet_slug": "ph-scale-basics", "age": "P" }
+      ]
+    },
+    {
+      "id": "earth",
+      "emoji": "🌍",
+      "title_vi": "Khoa học Trái đất",
+      "title_en": "Earth Science",
+      "age_recommend": "P+T",
+      "pillar_match": "Khám phá + Tư duy",
+      "career_intro_vi": "Hành tinh chúng ta · nghề: Geologist, Climatologist, Oceanographer, Astronaut",
+      "career_intro_en": "Our planet · Geologist, Climatologist, Oceanographer, Astronaut",
+      "simulations": [
+        { "name_vi": "Hiệu ứng nhà kính", "name_en": "Greenhouse Effect", "phet_slug": "greenhouse-effect", "age": "T" },
+        { "name_vi": "Mảng kiến tạo", "name_en": "Plate Tectonics", "phet_slug": "plate-tectonics", "age": "T" },
+        { "name_vi": "Hệ Mặt Trời", "name_en": "My Solar System", "phet_slug": "my-solar-system", "age": "P" }
+      ]
+    },
+    {
+      "id": "engineering",
+      "emoji": "🛠️",
+      "title_vi": "Kỹ thuật",
+      "title_en": "Engineering",
+      "age_recommend": "P+T",
+      "pillar_match": "Phần cứng + Sáng tạo",
+      "career_intro_vi": "Giải quyết bài toán thật · nghề: Civil/Mech/Electrical Engineer, Robotics, Game Dev",
+      "career_intro_en": "Solve real problems · Civil/Mech/Electrical Engineer, Robotics, Game Dev",
+      "simulations": [
+        { "name_vi": "Mạch điện", "name_en": "Circuit Construction Kit", "phet_slug": "circuit-construction-kit-dc", "age": "T" },
+        { "name_vi": "Khúc xạ ánh sáng", "name_en": "Bending Light", "phet_slug": "bending-light", "age": "P" },
+        { "name_vi": "Sóng giao thoa", "name_en": "Wave Interference", "phet_slug": "wave-interference", "age": "T" }
+      ]
+    }
+  ],
+  "curriculum_map_vn": [
+    { "kid_band_vi": "Y 5t (Mầm non)", "kid_band_en": "Y 5 (K)", "desc_vi": "Balloons static · Solar system intro · cùng bố/chị", "desc_en": "Balloons static · Solar system intro · with parent" },
+    { "kid_band_vi": "An 9t (Lớp 4)", "kid_band_en": "An 9 (P)", "desc_vi": "Phân số · Lực-chuyển động · Phân tử · trùng chương trình SGK", "desc_en": "Fractions · Forces · Molecules · matches VN textbook" },
+    { "kid_band_vi": "Phúc 11t (Lớp 6)", "kid_band_en": "Phúc 11 (P+)", "desc_vi": "Mạch điện · Đại số đồ thị · Cân bằng phương trình · pre-Lý/Hóa lớp 8-9", "desc_en": "Circuits · Graphs · Equations · pre-Physics/Chem grade 8-9" },
+    { "kid_band_vi": "Tương lai (12-15t)", "kid_band_en": "Future (12-15)", "desc_vi": "Lựa chọn tự nhiên · Mảng kiến tạo · Hiệu ứng nhà kính", "desc_en": "Natural selection · Plate tectonics · Greenhouse" }
+  ],
+  "careers": [
+    { "vi": "🏥 Bác sĩ · Dược sĩ", "en": "🏥 Doctor · Pharmacist", "salary": "30-100tr/m" },
+    { "vi": "⚡ Kỹ sư điện · điện tử", "en": "⚡ Electrical Engineer", "salary": "20-60tr/m" },
+    { "vi": "💻 Data Scientist · ML", "en": "💻 Data Scientist · ML", "salary": "30-150tr/m" },
+    { "vi": "🧬 Biotech · Sinh học", "en": "🧬 Biotech · Biologist", "salary": "15-40tr/m" },
+    { "vi": "🚀 Kỹ sư hàng không", "en": "🚀 Aerospace Engineer", "salary": "30-80tr/m" },
+    { "vi": "🤖 Robotics · IoT", "en": "🤖 Robotics · IoT", "salary": "25-70tr/m" }
+  ],
+  "vn_employers": "VinFast · Viettel R&D · FPT Software · Vinmec/Tâm Anh · ĐH Bách Khoa · Vingroup AI Lab",
+  "ai_agents": [
+    { "name": "AI Engineer", "desc_vi": "Cho Phúc khi muốn áp dụng AI vào dự án STEM (ML model, data analysis)", "desc_en": "For Phúc applying AI to STEM projects (ML, data analysis)" },
+    { "name": "Civil Engineer", "desc_vi": "Bài toán kỹ thuật cầu/nhà/cấu trúc · áp dụng Lý + Toán thực tế", "desc_en": "Civil engineering problems · applied Physics + Math" },
+    { "name": "Corporate Training Designer", "desc_vi": "Curriculum design · khi anh muốn build STEM curriculum riêng cho 3 con", "desc_en": "Curriculum design · when building custom STEM curriculum for 3 kids" }
+  ]
+}

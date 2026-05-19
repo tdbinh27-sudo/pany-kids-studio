@@ -622,6 +622,9 @@ export default function PanyKidsStudio() {
   const [familyJournal, setFamilyJournal] = useState([]); // [{date, author, kidId, content, type}]
   const [weeklyReviews, setWeeklyReviews] = useState({}); // {kidId-weekKey: {answers: [], date}}
   const [englishProgress, setEnglishProgress] = useState({}); // {kidId: {listen: {right, total}, speak: [{date, score, target, spoken}], read: {passageId: {score, date}}, write: [{date, score, prompt, text, feedback}]}}
+  const [gamedevProgress, setGamedevProgress] = useState({}); // D-039: {kidId: {milestoneId: ISO date}}
+  const [fashionProgress, setFashionProgress] = useState({}); // D-039: {kidId: {milestoneId: ISO date}}
+  const [stemProgress, setStemProgress] = useState({}); // D-039: {kidId: {phet_slug: ISO date}}
   const [completedQuests, setCompletedQuests] = useState<Record<string, string[]>>({}); // {kidId: [questKey, ...]} — questKey = `${questPillar}-${dayOfWeek}-${date}`
   const [readStories, setReadStories] = useState<string[]>([]); // [storyId, ...]
 
@@ -631,7 +634,7 @@ export default function PanyKidsStudio() {
   // ============== STORAGE ==============
   useEffect(() => {
     const load = async () => {
-      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges', 'parentPin', 'parentLocked', 'creativeWorks', 'exerciseLog', 'moodLog', 'riasecAnswers', 'riasecCompleted', 'savedCareers', 'familyJournal', 'weeklyReviews', 'englishProgress'];
+      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges', 'parentPin', 'parentLocked', 'creativeWorks', 'exerciseLog', 'moodLog', 'riasecAnswers', 'riasecCompleted', 'savedCareers', 'familyJournal', 'weeklyReviews', 'englishProgress', 'completedQuests', 'readStories', 'gamedevProgress', 'fashionProgress', 'stemProgress'];
       for (const k of keys) {
         try {
           const r = await storage.get(`pks3-${k}`);
@@ -662,6 +665,9 @@ export default function PanyKidsStudio() {
             if (k === 'englishProgress') setEnglishProgress(v);
             if (k === 'completedQuests') setCompletedQuests(v);
             if (k === 'readStories') setReadStories(v);
+            if (k === 'gamedevProgress') setGamedevProgress(v);
+            if (k === 'fashionProgress') setFashionProgress(v);
+            if (k === 'stemProgress') setStemProgress(v);
           }
         } catch (e) {}
       }
@@ -693,6 +699,9 @@ export default function PanyKidsStudio() {
   const setEnglishProgressP = (v) => { setEnglishProgress(v); persist('englishProgress', v); };
   const setCompletedQuestsP = (v) => { setCompletedQuests(v); persist('completedQuests', v); };
   const setReadStoriesP = (v) => { setReadStories(v); persist('readStories', v); };
+  const setGamedevProgressP = (v) => { setGamedevProgress(v); persist('gamedevProgress', v); };  // D-039
+  const setFashionProgressP = (v) => { setFashionProgress(v); persist('fashionProgress', v); };  // D-039
+  const setStemProgressP = (v) => { setStemProgress(v); persist('stemProgress', v); };  // D-039
 
   const tryParentLogin = (val) => {
     if (val === parentPin) {
@@ -994,9 +1003,9 @@ export default function PanyKidsStudio() {
         {activeTab === 'leaderboard' && <LeaderboardTab  kids={kids} getOverall={getOverall} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} />}
         {activeTab === 'hardware'    && <HardwareTab     t={t} L={L} />}
         {activeTab === 'software'    && <SoftwareTab     t={t} L={L} />}
-        {activeTab === 'gamedev'     && <GameDevTab        lang={lang} />}
-        {activeTab === 'fashion'     && <FashionDesignTab  lang={lang} />}
-        {activeTab === 'stem'        && <STEMTab           lang={lang} />}
+        {activeTab === 'gamedev'     && <GameDevTab        lang={lang} kids={kids} activeKidId={activeKidId} progress={gamedevProgress} setProgressP={setGamedevProgressP} />}
+        {activeTab === 'fashion'     && <FashionDesignTab  lang={lang} kids={kids} activeKidId={activeKidId} progress={fashionProgress} setProgressP={setFashionProgressP} />}
+        {activeTab === 'stem'        && <STEMTab           lang={lang} kids={kids} activeKidId={activeKidId} progress={stemProgress}   setProgressP={setStemProgressP} />}
         {activeTab === 'english'     && <EnglishTab      t={t} L={L} />}
         {activeTab === 'finance'     && <FinanceTab      t={t} L={L} />}
         {activeTab === 'thinking'    && <ThinkingTab     t={t} L={L} />}

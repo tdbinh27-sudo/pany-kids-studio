@@ -446,3 +446,47 @@
 - **Code shipped**: `components/STEMTab.tsx` (NEW, ~340 LOC) + import + activeTab route in PanyKidsStudio.tsx + 30th card in TreeOfKnowledgeHome.tsx + `artifacts/stem-track/README.md`
 - **Decision Filter 5/5 PASS** — STEM is foundational mission match, iframe embed minimal effort, PhET battle-tested 25M users
 - **Mid-Year Gate 2026-06-30 review**: Phúc complete bao nhiêu sims? Mini-project nào? An có streak làm sim/tuần? Y enjoy parent-supervised không?
+
+### D-039: Data Architecture Phase 1+2 — JSON content files + per-kid progress tracking ✅ SHIPPED
+- **Trigger** (2026-05-19, Session 19 final): Anh hỏi "phần dữ liệu sẽ được cập nhật ra sao cho 3 tab này". Em propose 3 phases (JSON / Progress tracking / CMS+AI). Anh chốt build Phase 1 + Phase 2 luôn.
+- **Phase 1 (JSON content):** Tách hardcoded TIERS/CAREER_PATHS/ENVIRONMENTS/SUBJECTS từ 3 file .tsx → 3 JSON files:
+  - `apps/web/lib/gamedev-data.json` (tiers + 10 milestones + careers + vn_studios + ai_agents)
+  - `apps/web/lib/fashion-data.json` (tiers + 9 milestones + environments + careers + vn_brands + ai_agents)
+  - `apps/web/lib/stem-data.json` (6 subjects × 3 sims = 18 sims + curriculum_map + careers + ai_agents)
+- **Anh update workflow mới:** Edit JSON → git push → Vercel auto-deploy. KHÔNG cần biết React/TypeScript. CTV cũng update JSON được qua git access.
+- **Phase 2 (Per-kid progress):** Build `lib/track-progress.ts` helper với 6 functions:
+  - `toggleProgress(progress, kidId, itemId)` — mark/unmark with ISO date
+  - `isCompleted(progress, kidId, itemId)` — boolean check
+  - `completedOn(progress, kidId, itemId)` — display tooltip date
+  - `countCompleted(progress, kidId, itemIds)` — count for badge
+  - `percentComplete(progress, kidId, itemIds)` — for progress bar
+  - `badgeTier(count)` — auto-tier (🌱 starter / 🥉 1+ / 🥈 3+ / 🥇 6+ / 🏆 10+)
+- **State schema:** `{ [kidId]: { [itemId]: ISODate } }` — same pattern as existing englishProgress/portfolio/journal.
+- **Wired in PanyKidsStudio.tsx:**
+  - 3 new useState: `gamedevProgress`, `fashionProgress`, `stemProgress`
+  - 3 new setXP helpers: `setGamedevProgressP`, `setFashionProgressP`, `setStemProgressP`
+  - 3 new keys in load() array + 3 if checks for restoration from localStorage (`pks3-` prefix matches existing pattern)
+  - Props passed to 3 tabs: `kids, activeKidId, progress, setProgressP`
+- **UI changes in 3 components:**
+  - Header: progress bar + badge ("🥈 Phúc · 5/10 mốc · Bạc · 50%")
+  - Tier/Subject cards: mini progress bar per tier ("3/5 done · 60%")
+  - Expanded view: milestone checkboxes (⬜/✅) clickable → toggleProgress
+  - If no activeKidId: show prompt "Chọn học viên (tab Học viên)" instead of progress
+  - All progress bars use amber-300 on translucent white over solid gradient hero (matches D-035 Tree of Knowledge palette)
+- **STEM-specific:** Each PhET sim has "Đánh dấu Phúc đã làm" button below external link (separates "open sim" action from "mark done" action — kid can browse without marking, only mark after actual completion)
+- **Files changed (8 total, +1500 LOC, -450 LOC):**
+  - NEW: `apps/web/lib/gamedev-data.json` + `fashion-data.json` + `stem-data.json` + `track-progress.ts`
+  - MODIFIED: `GameDevTab.tsx` (full rewrite consuming JSON + progress), `FashionDesignTab.tsx` (same), `STEMTab.tsx` (same), `PanyKidsStudio.tsx` (+12 lines state + props wiring)
+- **TypeScript clean** (tsc --noEmit EXIT=0)
+- **Backward compat:** progress field optional (default `{}`) — works whether kids loaded or not, gracefully degrades to "no progress tracking" mode when activeKidId is null.
+- **Phase 3 (CMS + AI auto-update) DEFERRED to Q3/Q4 2026** — trigger conditions: CTV pool ≥3, 50+ kid users, revenue model confirmed, 12h dedicated build block.
+- **Cross-references:**
+  - [[session_kids_studio_gamedev_2026_05_19]] — Session 19 full context
+  - D-019 (60 careers) — game/fashion/stem tabs add 14 new careers (4+4+6)
+  - D-034 (Claude rate limit) — kids KHÔNG chat directly, parent routes
+  - D-035 (Tree of Knowledge dark hero) — progress bar matches amber-300 palette
+- **Mid-Year Gate 2026-06-30 review criteria:**
+  - Engagement per kid (count completed milestones across 3 tracks)
+  - Anh có tự update JSON content được không (anh comfort level)
+  - CTV onboard có contribute JSON được không
+  - Trigger Phase 3 CMS build hay defer Q4?
