@@ -57,6 +57,9 @@ const DEFAULT_NAV: NavItem[] = [
   { id: 'rewards',     label: 'Phần thưởng',    label_en: 'Rewards',     tab: 'rewards',     icon: '🎁', glow: '#FFD43B' },
   { id: 'aisearch',    label: 'AI Search',      label_en: 'AI Search',   tab: 'aisearch',    icon: '🔎', glow: '#845EC2' },
   { id: 'badges',      label: 'Huy hiệu',       label_en: 'Badges',      tab: 'badges',      icon: '🏆', glow: '#FFD43B' },
+  { id: 'gamedev',     label: 'Lập trình Game', label_en: 'Game Dev',    tab: 'gamedev',     icon: '🎮', glow: '#FF6B9D' },
+  { id: 'fashion',     label: 'Thiết kế',       label_en: 'Fashion',     tab: 'fashion',     icon: '👗', glow: '#FF6B9D' },
+  { id: 'stem',        label: 'STEM Lab',       label_en: 'STEM Lab',    tab: 'stem',        icon: '🔬', glow: '#00BFFF' },
   // Row 5 — meta
   { id: 'portfolio',   label: 'Portfolio',      label_en: 'Portfolio',   tab: 'portfolio',   icon: '🖼️', glow: '#FF6B9D' },
   { id: 'leaderboard', label: 'Bảng xếp hạng',  label_en: 'Leaderboard', tab: 'leaderboard', icon: '📈', glow: '#FFD43B' },

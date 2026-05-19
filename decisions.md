@@ -374,3 +374,75 @@
   - D-022 → D-033 (free long-term) — không có "trial pressure" trong cây
   - D-034 (20 chat/day) — Cô Pany xuất hiện trong cây như "gardener helper" / "fairy of garden"
 
+
+
+### D-036: Game Dev Track (3-tier) added as 28th nav card on Tree of Knowledge ✅ CANDIDATE (pending anh confirm)
+- **Trigger** (2026-05-19, Session 19): Anh request mở lại Kids Studio + bổ sung 1 tab phát triển game · bổ trợ 2 agents `unity-architect` + `blender-addon-engineer` (đã LIVE từ 2026-04-12 bulk install agency-agents repo).
+- **Research**: 5 game-dev OSS candidates evaluated (Phaser 39.6K · Godot 111K · GDevelop 23K · Kaboom/KaPlay 2.7K · Scratch 4.8K) + Pygame-CE.
+- **Decision**: Add `gamedev` tab + new card to TreeOfKnowledgeHome 27→28 grid · 3-tier track theo tuổi:
+  - **Tier 1** 🌱 (Y 5t mầm non): Scratch.mit.edu (web, no install) · parent-supervised · 4-week starter curriculum
+  - **Tier 2** 🌿 (An 9t lớp 4): Kaboom/KaPlay (MIT, browser CDN, no install) · single-file `kaboom-starter.html` ready
+  - **Tier 3** 🌳 (Phúc 11t lớp 6): Godot 4.6 (MIT, 111K⭐) + Pygame-CE (auto-installed ✅) + Blender (preinstalled ✅) · 3 projects 3-month curriculum
+- **AI Agent companions** (đã có sẵn `~/.claude/agents/`):
+  - `unity-architect.md` — game architecture patterns, state machines, component composition
+  - `blender-addon-engineer.md` — 3D asset pipeline, Python add-ons, exporters
+- **Installs done this session**:
+  - ✅ `pygame-ce 2.5.7` via `pip install --user` (no admin)
+  - ✅ Artifacts pack: README.md / kaboom-starter.html / pygame-hello.py / scratch-track.md / godot-first-game.md / INSTALL.md in `artifacts/game-dev-track/`
+- **Installs pending anh manual click** (auto mode chặn .exe download):
+  - ⏳ Godot 4.6 portable from https://godotengine.org/download/windows/ → `~/Tools/Godot/` (~120MB)
+  - ⏳ GDevelop 5 installer from https://gdevelop.io/download (OPTIONAL, 200MB)
+  - ❌ Unity Engine SKIP (30GB + license + unity-architect agent advisory mode đủ)
+- **Skipped from research** (Decision Filter FAIL):
+  - Phaser 39.6K — dev framework, không kid-tool
+  - Scratch GUI self-host — AGPL conflict + use hosted scratch.mit.edu thay
+  - LittleJS / Crafty / melonJS — niche, không impact
+- **Code shipped** (3 file changes, ~280 LOC additions):
+  - `apps/web/components/GameDevTab.tsx` (new, 232 lines) — 3-tier card UI + 4 career paths + AI agent companion box
+  - `apps/web/components/PanyKidsStudio.tsx` — added import + `{activeTab === 'gamedev' && <GameDevTab lang={lang} />}` route
+  - `apps/web/components/TreeOfKnowledgeHome.tsx` — added 28th nav card (id: gamedev, icon: 🎮, after badges)
+- **Verification**: `tsc --noEmit` clean (EXIT=0) · Pygame import test pass · TypeScript types resolved
+- **Career path mapping**: 4 careers added (Indie Game Dev / Game Designer / Tech Artist / Game Programmer) with VN salary ranges 15-100tr/m · VN studios: VNG, Sky Mavis, Wolffun, Topebox, Hiker Games, Sparx*
+- **Cross-references**:
+  - D-019 (60 careers) — D-036 adds 4 new under tech/creative
+  - D-028 (12 single-year tracks) — Game Dev fits trụ cột Technology + Creative + Math
+  - D-034 (Claude rate limit) — kids KHÔNG chat Claude directly, bố routes qua agents
+  - [[reference_agency_agents]] memory — confirms unity-architect + blender-addon-engineer LIVE since 2026-04-12
+- **Mid-Year Gate review (2026-06-30)**: validate engagement — anh check journal "Bao nhiêu lần 3 con vào Game Dev tab?" Nếu Phúc xây xong Project 1 Godot → ✅ keep + expand. Nếu zero engagement → defer revisit Q4/2026.
+
+### D-037: Fashion Design Track (3-tier) added as 29th nav card 👗 ✅ CANDIDATE
+- **Trigger** (2026-05-19, Session 19 cont.): Anh request sản phẩm thiết kế thời trang trẻ em + mô phỏng môi trường (nhà/xe/công viên).
+- **Stack OSS chọn**: Open Peeps (CC0 public domain, 584,688 combinations by Pablo Stanley) + DiceBear 8.7K⭐ MIT (30+ avatar styles) + Avataaars Generator 3K⭐ MIT (React SVG output) + Figma free tier.
+- **Decision**: Add `fashion` tab + new card (id: fashion, icon: 👗) sau gamedev trên TreeOfKnowledgeHome (29 cards total).
+- **3-tier**:
+  - Tier 1 👶 (Y 5t): DiceBear Playground → randomize → save PNG Portfolio · parent-supervised 15 phút/buổi
+  - Tier 2 🧒 (An 9t): Avataaars Generator → customize Top/Hair/Clothes/Accessories/Eyes/Mouth → SVG download · 30 phút/buổi
+  - Tier 3 👨‍🎨 (Phúc 11t): Open Peeps SVG + Figma free + 8 PANY scene backdrops (house/car/park/school/cafe/beach/forest/future) → composite scene → PNG @2x export
+- **8 scenes curated**: 🏠 Nhà / 🚗 Xe / 🌳 Công viên / 🏫 Trường học / ☕ Café / 🏖️ Bãi biển / 🌲 Rừng / 🚀 Tương lai (sources: unDraw, Storyset, Open Peeps complementary, Pexels CC0)
+- **Career path mapping**: 4 careers added — Fashion Designer (20-100tr/m), Costume Designer (15-40tr/m), Character Illustrator (15-60tr/m VNG/Colorful), UI/UX Designer (20-150tr/m MoMo/Tiki/Shopee). VN brands: Canifa/IVY moda/Yody/Coolmate/Routine/Owen/Elise/Saigon Garment.
+- **AI Agent companions**: UI Designer + Brand Guardian + Inclusive Visuals Specialist (all đã LIVE [[reference_agency_agents]]). Complex visuals route Claude Design ([[preference_claude_design]]).
+- **Code shipped**: `components/FashionDesignTab.tsx` (NEW, ~280 LOC) + import + activeTab route in PanyKidsStudio.tsx + 29th card in TreeOfKnowledgeHome.tsx + `artifacts/fashion-design-track/README.md`
+- **Skipped**: Self-host scene composer UI (Phase 2 nếu engagement cao) — Tier 3 hiện dùng Figma free đủ
+- **Decision Filter 4.5/5 PASS** (bandwidth marginal: Tier 3 Figma workflow cần parent guidance Phúc giai đoạn đầu)
+- **Mid-Year Gate 2026-06-30 review**: kiểm tra Portfolio Y/An có entry fashion không? Phúc đã làm Figma scene chưa? Engagement zero → defer · high → build Phase 2 in-app scene composer
+
+### D-038: STEM Lab Track (PhET 18 simulations curated) added as 30th nav card 🔬 ✅ CANDIDATE
+- **Trigger** (2026-05-19, Session 19 cont.): Anh request sản phẩm STEM cho học sinh + đầy đủ nội dung kiến thức bổ sung.
+- **Stack OSS chọn**: PhET Interactive Simulations (University of Colorado Boulder, 125+ HTML5, CC-BY 3.0, 121 ngôn ngữ bao gồm Tiếng Việt ✅, 25M+ users globally).
+- **Decision**: Add `stem` tab + new card (id: stem, icon: 🔬) sau fashion trên TreeOfKnowledgeHome (30 cards total).
+- **6 môn × 3 sims = 18 curated**:
+  - 🔢 Toán: Fractions Intro · Area Builder · Graphing Lines
+  - ⚛️ Lý: Forces & Motion · Energy Skate Park · Balloons Static Electricity
+  - 🧪 Hóa: Build a Molecule · States of Matter Basics · Balancing Equations
+  - 🧬 Sinh: pH Scale · Natural Selection · Gene Expression
+  - 🌍 Trái đất: My Solar System · Greenhouse Effect · Plate Tectonics
+  - 🛠️ Kỹ thuật: Bending Light · Wave Interference · Circuit Construction
+- **Curriculum mapping VN**: trùng chương trình SGK lớp 4-12 KHTN/Lý/Hóa/Sinh (đã document trong stem-track/README.md)
+- **Age cadence**: Y 5t = 1 sim/tuần parent-supervised (15-20 phút), An 9t = 2 sims/tuần (30 phút), Phúc 11t = 3 sims/tuần + 1 mini-project/tháng
+- **Implementation**: External link mở PhET tab mới (Vietnamese URL pattern `https://phet.colorado.edu/vi/simulations/<slug>`) — iframe embed defer Phase 2 nếu cần keep user inside app
+- **Resources bổ sung**: VioEdu, OLM.vn, Khan Academy Tiếng Việt, GeoGebra, Code.org, CK-12, MIT OCW, Crash Course YouTube. Hardware kit roadmap (Micro:bit / Arduino / Raspberry Pi Pico / Snap Circuits) anh-decide Q3 budget.
+- **Career path mapping**: 6 careers — Bác sĩ/Dược sĩ (30-100tr/m), Kỹ sư điện (20-60tr/m), Data Scientist (30-150tr/m), Biotech (15-40tr/m), Kỹ sư hàng không (30-80tr/m), Robotics/IoT (25-70tr/m). VN employers: VinFast/Viettel R&D/FPT/Vinmec/Tâm Anh/Bách Khoa/Vingroup AI Lab.
+- **AI Agent companions**: AI Engineer + Civil Engineer + Corporate Training Designer (all LIVE [[reference_agency_agents]])
+- **Code shipped**: `components/STEMTab.tsx` (NEW, ~340 LOC) + import + activeTab route in PanyKidsStudio.tsx + 30th card in TreeOfKnowledgeHome.tsx + `artifacts/stem-track/README.md`
+- **Decision Filter 5/5 PASS** — STEM is foundational mission match, iframe embed minimal effort, PhET battle-tested 25M users
+- **Mid-Year Gate 2026-06-30 review**: Phúc complete bao nhiêu sims? Mini-project nào? An có streak làm sim/tuần? Y enjoy parent-supervised không?

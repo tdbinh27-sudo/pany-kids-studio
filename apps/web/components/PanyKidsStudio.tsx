@@ -17,6 +17,9 @@ import AISearchTab from '@/components/AISearch';
 import HeroGreeting from '@/components/HeroGreeting';
 import FamilyForest, { type FamilyKid } from '@/components/FamilyForest';
 import TreeOfKnowledgeHome from '@/components/TreeOfKnowledgeHome';
+import GameDevTab from '@/components/GameDevTab';
+import FashionDesignTab from '@/components/FashionDesignTab';
+import STEMTab from '@/components/STEMTab';
 import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
 import { QUIZ_BANK } from '@/lib/quiz';
 import { RIASEC_TYPES, RIASEC_JUNIOR_8_12, RIASEC_JUNIOR_13_15, MOOD_OPTIONS, CREATIVE_PROMPTS, EXERCISE_CHALLENGES, scoreRiasec } from '@/lib/riasec-junior';
@@ -991,6 +994,9 @@ export default function PanyKidsStudio() {
         {activeTab === 'leaderboard' && <LeaderboardTab  kids={kids} getOverall={getOverall} streaks={streaks} unlockedBadges={unlockedBadges} t={t} L={L} />}
         {activeTab === 'hardware'    && <HardwareTab     t={t} L={L} />}
         {activeTab === 'software'    && <SoftwareTab     t={t} L={L} />}
+        {activeTab === 'gamedev'     && <GameDevTab        lang={lang} />}
+        {activeTab === 'fashion'     && <FashionDesignTab  lang={lang} />}
+        {activeTab === 'stem'        && <STEMTab           lang={lang} />}
         {activeTab === 'english'     && <EnglishTab      t={t} L={L} />}
         {activeTab === 'finance'     && <FinanceTab      t={t} L={L} />}
         {activeTab === 'thinking'    && <ThinkingTab     t={t} L={L} />}

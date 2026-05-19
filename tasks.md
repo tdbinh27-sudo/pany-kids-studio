@@ -209,3 +209,60 @@
 - [x] decisions.md +D-013 +D-014 +D-015
 - [x] status.md, handoff.md, tasks.md updated
 - [x] MemPalace checkpoints (3 entries: diary + drawer + KG triples)
+
+## Session 19 (2026-05-19) — Game Dev Track D-036
+
+### Completed
+- [x] Read pany-kids-studio state (status/handoff)
+- [x] Research GitHub: 5 game-dev OSS candidates (Phaser, Godot, GDevelop, Kaboom, Scratch) + Pygame-CE
+- [x] Apply Decision Filter (5/5 PASS)
+- [x] Install `pygame-ce 2.5.7` via `pip install --user` (no admin)
+- [x] Create `artifacts/game-dev-track/` (6 files: README, kaboom-starter.html, pygame-hello.py, scratch-track.md, godot-first-game.md, INSTALL.md)
+- [x] Build `GameDevTab.tsx` component (232 lines, 3-tier card + career paths + AI agent box)
+- [x] Wire into `PanyKidsStudio.tsx` (import + activeTab route)
+- [x] Add 28th nav card to `TreeOfKnowledgeHome.tsx`
+- [x] TypeScript check clean (`tsc --noEmit` EXIT=0)
+- [x] Append D-036 to `decisions.md`
+
+### Pending (anh manual)
+- [ ] Tải Godot 4.6 portable từ https://godotengine.org/download/windows/ → extract `~/Tools/Godot/`
+- [ ] (Optional) Tải GDevelop 5 từ https://gdevelop.io/download
+- [ ] Test deploy: `vercel deploy --prod` để verify GameDevTab live trên https://pany-kids-studio.vercel.app
+- [ ] Cùng An mở `artifacts/game-dev-track/kaboom-starter.html` trong browser → con thử đổi gravity trong Notepad
+- [ ] Cùng Phúc chạy `python artifacts/game-dev-track/pygame-hello.py` → con build từ template
+
+### Deferred (Mid-Year Gate 2026-06-30 review)
+- [ ] Engagement check: 3 con vào Game Dev tab bao nhiêu lần trong tháng 6?
+- [ ] Phúc Project 1 Godot Lava Floor: completed/not?
+- [ ] An Scratch projects: completed at least 2?
+- [ ] If engagement zero → defer revisit Q4/2026; nếu high → expand Tier 4 add Unity Hub install
+
+## Session 19 cont. (2026-05-19) — Fashion Design + STEM Lab D-037 + D-038
+
+### Completed
+- [x] Research Fashion OSS (Open Peeps CC0 · DiceBear 8.7K⭐ MIT · Avataaars 3K⭐ MIT)
+- [x] Research STEM PhET (125 sims · 6 subjects · Vietnamese support ✅ · CC-BY 3.0)
+- [x] Decision Filter — Fashion 4.5/5 · STEM 5/5 both PASS
+- [x] Build `FashionDesignTab.tsx` (~280 LOC, 3-tier card + 8 scenes + 4 careers + 3 AI agents)
+- [x] Build `STEMTab.tsx` (~340 LOC, 6 subjects × 3 sims + curriculum mapping + 6 careers)
+- [x] Wire 2 imports + 2 activeTab routes in `PanyKidsStudio.tsx`
+- [x] Add 2 cards (29th 👗 + 30th 🔬) in `TreeOfKnowledgeHome.tsx`
+- [x] TypeScript check clean (`tsc --noEmit` EXIT=0)
+- [x] Create `artifacts/fashion-design-track/README.md` (3-tier detailed guide + scenes + careers)
+- [x] Create `artifacts/stem-track/README.md` (18 curated sims + curriculum mapping + resources)
+- [x] Append D-037 + D-038 to `decisions.md`
+
+### Pending (anh manual)
+- [ ] Review + git commit: `git add -A && git status` → if OK: `feat(D-037+D-038): Fashion + STEM tabs + 2 components + 2 artifacts`
+- [ ] Deploy: `vercel deploy --prod` → verify tabs 👗 + 🔬 LIVE on https://pany-kids-studio.vercel.app
+- [ ] Cuối tuần với 3 con:
+  - Y: cùng bố mở https://www.dicebear.com/playground/ → randomize Open Peeps 5 lần → chọn 1 nhân vật
+  - An: mở https://getavataaars.com/ → tạo 5 nhân vật family (bố/mẹ/Phúc/An/Y)
+  - Phúc: mở 1 PhET sim https://phet.colorado.edu/vi/simulations/forces-and-motion-basics → trải nghiệm 30 phút
+
+### Phase 2 deferred (sau Mid-Year Gate)
+- [ ] Build 8 PANY scene backdrops SVG pack tại `/public/fashion-scenes/`
+- [ ] In-app PhET iframe embed (thay vì external link)
+- [ ] Drag-drop scene composer UI cho Fashion Tier 3 (thay Figma external)
+- [ ] STEM journal auto-link mỗi sim Phúc làm xong
+- [ ] Hardware kit decision Micro:bit / Arduino budget Q3
