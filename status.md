@@ -285,3 +285,33 @@ Sau 1 tuần test nội bộ (per Q6) → mua domain + map vào Vercel + iOS bun
 Continue pany-kids-studio English Listen/Speak/Read/Write
 ```
 Web Speech API + audio + AI grading. ~6h focused work.
+
+## ⭐ SESSION 19 DEPLOYED (2026-05-19) — 3 Tracks LIVE on kids.panyvn.app
+
+**Production URL:** https://kids.panyvn.app/
+**Commit:** `5dd9a47` — feat(D-036+D-037+D-038): Game Dev + Fashion + STEM tracks
+**Vercel deployment:** https://pany-kids-studio-hp7shydgy-tdbinh27-3978s-projects.vercel.app
+**Build time:** 20s build + 36s deploy = 56s total
+**Verification:** HTTP 200 · 3 new tabs confirmed in JS bundle by browser-pilot agent
+
+### What shipped (15 files, 2158 insertions)
+- 3 new tab components (852 LOC total): `GameDevTab.tsx` 232L · `FashionDesignTab.tsx` 280L · `STEMTab.tsx` 340L
+- 2 wiring edits: PanyKidsStudio.tsx (+5 lines), TreeOfKnowledgeHome.tsx (+3 nav cards)
+- 8 artifact files: game-dev-track/ (6 files) + fashion-design-track/README.md + stem-track/README.md
+- 2 project docs updated: decisions.md (+D-036+D-037+D-038, total 38 decisions) · tasks.md (+Session 19 entries)
+
+### Stack OSS leveraged
+- 🎮 Godot 111K⭐ MIT (pending anh manual install) · Pygame-CE 2.5.7 ✅ installed · Kaboom MIT · Scratch hosted · Blender ✅ pre-installed
+- 👗 Open Peeps CC0 (584K combinations) · DiceBear 8.7K⭐ MIT · Avataaars 3K⭐ MIT · Figma free
+- 🔬 PhET 125+ sims CC-BY 3.0 (✅ Tiếng Việt 121 langs) · curated 18 mapping VN SGK lớp 4-12
+
+### Pending (anh)
+- 🟡 `git push origin main` — auto mode chặn em push, anh tự push commit `5dd9a47` để sync GitHub
+- 🟡 Tải Godot 4.6 portable (đã hướng dẫn bypass SmartScreen) for Phúc Tier 3 Game Dev
+- 🟡 Test với 3 con cuối tuần: Y DiceBear · An Avataaars · Phúc PhET + pygame-hello.py
+
+### Resume Gate (pre-existing, still pending anh-only)
+- 🔴 Rotate Anthropic API key (Session 16+17+18 carry-over)
+- 🔴 Backfill `feedback-week-1.md` Day 1-4
+- ⚠️ Re-link Vercel webhook (workaround: manual `vercel deploy --prod` works fine)
+- ⚖️ Chốt Path A/B debug deps Session 15
