@@ -315,3 +315,49 @@ Web Speech API + audio + AI grading. ~6h focused work.
 - 🔴 Backfill `feedback-week-1.md` Day 1-4
 - ⚠️ Re-link Vercel webhook (workaround: manual `vercel deploy --prod` works fine)
 - ⚖️ Chốt Path A/B debug deps Session 15
+
+## ⭐ SESSION 19 FINAL CLOSE (2026-05-19 ~9:00 GMT+7) — Day-long sprint
+
+**Production URL:** https://kids.panyvn.app/
+**Current HEAD:** `7ffb96b` (4 commits ahead of `git push origin main` — anh push when ready)
+**Total decisions logged:** 40 (D-036 → D-040 added today)
+**Deploys today:** 4 successful (all aliased kids.panyvn.app)
+
+### Today's commits
+| Commit | Decision | Lines |
+|---|---|---|
+| `5dd9a47` | D-036+037+038 | 3 tabs (Game/Fashion/STEM) + artifacts (2158 ins) |
+| `28b7f2b` | UI fix | LIGHT theme contrast rewrite (-340 +273) |
+| `38d94f7` | D-039 | JSON files + per-kid progress tracking (859 ins) |
+| `7ffb96b` | D-040 | Phase 3 Supabase CMS MVP (920 ins) |
+
+### Data architecture levels NOW
+1. ✅ Phase 1: 3 JSON files in lib/ — git edit fallback
+2. ✅ Phase 2: per-kid progress tracking (localStorage, badge tier, milestone checkboxes)
+3. ✅ Phase 3 MVP: Supabase CMS via `/admin/content` (migration pending anh apply)
+
+### Resume Gate (anh-only manual)
+1. **Apply migration** (5 min): Supabase SQL Editor → paste `artifacts/migration-content-tracks-2026-05-19.sql` → Run
+2. **Vercel env vars check** (3 min): ADMIN_SECRET + SUPABASE_SERVICE_ROLE_KEY in Production scope
+3. **Test admin UI** (2 min): `/admin/content?secret=YOUR_ADMIN_SECRET`
+4. **Push to GitHub** (1 min): `git push origin main` (auto mode chặn em)
+5. **Carryover from prior sessions:**
+   - 🔴 Rotate Anthropic API key (Session 16+17+18+19 carry-over, 2 min)
+   - 🔴 Backfill `feedback-week-1.md` Day 1-4 (Session 16, 30 min)
+   - ⚠️ Re-link Vercel ↔ GitHub webhook (Session 16+17+18, 2 min)
+   - 🟡 Manual download Godot 4.6 for Phúc Tier 3 Game Dev
+   - 🟡 Test với 3 con cuối tuần (DiceBear/Avataaars/PhET/pygame-hello)
+
+### Phase 3b deferred (next trigger session)
+- Version history table + diff viewer (when DB UPDATE >50 times)
+- Per-CTV auth + role table (when CTV pool ≥3)
+- AI suggestion queue (Claude agent quét GitHub/PhET RSS)
+- Multi-language split editor
+- Schema JSONSchema validation
+- CDN webhook for instant cache (currently 60s ISR)
+
+### Mid-Year Gate 2026-06-30 review criteria
+- Engagement per kid (count completed milestones in 3 tracks: 10 + 9 + 18 = 37 max)
+- Anh comfort tự update content qua admin UI vs JSON edit?
+- CTV onboard có contribute được không?
+- Phase 3b trigger conditions met yet?

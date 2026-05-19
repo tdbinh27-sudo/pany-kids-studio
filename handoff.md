@@ -259,3 +259,61 @@ Sau 1 tuần test nội bộ → mua domain + map vào Vercel + iOS bundle id up
 Continue pany-kids-studio quest-extension
 ```
 Anh mark gaps, em append entries với schema đã có.
+
+---
+
+## ⭐ Session 19 close (2026-05-19) — Day-long marathon 5-stage sprint
+
+**Resume command for next session:** `"Continue pany-kids-studio - apply Supabase migration D-040 + test admin UI"`
+
+### What shipped today (5 decisions, 4 deploys, ~3500 LOC)
+1. **D-036 Game Dev tab** 🎮 (Scratch/Kaboom/Godot+Pygame+Blender)
+2. **D-037 Fashion tab** 👗 (DiceBear/Avataaars/Open Peeps CC0 + 8 scenes)
+3. **D-038 STEM Lab tab** 🔬 (PhET 18 sims Vietnamese)
+4. **D-039 Data Phase 1+2:** JSON files + per-kid milestone progress tracking
+5. **D-040 Phase 3 CMS:** Supabase content_tracks table + admin UI `/admin/content`
+
+### State now
+- 30 nav cards on TreeOfKnowledgeHome (was 27)
+- 40 decisions in decisions.md (was 35)
+- Production LIVE https://kids.panyvn.app/ HTTP 200
+- Local HEAD `7ffb96b` · 4 commits ahead of origin/main (anh push when ready)
+- TypeScript clean throughout (`tsc --noEmit` EXIT=0 all 4 deploys)
+
+### Resume Gate (anh-only manual, ~15 min total)
+
+| Priority | Action | Time | Why |
+|---|---|---|---|
+| 🔴 P0 | Apply `artifacts/migration-content-tracks-2026-05-19.sql` in Supabase SQL Editor | 5 min | Activates D-040 CMS (without this, components fall back to bundled JSON) |
+| 🔴 P0 | Verify ADMIN_SECRET env var on Vercel (smoke test showed HTTP 503 = not set) | 3 min | Required for admin UI to work |
+| 🟡 P1 | Test `/admin/content?secret=YOUR_ADMIN_SECRET` LIVE | 2 min | Confirm CMS workflow |
+| 🟡 P1 | `git push origin main` (4 commits) | 1 min | Sync GitHub (auto mode blocks em from pushing) |
+| 🟢 P2 | Manual download Godot 4.6 portable for Phúc Tier 3 Game Dev | 5 min | Anh started, SmartScreen guide in INSTALL.md |
+| 🟢 P3 | Cuối tuần test 3 con: Y DiceBear · An Avataaars · Phúc PhET + pygame-hello | 1h family time | Validate engagement |
+
+### Resume Gate carry-over (from Session 16-18, still pending)
+- 🔴 Rotate Anthropic API key — 2 min
+- 🔴 Backfill `feedback-week-1.md` Day 1-4 — 30 min (D-025 gate)
+- ⚠️ Re-link Vercel ↔ GitHub webhook — 2 min (workaround: manual `vercel deploy --prod`)
+
+### Key files for next session
+- `decisions.md` — D-036 → D-040 detailed
+- `artifacts/admin-content-runbook-2026-05-19.md` — Full CMS operational guide
+- `artifacts/migration-content-tracks-2026-05-19.sql` — Schema + seed for Supabase
+- `apps/web/lib/{gamedev,fashion,stem}-data.json` — Content source of truth (fallback)
+- `apps/web/lib/track-progress.ts` — Per-kid progress helpers
+- `apps/web/lib/useContent.ts` — Client hook with Supabase fetch + JSON fallback
+- `apps/web/lib/supabase-admin.ts` — Server-side admin client
+- `apps/web/app/api/{content,admin/content}/[track]/route.ts` — API endpoints
+- `apps/web/app/admin/content/page.tsx` — Admin CMS UI
+- 3 components: `GameDevTab.tsx`, `FashionDesignTab.tsx`, `STEMTab.tsx`
+
+### Future scope (when anh ready)
+
+**Phase 3b enhancements (DEFER trigger conditions):**
+- Version history table → trigger: DB UPDATE >50 times
+- CTV roles → trigger: CTV pool ≥3 + need access control
+- AI suggestion queue → trigger: PhET RSS new sims weekly OR GitHub trending
+- Multi-language editor split → trigger: bilingual content drift
+- Schema JSONSchema validation → trigger: anh save broken JSON >2 times
+- CDN webhook → trigger: 60s ISR feels too slow for marketing iterations
