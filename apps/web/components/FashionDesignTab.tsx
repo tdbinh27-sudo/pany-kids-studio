@@ -8,7 +8,8 @@
  */
 
 import { useState } from 'react';
-import data from '@/lib/fashion-data.json';
+import bundledData from '@/lib/fashion-data.json';
+import { useContent } from '@/lib/useContent';
 import {
   type TrackProgress,
   toggleProgress,
@@ -37,12 +38,16 @@ type Props = {
   setProgressP?: (v: TrackProgress) => void;
 };
 
-const TIERS = data.tiers as FashionTier[];
-const ALL_MILESTONE_IDS = TIERS.flatMap((t) => t.milestones.map((m) => m.id));
+type FashionPayload = typeof bundledData;
 
 export default function FashionDesignTab({ lang, kids = [], activeKidId = null, progress = {}, setProgressP }: Props) {
   const [expandedTier, setExpandedTier] = useState<number | null>(2);
   const L = (vi: string, en: string) => (lang === 'vi' ? vi : en);
+
+  // D-040: fetch live content from Supabase (falls back to bundled JSON)
+  const { data } = useContent<FashionPayload>('fashion');
+  const TIERS = (data.tiers as FashionTier[]) || [];
+  const ALL_MILESTONE_IDS = TIERS.flatMap((t) => t.milestones.map((m) => m.id));
 
   const activeKid = kids.find((k) => k.id === activeKidId);
   const totalDone = countCompleted(progress, activeKidId, ALL_MILESTONE_IDS);

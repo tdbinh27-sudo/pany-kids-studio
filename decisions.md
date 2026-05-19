@@ -490,3 +490,65 @@
   - Anh có tự update JSON content được không (anh comfort level)
   - CTV onboard có contribute JSON được không
   - Trigger Phase 3 CMS build hay defer Q4?
+
+### D-040: Phase 3 MVP — Supabase CMS for 3 tracks content ✅ SHIPPED (migration pending anh apply)
+- **Trigger** (2026-05-19, Session 19 final cont.): Anh confirm Supabase Pro tier active → build Phase 3 luôn thay vì defer Q3/Q4.
+- **Scope MVP** (4-6h actual): Simple polymorphic table + admin UI JSON editor + API + hook. Phase 3b (versioning, CTV roles, AI auto-update, schema validation) DEFERRED to next session.
+- **Schema** (`migration-content-tracks-2026-05-19.sql`):
+  - Table `public.content_tracks (id uuid, track text UNIQUE CHECK IN ('gamedev','fashion','stem'), payload jsonb, version int, updated_by text, updated_at timestamptz, published bool)`
+  - Trigger `bump_content_tracks_version` auto-increment version + timestamp on UPDATE
+  - RLS enabled · `service_role_full_access` policy (deny anon, server-only access)
+  - Index on `(track) WHERE published` for fast lookup
+  - Seed: 3 rows from current JSON snapshot (gamedev/fashion/stem)
+- **API routes** (2 new):
+  - `GET /api/content/[track]` — public, ISR cached 60s, returns payload with fallback to bundled JSON if Supabase fails or row missing
+  - `GET+PATCH /api/admin/content/[track]` — admin-only via ADMIN_SECRET (query `?secret=` or `x-admin-secret` header, same pattern as `/api/admin/families`)
+- **Admin UI** (`/admin/content`):
+  - Auth flow: paste secret → save localStorage → URL clean
+  - 3 tab buttons (Game Dev / Fashion / STEM)
+  - Metadata bar: track + version + last update timestamp + reload button
+  - Inline JSON textarea editor (monospace, ~60vh, parse validation client-side)
+  - Save button → PATCH API → success message with new version
+  - Schema cheatsheet sidebar warning về NOT removing `milestones[].id` / `phet_slug` (breaks progress tracking D-039)
+  - Logout button to clear localStorage secret
+- **Client hook** (`lib/useContent.ts`):
+  - Module-level cache (60s TTL, survives re-renders within session)
+  - Falls back to bundled JSON if API fails or returns error
+  - Returns `{ data, loading, source: 'bundle'|'supabase'|'bundle-fallback'|'cache', version }`
+- **Server lib** (`lib/supabase-admin.ts`):
+  - `getSupabaseAdmin()` — lazy-cached client using SERVICE_ROLE_KEY
+  - `checkAdminAuth(req)` — extracted helper matching existing admin route pattern
+- **Component refactor** (3 files):
+  - Import becomes `import bundledData from '@/lib/X-data.json'; import { useContent } from '@/lib/useContent'`
+  - Replace static `data` constant with `const { data } = useContent<XPayload>('X')`
+  - Move TIERS/SUBJECTS computation INSIDE component body
+  - Defensive `|| []` for null payload during loading flicker
+  - Type: `type XPayload = typeof bundledData` for full type safety from JSON shape
+- **Update workflow comparison**:
+  - OLD (Phase 1): edit JSON file → git push → Vercel rebuild (3-5 min)
+  - NEW (Phase 3): admin UI → save → cache refresh 60s (no rebuild, no git)
+- **Backward compatibility**:
+  - Bundled JSON files retained as fallback (NOT deleted)
+  - If migration not applied yet → API returns bundled JSON (source: 'bundle')
+  - If Supabase down → hook fallback to bundled JSON automatically
+  - Components NEVER crash on missing data (default `[]` everywhere)
+- **Files shipped (8 new + 3 modified, ~700 LOC):**
+  - NEW: migration SQL, supabase-admin.ts, useContent.ts, 2 API routes, admin page, runbook MD
+  - MODIFIED: GameDevTab.tsx, FashionDesignTab.tsx, STEMTab.tsx
+- **TS clean** (tsc --noEmit EXIT=0)
+- **Pending anh** (3 manual steps, ~10 min):
+  1. Apply migration in Supabase SQL Editor (pany-kids-prod)
+  2. Verify env vars NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY + ADMIN_SECRET on Vercel
+  3. Test `/admin/content?secret=YOUR_ADMIN_SECRET` LIVE
+- **Cross-references:**
+  - [[D-039]] (Phase 1+2 JSON+progress) — content schema reused
+  - [[D-031]] (Supabase pany-kids-prod isolated project) — same DB
+  - [[D-022]] (admin auth ADMIN_SECRET pattern) — same auth
+  - artifacts/admin-content-runbook-2026-05-19.md — full operational guide
+- **Phase 3b future enhancements** (defer until trigger):
+  - Version history table + diff viewer (when content_tracks UPDATE >50 times)
+  - Per-CTV auth + role table (when CTV pool ≥3)
+  - AI suggestion queue (Claude agent scans GitHub/PhET RSS → propose updates)
+  - Multi-language editor split (vi/en separate fields)
+  - Schema JSONSchema validation client-side
+  - CDN webhook for instant cache invalidation (currently 60s ISR)

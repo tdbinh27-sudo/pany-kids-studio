@@ -9,7 +9,8 @@
  */
 
 import { useState } from 'react';
-import data from '@/lib/stem-data.json';
+import bundledData from '@/lib/stem-data.json';
+import { useContent } from '@/lib/useContent';
 import {
   type TrackProgress,
   toggleProgress,
@@ -35,14 +36,18 @@ type Props = {
   setProgressP?: (v: TrackProgress) => void;
 };
 
-const SUBJECTS = data.subjects as STEMSubject[];
-const ALL_SIM_SLUGS = SUBJECTS.flatMap((s) => s.simulations.map((sim) => sim.phet_slug));
+type StemPayload = typeof bundledData;
 
 const phetUrl = (slug: string, lang: 'vi' | 'en') => `https://phet.colorado.edu/${lang}/simulations/${slug}`;
 
 export default function STEMTab({ lang, kids = [], activeKidId = null, progress = {}, setProgressP }: Props) {
   const [expandedSubject, setExpandedSubject] = useState<string | null>('math');
   const L = (vi: string, en: string) => (lang === 'vi' ? vi : en);
+
+  // D-040: fetch live content from Supabase (falls back to bundled JSON)
+  const { data } = useContent<StemPayload>('stem');
+  const SUBJECTS = (data.subjects as STEMSubject[]) || [];
+  const ALL_SIM_SLUGS = SUBJECTS.flatMap((s) => s.simulations.map((sim) => sim.phet_slug));
 
   const activeKid = kids.find((k) => k.id === activeKidId);
   const totalDone = countCompleted(progress, activeKidId, ALL_SIM_SLUGS);
