@@ -10,12 +10,14 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
-type Track = 'gamedev' | 'fashion' | 'stem';
+type Track = 'gamedev' | 'fashion' | 'stem' | 'glossary' | 'findtrack';
 
 const TRACKS: { id: Track; emoji: string; label: string }[] = [
-  { id: 'gamedev', emoji: '🎮', label: 'Lập trình Game' },
-  { id: 'fashion', emoji: '👗', label: 'Thiết kế Thời trang' },
-  { id: 'stem',    emoji: '🔬', label: 'STEM Lab' },
+  { id: 'gamedev',   emoji: '🎮', label: 'Lập trình Game' },
+  { id: 'fashion',   emoji: '👗', label: 'Thiết kế Thời trang' },
+  { id: 'stem',      emoji: '🔬', label: 'STEM Lab' },
+  { id: 'glossary',  emoji: '📖', label: 'Từ điển AI' },
+  { id: 'findtrack', emoji: '🧭', label: 'Bắt đầu từ đâu' },
 ];
 
 const ADMIN_SECRET_KEY = 'pks-admin-secret';

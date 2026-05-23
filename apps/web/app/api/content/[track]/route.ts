@@ -1,9 +1,9 @@
 /**
  * @file app/api/content/[track]/route.ts
- * @description Public GET endpoint for content (gamedev/fashion/stem).
+ * @description Public GET endpoint for content (gamedev/fashion/stem/glossary/findtrack).
  *              Falls back to bundled JSON if Supabase unavailable.
  *              Cached 60s in production (revalidate=60).
- * @reference D-040 Phase 3 MVP
+ * @reference D-040 Phase 3 MVP · D-041 added glossary + findtrack
  */
 
 import { NextResponse } from 'next/server';
@@ -11,12 +11,18 @@ import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import gamedevJson from '@/lib/gamedev-data.json';
 import fashionJson from '@/lib/fashion-data.json';
 import stemJson from '@/lib/stem-data.json';
+import glossaryJson from '@/lib/glossary-data.json';
+import findtrackJson from '@/lib/findtrack-data.json';
 
 const FALLBACKS: Record<string, unknown> = {
   gamedev: gamedevJson,
   fashion: fashionJson,
   stem: stemJson,
+  glossary: glossaryJson,
+  findtrack: findtrackJson,
 };
+
+const VALID_TRACKS = ['gamedev', 'fashion', 'stem', 'glossary', 'findtrack'];
 
 export const revalidate = 60; // ISR cache 60s
 
@@ -26,7 +32,7 @@ export async function GET(
 ) {
   const { track } = await ctx.params;
 
-  if (!['gamedev', 'fashion', 'stem'].includes(track)) {
+  if (!VALID_TRACKS.includes(track)) {
     return NextResponse.json({ ok: false, error: 'Invalid track' }, { status: 400 });
   }
 

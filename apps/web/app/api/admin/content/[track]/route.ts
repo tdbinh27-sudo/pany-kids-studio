@@ -3,11 +3,13 @@
  * @description Admin PATCH endpoint to update content payload.
  *              Auth via ADMIN_SECRET (same pattern as /api/admin/families).
  *              Bumps version + updated_at via DB trigger.
- * @reference D-040 Phase 3 MVP
+ * @reference D-040 Phase 3 MVP · D-041 added glossary + findtrack
  */
 
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin, checkAdminAuth } from '@/lib/supabase-admin';
+
+const VALID_TRACKS = ['gamedev', 'fashion', 'stem', 'glossary', 'findtrack'];
 
 export async function GET(
   req: Request,
@@ -17,7 +19,7 @@ export async function GET(
   if (!auth.ok) return NextResponse.json({ ok: false, error: auth.reason }, { status: auth.status });
 
   const { track } = await ctx.params;
-  if (!['gamedev', 'fashion', 'stem'].includes(track)) {
+  if (!VALID_TRACKS.includes(track)) {
     return NextResponse.json({ ok: false, error: 'Invalid track' }, { status: 400 });
   }
 
@@ -42,7 +44,7 @@ export async function PATCH(
   if (!auth.ok) return NextResponse.json({ ok: false, error: auth.reason }, { status: auth.status });
 
   const { track } = await ctx.params;
-  if (!['gamedev', 'fashion', 'stem'].includes(track)) {
+  if (!VALID_TRACKS.includes(track)) {
     return NextResponse.json({ ok: false, error: 'Invalid track' }, { status: 400 });
   }
 
