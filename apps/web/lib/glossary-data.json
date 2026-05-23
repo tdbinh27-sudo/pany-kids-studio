@@ -1,0 +1,216 @@
+{
+  "$schema_version": "1.0",
+  "$last_updated": "2026-05-23",
+  "$editable": "Anh edit JSON này → git push → Vercel auto-deploy. KHÔNG cần biết React/TypeScript.",
+  "$source_attribution": "Adapted from rohitg00/ai-engineering-from-scratch (MIT) + simplified for ages 8-12 by Pany Kids Studio.",
+  "categories": [
+    { "id": "basics",  "emoji": "🧠", "title_vi": "Cơ bản",         "title_en": "Basics" },
+    { "id": "agents",  "emoji": "🤖", "title_vi": "Robot AI",       "title_en": "AI Agents" },
+    { "id": "data",    "emoji": "📦", "title_vi": "Dữ liệu",        "title_en": "Data" },
+    { "id": "models",  "emoji": "🎓", "title_vi": "Mô hình học",    "title_en": "Models" },
+    { "id": "safety",  "emoji": "🛡️", "title_vi": "An toàn",        "title_en": "Safety" },
+    { "id": "tools",   "emoji": "🛠️", "title_vi": "Công cụ",        "title_en": "Tools" }
+  ],
+  "terms": [
+    {
+      "id": "ai",
+      "category": "basics",
+      "term_vi": "Trí tuệ nhân tạo (AI)",
+      "term_en": "Artificial Intelligence (AI)",
+      "definition_vi": "Là khi máy tính có thể làm những việc thường cần con người, ví dụ như đoán hình, viết truyện, hay trả lời câu hỏi.",
+      "definition_en": "When a computer can do things that usually need a human — like guessing a picture, writing a story, or answering a question.",
+      "example_vi": "Khi bạn nói \"Hey Siri\" và Siri trả lời — đó là AI nghe và nói chuyện với bạn.",
+      "example_en": "When you say \"Hey Siri\" and Siri talks back — that's AI listening to you."
+    },
+    {
+      "id": "algorithm",
+      "category": "basics",
+      "term_vi": "Thuật toán",
+      "term_en": "Algorithm",
+      "definition_vi": "Là một danh sách các bước rõ ràng để giải một vấn đề. Giống như công thức nấu mì gói: đổ nước, đợi sôi, bỏ mì.",
+      "definition_en": "A clear list of steps to solve a problem. Like a recipe for instant noodles: pour water, wait for boil, add noodles.",
+      "example_vi": "Thuật toán Google Maps tìm đường đi ngắn nhất từ nhà tới trường.",
+      "example_en": "Google Maps' algorithm finds the shortest road from home to school."
+    },
+    {
+      "id": "prompt",
+      "category": "basics",
+      "term_vi": "Câu lệnh (Prompt)",
+      "term_en": "Prompt",
+      "definition_vi": "Là câu hỏi hoặc yêu cầu bạn gõ cho AI. Hỏi càng rõ thì AI trả lời càng đúng.",
+      "definition_en": "The question or request you type to an AI. The clearer you ask, the better it answers.",
+      "example_vi": "\"Vẽ cho bé con mèo đeo kính\" là một prompt.",
+      "example_en": "\"Draw me a cat wearing glasses\" is a prompt."
+    },
+    {
+      "id": "model",
+      "category": "models",
+      "term_vi": "Mô hình AI",
+      "term_en": "AI Model",
+      "definition_vi": "Là bộ não của AI — một file rất lớn chứa tất cả những gì AI đã học được. Mô hình giống như con người đã đọc xong cả thư viện.",
+      "definition_en": "The brain of an AI — a huge file that holds everything the AI has learned. Like a person who finished reading a whole library.",
+      "example_vi": "ChatGPT, Claude, Gemini — mỗi cái là một mô hình khác nhau.",
+      "example_en": "ChatGPT, Claude, Gemini — each is a different model."
+    },
+    {
+      "id": "training",
+      "category": "models",
+      "term_vi": "Huấn luyện",
+      "term_en": "Training",
+      "definition_vi": "Là khi AI học từ rất nhiều ví dụ. Giống như bạn xem 1000 bức ảnh con chó → từ đó nhận ra con chó mới.",
+      "definition_en": "When AI learns from lots of examples. Like looking at 1000 dog photos → then recognizing a new dog.",
+      "example_vi": "Để AI biết phân biệt mèo và chó, người ta cho nó xem hàng triệu bức ảnh có gắn nhãn.",
+      "example_en": "To teach AI cats vs dogs, people show it millions of labeled photos."
+    },
+    {
+      "id": "dataset",
+      "category": "data",
+      "term_vi": "Tập dữ liệu",
+      "term_en": "Dataset",
+      "definition_vi": "Là một bộ sưu tập lớn các ví dụ dùng để dạy AI. Ví dụ: 100,000 bức ảnh trái cây có ghi tên.",
+      "definition_en": "A big collection of examples used to teach an AI. Example: 100,000 fruit pictures with labels.",
+      "example_vi": "ImageNet có 14 triệu ảnh — đây là dataset nổi tiếng nhất để dạy AI nhìn.",
+      "example_en": "ImageNet has 14 million pictures — it's the most famous dataset for teaching AI to see."
+    },
+    {
+      "id": "neural-network",
+      "category": "models",
+      "term_vi": "Mạng nơ-ron",
+      "term_en": "Neural Network",
+      "definition_vi": "Là cách AI bắt chước bộ não con người: rất nhiều \"tế bào\" nhỏ nối với nhau, mỗi cái xử lý một mẩu thông tin.",
+      "definition_en": "How AI copies the human brain: many tiny \"cells\" connected together, each handling a small piece of information.",
+      "example_vi": "Não con người có ~86 tỷ nơ-ron. Mạng AI cỡ nhỏ có vài triệu.",
+      "example_en": "Human brain has ~86 billion neurons. A small AI net has a few million."
+    },
+    {
+      "id": "agent",
+      "category": "agents",
+      "term_vi": "AI Agent (Robot AI)",
+      "term_en": "AI Agent",
+      "definition_vi": "Là một AI có thể tự làm việc, ví dụ: tự đặt vé máy bay, tự viết code, hoặc tự tìm thông tin trên mạng.",
+      "definition_en": "An AI that can do work on its own — like booking flights, writing code, or searching the web by itself.",
+      "example_vi": "Claude Code là một agent — nó tự đọc file, sửa lỗi, và kiểm tra kết quả.",
+      "example_en": "Claude Code is an agent — it reads files, fixes bugs, and checks results on its own."
+    },
+    {
+      "id": "tool-use",
+      "category": "agents",
+      "term_vi": "Dùng công cụ",
+      "term_en": "Tool Use",
+      "definition_vi": "Khi AI biết bấm máy tính, mở trình duyệt, gửi email — giống như bạn dùng kéo, bút, hay điện thoại.",
+      "definition_en": "When AI can use a calculator, open a browser, send email — like you use scissors, pens, or a phone.",
+      "example_vi": "AI dùng tool \"calculator\" để tính 47 × 89 cho chính xác.",
+      "example_en": "AI uses the \"calculator\" tool to compute 47 × 89 correctly."
+    },
+    {
+      "id": "multi-agent",
+      "category": "agents",
+      "term_vi": "Nhiều AI cùng làm",
+      "term_en": "Multi-Agent",
+      "definition_vi": "Khi nhiều AI hợp tác như một đội — một AI viết, một AI sửa, một AI kiểm tra. Giống nhóm bài tập lớp.",
+      "definition_en": "Many AIs working together like a team — one writes, one edits, one checks. Like a school group project.",
+      "example_vi": "Một AI vẽ poster, một AI viết caption, một AI đăng lên Facebook.",
+      "example_en": "One AI designs the poster, one AI writes the caption, one AI posts it on Facebook."
+    },
+    {
+      "id": "rag",
+      "category": "data",
+      "term_vi": "RAG (Tìm rồi mới trả lời)",
+      "term_en": "RAG (Retrieval-Augmented Generation)",
+      "definition_vi": "Khi AI mở sách hoặc tra Google trước, rồi mới trả lời. Cách này giúp AI không bịa.",
+      "definition_en": "When AI opens a book or searches Google first, then answers. This helps the AI not make stuff up.",
+      "example_vi": "Hỏi AI \"Hôm nay Sài Gòn mấy độ?\" — AI tra weather rồi trả lời.",
+      "example_en": "Ask AI \"What's the weather in Saigon today?\" — AI checks weather first, then answers."
+    },
+    {
+      "id": "hallucination",
+      "category": "safety",
+      "term_vi": "Ảo giác AI",
+      "term_en": "Hallucination",
+      "definition_vi": "Khi AI tự bịa ra thông tin nghe có vẻ đúng nhưng thực ra sai. Luôn kiểm tra lại với người lớn!",
+      "definition_en": "When AI makes up info that sounds right but is wrong. Always double-check with a grown-up!",
+      "example_vi": "AI nói \"Núi Fansipan cao 5000m\" — sai (thực tế 3147m). Đó là ảo giác.",
+      "example_en": "AI says \"Mount Fansipan is 5000m tall\" — wrong (it's actually 3147m). That's a hallucination."
+    },
+    {
+      "id": "bias",
+      "category": "safety",
+      "term_vi": "Thiên lệch",
+      "term_en": "Bias",
+      "definition_vi": "Khi AI nghĩ không công bằng vì học từ dữ liệu không cân bằng. Ví dụ: chỉ thấy bác sĩ là đàn ông → tưởng mọi bác sĩ đều là đàn ông.",
+      "definition_en": "When AI thinks unfairly because it learned from unbalanced data. Example: only seeing male doctors → thinks all doctors are men.",
+      "example_vi": "AI dịch \"the nurse\" sang tiếng Việt thường là \"cô y tá\" (nữ) thay vì \"anh y tá\" — đó là thiên lệch.",
+      "example_en": "AI translating \"the nurse\" to Vietnamese often picks female \"cô y tá\" instead of male \"anh y tá\" — that's bias."
+    },
+    {
+      "id": "safety",
+      "category": "safety",
+      "term_vi": "An toàn AI",
+      "term_en": "AI Safety",
+      "definition_vi": "Là việc làm sao để AI giúp người, không hại người. Luôn nói thật, không lừa, không làm việc xấu.",
+      "definition_en": "Making sure AI helps people, not hurts them. Always honest, no tricks, no bad actions.",
+      "example_vi": "Claude không giúp người làm bom — đó là an toàn AI hoạt động đúng.",
+      "example_en": "Claude won't help make bombs — that's AI safety working correctly."
+    },
+    {
+      "id": "token",
+      "category": "models",
+      "term_vi": "Token (mảnh chữ)",
+      "term_en": "Token",
+      "definition_vi": "AI không đọc nguyên chữ — nó chia chữ ra thành các mảnh nhỏ gọi là token. \"Xin chào\" có thể là 2-3 token.",
+      "definition_en": "AI doesn't read full words — it splits text into small chunks called tokens. \"Hello\" might be 1-2 tokens.",
+      "example_vi": "Hỏi AI 1 câu dài tốn nhiều token hơn — nên Claude/ChatGPT có giới hạn token mỗi lần.",
+      "example_en": "A long question uses more tokens — that's why Claude/ChatGPT has token limits per chat."
+    },
+    {
+      "id": "embedding",
+      "category": "data",
+      "term_vi": "Embedding (mã hóa số)",
+      "term_en": "Embedding",
+      "definition_vi": "Là cách AI biến chữ hoặc hình thành một dãy số dài. Hai thứ giống nhau sẽ có số gần giống nhau.",
+      "definition_en": "How AI turns words or pictures into long lists of numbers. Two similar things get similar numbers.",
+      "example_vi": "\"Mèo\" và \"chó\" có embedding gần nhau (đều là thú cưng); \"mèo\" và \"xe đạp\" thì xa.",
+      "example_en": "\"Cat\" and \"dog\" have close embeddings (both pets); \"cat\" and \"bicycle\" are far apart."
+    },
+    {
+      "id": "fine-tuning",
+      "category": "models",
+      "term_vi": "Tinh chỉnh",
+      "term_en": "Fine-Tuning",
+      "definition_vi": "Là khi bạn dạy thêm cho AI một chủ đề mới sau khi nó đã học cơ bản. Như học thêm violin sau khi đã biết piano.",
+      "definition_en": "Teaching an AI extra skills after it already knows the basics. Like learning violin after you already play piano.",
+      "example_vi": "Tinh chỉnh Claude để chuyên dịch tiếng Việt → tiếng Anh ngành y tế.",
+      "example_en": "Fine-tuning Claude to specialize in Vietnamese ↔ English medical translation."
+    },
+    {
+      "id": "mcp",
+      "category": "tools",
+      "term_vi": "MCP (kết nối AI với app)",
+      "term_en": "MCP (Model Context Protocol)",
+      "definition_vi": "Là cách AI nói chuyện với các app khác — Google Drive, Notion, Spotify... giống ổ cắm điện chuẩn USB-C dùng được nhiều thứ.",
+      "definition_en": "How AI talks to other apps — Google Drive, Notion, Spotify... like a USB-C plug that fits many devices.",
+      "example_vi": "Claude dùng MCP để đọc Notion + gửi email + đặt nhạc Spotify trong cùng 1 cuộc trò chuyện.",
+      "example_en": "Claude uses MCP to read Notion + send emails + play Spotify all in one chat."
+    },
+    {
+      "id": "skill",
+      "category": "tools",
+      "term_vi": "Skill (kỹ năng AI)",
+      "term_en": "Skill",
+      "definition_vi": "Là một bộ hướng dẫn dạy AI cách làm 1 việc cụ thể tốt hơn. Giống một quyển sách công thức cho riêng nó.",
+      "definition_en": "A pack of instructions that teaches AI to do one job better. Like a recipe book just for that task.",
+      "example_vi": "Pany Kids Studio có skill \"Math Quiz\" để AI ra đề toán phù hợp tuổi của bé.",
+      "example_en": "Pany Kids Studio has a \"Math Quiz\" skill so AI makes problems matched to your kid's age."
+    },
+    {
+      "id": "context-window",
+      "category": "models",
+      "term_vi": "Cửa sổ ngữ cảnh",
+      "term_en": "Context Window",
+      "definition_vi": "Là lượng chữ AI có thể nhớ trong 1 cuộc nói chuyện. Hết cửa sổ → AI quên đoạn đầu.",
+      "definition_en": "How much text AI can remember in one conversation. When the window is full → AI forgets the start.",
+      "example_vi": "Claude Opus 4.7 nhớ ~1 triệu token = ~750,000 chữ tiếng Anh (cả cuốn Harry Potter).",
+      "example_en": "Claude Opus 4.7 remembers ~1 million tokens = ~750,000 English words (a full Harry Potter book)."
+    }
+  ]
+}

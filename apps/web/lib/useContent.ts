@@ -9,13 +9,17 @@ import { useEffect, useState } from 'react';
 import gamedevJson from '@/lib/gamedev-data.json';
 import fashionJson from '@/lib/fashion-data.json';
 import stemJson from '@/lib/stem-data.json';
+import glossaryJson from '@/lib/glossary-data.json';
+import findtrackJson from '@/lib/findtrack-data.json';
 
-type Track = 'gamedev' | 'fashion' | 'stem';
+type Track = 'gamedev' | 'fashion' | 'stem' | 'glossary' | 'findtrack';
 
 const FALLBACKS: Record<Track, unknown> = {
   gamedev: gamedevJson,
   fashion: fashionJson,
   stem: stemJson,
+  glossary: glossaryJson,
+  findtrack: findtrackJson,
 };
 
 // Module-level cache (survives across re-renders, not across page loads)

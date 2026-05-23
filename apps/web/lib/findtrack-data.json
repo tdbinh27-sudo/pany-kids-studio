@@ -1,0 +1,160 @@
+{
+  "$schema_version": "1.0",
+  "$last_updated": "2026-05-23",
+  "$editable": "Anh edit JSON này → git push → Vercel auto-deploy.",
+  "$source_attribution": "Quiz pattern inspired by rohitg00/ai-engineering-from-scratch /find-your-level (MIT).",
+  "$scoring": "Each answer adds points to tracks. Highest total → recommended track. Ties → 'explorer'.",
+  "tracks": [
+    {
+      "id": "gamedev",
+      "emoji": "🎮",
+      "tab": "gamedev",
+      "title_vi": "Lập trình Game",
+      "title_en": "Game Dev",
+      "blurb_vi": "Bé thích chơi và làm game? Bắt đầu Scratch → Kaboom → Godot.",
+      "blurb_en": "Loves playing and making games? Start with Scratch → Kaboom → Godot.",
+      "first_step_vi": "Mở Scratch.mit.edu cùng bố/mẹ 15 phút.",
+      "first_step_en": "Open Scratch.mit.edu with a parent for 15 minutes."
+    },
+    {
+      "id": "fashion",
+      "emoji": "👗",
+      "tab": "fashion",
+      "title_vi": "Thiết kế thời trang",
+      "title_en": "Fashion Design",
+      "blurb_vi": "Bé thích vẽ, phối màu, tạo nhân vật? Bắt đầu DiceBear → Open Peeps → Figma.",
+      "blurb_en": "Loves drawing, colors, and characters? Start with DiceBear → Open Peeps → Figma.",
+      "first_step_vi": "Mở DiceBear avatar maker, tạo 1 nhân vật giống mình.",
+      "first_step_en": "Open DiceBear avatar maker, design a character that looks like you."
+    },
+    {
+      "id": "stem",
+      "emoji": "🔬",
+      "tab": "stem",
+      "title_vi": "STEM Lab",
+      "title_en": "STEM Lab",
+      "blurb_vi": "Bé thích hỏi 'tại sao'? Khám phá vật lý, hóa, sinh, toán qua mô phỏng PhET tiếng Việt.",
+      "blurb_en": "Loves asking 'why'? Explore physics, chemistry, biology, math via PhET sims in Vietnamese.",
+      "first_step_vi": "Vào PhET sim 'Forces and Motion: Basics' bằng tiếng Việt, kéo hộp xem điều gì xảy ra.",
+      "first_step_en": "Open PhET sim 'Forces and Motion: Basics' in Vietnamese, drag a box and see what happens."
+    },
+    {
+      "id": "explorer",
+      "emoji": "🌟",
+      "tab": "overview",
+      "title_vi": "Người khám phá",
+      "title_en": "Explorer",
+      "blurb_vi": "Bé thích thử mọi thứ! Mỗi tuần thử 1 track khác nhau xem cái nào hợp nhất.",
+      "blurb_en": "Loves trying everything! Try a different track each week to see what fits best.",
+      "first_step_vi": "Tuần này thử Game Dev. Tuần sau thử Fashion. Tuần sau nữa thử STEM.",
+      "first_step_en": "This week try Game Dev. Next week Fashion. Then STEM."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "prompt_vi": "Bé bao nhiêu tuổi?",
+      "prompt_en": "How old is the kid?",
+      "options": [
+        { "label_vi": "5-7 tuổi",   "label_en": "5-7 years", "scores": { "gamedev": 2, "fashion": 3, "stem": 2, "explorer": 1 } },
+        { "label_vi": "8-10 tuổi",  "label_en": "8-10 years", "scores": { "gamedev": 3, "fashion": 3, "stem": 3, "explorer": 2 } },
+        { "label_vi": "11-13 tuổi", "label_en": "11-13 years", "scores": { "gamedev": 3, "fashion": 2, "stem": 3, "explorer": 2 } }
+      ]
+    },
+    {
+      "id": "q2",
+      "prompt_vi": "Bé thích làm gì nhất khi rảnh?",
+      "prompt_en": "What does the kid love most in free time?",
+      "options": [
+        { "label_vi": "Chơi game",            "label_en": "Playing games", "scores": { "gamedev": 5, "fashion": 0, "stem": 1, "explorer": 1 } },
+        { "label_vi": "Vẽ, tô màu",           "label_en": "Drawing, coloring", "scores": { "gamedev": 0, "fashion": 5, "stem": 1, "explorer": 1 } },
+        { "label_vi": "Tháo lắp đồ vật",      "label_en": "Taking things apart", "scores": { "gamedev": 1, "fashion": 0, "stem": 5, "explorer": 1 } },
+        { "label_vi": "Đủ thứ luôn",          "label_en": "A bit of everything", "scores": { "gamedev": 1, "fashion": 1, "stem": 1, "explorer": 5 } }
+      ]
+    },
+    {
+      "id": "q3",
+      "prompt_vi": "Khi gặp việc khó, bé thường?",
+      "prompt_en": "When the kid faces a hard problem, they usually?",
+      "options": [
+        { "label_vi": "Thử đi thử lại đến khi xong",  "label_en": "Keep trying until done", "scores": { "gamedev": 4, "fashion": 2, "stem": 4, "explorer": 1 } },
+        { "label_vi": "Tìm cách làm cho đẹp hơn",      "label_en": "Make it look nicer first", "scores": { "gamedev": 1, "fashion": 4, "stem": 1, "explorer": 1 } },
+        { "label_vi": "Hỏi tại sao và muốn hiểu",     "label_en": "Ask why and want to understand", "scores": { "gamedev": 2, "fashion": 1, "stem": 5, "explorer": 1 } },
+        { "label_vi": "Chuyển sang việc khác",         "label_en": "Move on to something else", "scores": { "gamedev": 1, "fashion": 1, "stem": 1, "explorer": 4 } }
+      ]
+    },
+    {
+      "id": "q4",
+      "prompt_vi": "Bé đã biết tiếng Anh đến mức nào?",
+      "prompt_en": "What's the kid's English level?",
+      "options": [
+        { "label_vi": "Mới bắt đầu (A1 trở xuống)",  "label_en": "Beginner (A1 or below)", "scores": { "gamedev": 3, "fashion": 4, "stem": 4, "explorer": 2 } },
+        { "label_vi": "Tốt (A2 / Flyers)",            "label_en": "Good (A2 / Flyers)", "scores": { "gamedev": 4, "fashion": 3, "stem": 4, "explorer": 2 } },
+        { "label_vi": "Rất tốt (B1+ / KET)",         "label_en": "Strong (B1+ / KET)", "scores": { "gamedev": 5, "fashion": 3, "stem": 4, "explorer": 2 } }
+      ]
+    },
+    {
+      "id": "q5",
+      "prompt_vi": "Bé đã thử Scratch chưa?",
+      "prompt_en": "Has the kid tried Scratch yet?",
+      "options": [
+        { "label_vi": "Chưa bao giờ",            "label_en": "Never", "scores": { "gamedev": 3, "fashion": 2, "stem": 2, "explorer": 3 } },
+        { "label_vi": "Đã thử vài lần",          "label_en": "Tried a few times", "scores": { "gamedev": 4, "fashion": 1, "stem": 2, "explorer": 2 } },
+        { "label_vi": "Đã làm xong dự án",        "label_en": "Finished a project", "scores": { "gamedev": 5, "fashion": 1, "stem": 2, "explorer": 1 } }
+      ]
+    },
+    {
+      "id": "q6",
+      "prompt_vi": "Bé thích loại video nào trên YouTube?",
+      "prompt_en": "Which YouTube videos does the kid like most?",
+      "options": [
+        { "label_vi": "Gameplay, Minecraft, Roblox",   "label_en": "Gameplay, Minecraft, Roblox", "scores": { "gamedev": 5, "fashion": 0, "stem": 1, "explorer": 1 } },
+        { "label_vi": "Vẽ, làm slime, DIY",            "label_en": "Drawing, slime, DIY crafts", "scores": { "gamedev": 0, "fashion": 5, "stem": 2, "explorer": 1 } },
+        { "label_vi": "Thí nghiệm khoa học",            "label_en": "Science experiments", "scores": { "gamedev": 1, "fashion": 1, "stem": 5, "explorer": 1 } },
+        { "label_vi": "Mỗi ngày một kiểu khác",         "label_en": "A different topic each day", "scores": { "gamedev": 1, "fashion": 1, "stem": 1, "explorer": 5 } }
+      ]
+    },
+    {
+      "id": "q7",
+      "prompt_vi": "Bé tập trung được bao lâu cho 1 việc?",
+      "prompt_en": "How long can the kid focus on one task?",
+      "options": [
+        { "label_vi": "Dưới 15 phút",   "label_en": "Under 15 min", "scores": { "gamedev": 2, "fashion": 3, "stem": 2, "explorer": 4 } },
+        { "label_vi": "15-30 phút",     "label_en": "15-30 min", "scores": { "gamedev": 3, "fashion": 3, "stem": 3, "explorer": 2 } },
+        { "label_vi": "30-60 phút",     "label_en": "30-60 min", "scores": { "gamedev": 4, "fashion": 3, "stem": 4, "explorer": 1 } },
+        { "label_vi": "Hơn 1 tiếng",    "label_en": "Over 1 hour", "scores": { "gamedev": 5, "fashion": 4, "stem": 5, "explorer": 1 } }
+      ]
+    },
+    {
+      "id": "q8",
+      "prompt_vi": "Bố/mẹ có thời gian học cùng bé bao nhiêu mỗi tuần?",
+      "prompt_en": "How much time can parents spend learning together each week?",
+      "options": [
+        { "label_vi": "Dưới 1 giờ",  "label_en": "Under 1 hour", "scores": { "gamedev": 3, "fashion": 3, "stem": 2, "explorer": 4 } },
+        { "label_vi": "1-3 giờ",     "label_en": "1-3 hours", "scores": { "gamedev": 4, "fashion": 4, "stem": 4, "explorer": 3 } },
+        { "label_vi": "Hơn 3 giờ",   "label_en": "Over 3 hours", "scores": { "gamedev": 4, "fashion": 4, "stem": 5, "explorer": 2 } }
+      ]
+    },
+    {
+      "id": "q9",
+      "prompt_vi": "Bé hay vẽ hoặc tô màu không?",
+      "prompt_en": "Does the kid draw or color often?",
+      "options": [
+        { "label_vi": "Rất hay, hàng ngày",      "label_en": "Yes, every day", "scores": { "gamedev": 1, "fashion": 5, "stem": 1, "explorer": 2 } },
+        { "label_vi": "Thỉnh thoảng",            "label_en": "Sometimes", "scores": { "gamedev": 2, "fashion": 3, "stem": 2, "explorer": 3 } },
+        { "label_vi": "Hiếm khi",                "label_en": "Rarely", "scores": { "gamedev": 3, "fashion": 0, "stem": 3, "explorer": 2 } }
+      ]
+    },
+    {
+      "id": "q10",
+      "prompt_vi": "Mục tiêu chính của bố/mẹ là gì?",
+      "prompt_en": "Parent's main goal?",
+      "options": [
+        { "label_vi": "Bé biết lập trình sớm",         "label_en": "Learn to code early", "scores": { "gamedev": 5, "fashion": 1, "stem": 3, "explorer": 1 } },
+        { "label_vi": "Bé sáng tạo, tự tin",           "label_en": "Be creative and confident", "scores": { "gamedev": 3, "fashion": 5, "stem": 2, "explorer": 3 } },
+        { "label_vi": "Bé giỏi tư duy logic, khoa học", "label_en": "Strong logic and science thinking", "scores": { "gamedev": 3, "fashion": 1, "stem": 5, "explorer": 2 } },
+        { "label_vi": "Bé tìm thấy đam mê thực sự",     "label_en": "Find a real passion", "scores": { "gamedev": 2, "fashion": 2, "stem": 2, "explorer": 5 } }
+      ]
+    }
+  ]
+}

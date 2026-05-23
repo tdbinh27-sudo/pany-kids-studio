@@ -20,6 +20,8 @@ import TreeOfKnowledgeHome from '@/components/TreeOfKnowledgeHome';
 import GameDevTab from '@/components/GameDevTab';
 import FashionDesignTab from '@/components/FashionDesignTab';
 import STEMTab from '@/components/STEMTab';
+import AIGlossaryTab from '@/components/AIGlossaryTab';
+import FindYourTrackTab from '@/components/FindYourTrackTab';
 import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
 import { QUIZ_BANK } from '@/lib/quiz';
 import { RIASEC_TYPES, RIASEC_JUNIOR_8_12, RIASEC_JUNIOR_13_15, MOOD_OPTIONS, CREATIVE_PROMPTS, EXERCISE_CHALLENGES, scoreRiasec } from '@/lib/riasec-junior';
@@ -1006,6 +1008,8 @@ export default function PanyKidsStudio() {
         {activeTab === 'gamedev'     && <GameDevTab        lang={lang} kids={kids} activeKidId={activeKidId} progress={gamedevProgress} setProgressP={setGamedevProgressP} />}
         {activeTab === 'fashion'     && <FashionDesignTab  lang={lang} kids={kids} activeKidId={activeKidId} progress={fashionProgress} setProgressP={setFashionProgressP} />}
         {activeTab === 'stem'        && <STEMTab           lang={lang} kids={kids} activeKidId={activeKidId} progress={stemProgress}   setProgressP={setStemProgressP} />}
+        {activeTab === 'glossary'    && <AIGlossaryTab     lang={lang} />}
+        {activeTab === 'findtrack'   && <FindYourTrackTab  lang={lang} kids={kids} activeKidId={activeKidId} onNavigate={(tabId) => setActiveTab(tabId)} />}
         {activeTab === 'english'     && <EnglishTab      t={t} L={L} />}
         {activeTab === 'finance'     && <FinanceTab      t={t} L={L} />}
         {activeTab === 'thinking'    && <ThinkingTab     t={t} L={L} />}
