@@ -54,10 +54,11 @@ export default function ContentAdminPage() {
       setLoading(true);
       setMessage(null);
       try {
-        const res = await fetch(`/api/admin/content/${track}`, {
-          headers: { 'x-admin-secret': secret },
-          cache: 'no-store',
-        });
+        // D-041 fix: secret via URL query (header rejects non-ASCII chars)
+        const res = await fetch(
+          `/api/admin/content/${track}?secret=${encodeURIComponent(secret)}`,
+          { cache: 'no-store' }
+        );
         const json = await res.json();
         if (!json.ok) {
           setMessage({ type: 'err', text: `Load failed: ${json.error}` });
@@ -107,11 +108,15 @@ export default function ContentAdminPage() {
     setSaving(true);
     setMessage(null);
     try {
-      const res = await fetch(`/api/admin/content/${activeTrack}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
-        body: JSON.stringify({ payload, updated_by: 'admin-ui' }),
-      });
+      // D-041 fix: secret via URL query (header rejects non-ASCII chars)
+      const res = await fetch(
+        `/api/admin/content/${activeTrack}?secret=${encodeURIComponent(secret)}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ payload, updated_by: 'admin-ui' }),
+        }
+      );
       const json = await res.json();
       if (!json.ok) {
         setMessage({ type: 'err', text: `Save failed: ${json.error}` });
@@ -173,7 +178,7 @@ export default function ContentAdminPage() {
         <div className="bg-white rounded-2xl shadow-md p-4 mb-4 border border-purple-200 flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-2xl font-bold text-purple-900">📊 Content Admin</h1>
-            <p className="text-xs text-slate-500">D-040 Phase 3 MVP · Supabase-backed CMS for Kids Studio 3 tabs</p>
+            <p className="text-xs text-slate-500">D-040 Phase 3 MVP + D-041 Phase 3b · Supabase-backed CMS for Kids Studio 5 tabs</p>
           </div>
           <div className="flex gap-2">
             <a
