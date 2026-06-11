@@ -1,0 +1,348 @@
+{
+  "$schema_version": "1.0",
+  "$last_updated": "2026-06-11",
+  "$editable": "Anh edit JSON này → git push → Vercel auto-deploy. KHÔNG cần biết React/TypeScript. Đừng xóa missions[].milestones[].id hoặc order_game.planets[].id (progress + mini-game sẽ hỏng).",
+  "iframe": {
+    "vi": "/space/solar-system.vi.html",
+    "en": "/space/solar-system.html"
+  },
+  "intro_vi": "Du hành quanh Hệ Mặt Trời ngay trên màn hình! Kéo để xoay, lăn chuột để phóng to, bấm vào một hành tinh để bay tới đó.",
+  "intro_en": "Travel around the Solar System right on your screen! Drag to spin, scroll to zoom, click a planet to fly to it.",
+  "planets": [
+    {
+      "id": "sun", "emoji": "☀️", "order": 0, "color": "#FDB813",
+      "name_vi": "Mặt Trời", "name_en": "Sun",
+      "type_vi": "Ngôi sao", "type_en": "Star",
+      "stats": { "size_vi": "Đường kính ~1.39 triệu km", "size_en": "~1.39 million km wide", "temp_vi": "Bề mặt ~5.500°C", "temp_en": "Surface ~5,500°C" },
+      "facts_vi": [
+        "Chiếm tới 99,8% khối lượng của cả Hệ Mặt Trời.",
+        "Là một quả cầu khí khổng lồ làm từ hydro và heli.",
+        "Ánh sáng từ Mặt Trời mất khoảng 8 phút để tới Trái Đất.",
+        "Mọi hành tinh đều quay quanh Mặt Trời nhờ lực hấp dẫn của nó."
+      ],
+      "facts_en": [
+        "Holds 99.8% of all the mass in the Solar System.",
+        "A giant ball of gas made of hydrogen and helium.",
+        "Its light takes about 8 minutes to reach Earth.",
+        "Every planet orbits the Sun because of its gravity."
+      ],
+      "wow_vi": "Có thể nhét khoảng 1,3 triệu Trái Đất vào bên trong Mặt Trời!",
+      "wow_en": "About 1.3 million Earths could fit inside the Sun!"
+    },
+    {
+      "id": "mercury", "emoji": "☿️", "order": 1, "color": "#9E9E9E",
+      "name_vi": "Sao Thủy", "name_en": "Mercury",
+      "type_vi": "Hành tinh đá", "type_en": "Rocky planet",
+      "stats": { "distance_vi": "Gần Mặt Trời nhất", "distance_en": "Closest to the Sun", "year_vi": "1 năm = 88 ngày Trái Đất", "year_en": "1 year = 88 Earth days" },
+      "facts_vi": [
+        "Là hành tinh nhỏ nhất và gần Mặt Trời nhất.",
+        "Ban ngày nóng tới ~430°C, ban đêm lạnh tới ~-180°C.",
+        "Hầu như không có khí quyển để giữ nhiệt.",
+        "Bề mặt đầy hố va chạm giống như Mặt Trăng."
+      ],
+      "facts_en": [
+        "The smallest planet and the closest to the Sun.",
+        "Daytime hits ~430°C; night drops to ~-180°C.",
+        "Has almost no atmosphere to trap heat.",
+        "Its surface is covered in craters, like the Moon."
+      ],
+      "wow_vi": "Một ngày trên Sao Thủy còn dài hơn cả một năm của nó!",
+      "wow_en": "A single day on Mercury lasts longer than its whole year!"
+    },
+    {
+      "id": "venus", "emoji": "♀️", "order": 2, "color": "#E6B873",
+      "name_vi": "Sao Kim", "name_en": "Venus",
+      "type_vi": "Hành tinh đá", "type_en": "Rocky planet",
+      "stats": { "temp_vi": "Nóng nhất ~465°C", "temp_en": "Hottest ~465°C", "year_vi": "1 ngày dài hơn 1 năm", "year_en": "A day longer than a year" },
+      "facts_vi": [
+        "Là hành tinh NÓNG NHẤT do hiệu ứng nhà kính dày đặc.",
+        "Quay ngược chiều so với hầu hết các hành tinh khác.",
+        "Là vật thể sáng nhất trên bầu trời sau Mặt Trời và Mặt Trăng.",
+        "Có kích thước gần bằng Trái Đất nên được gọi là 'hành tinh chị em'."
+      ],
+      "facts_en": [
+        "The HOTTEST planet, thanks to a thick greenhouse blanket.",
+        "Spins backwards compared to most other planets.",
+        "The brightest object in the sky after the Sun and Moon.",
+        "Almost Earth's size — often called our 'sister planet'."
+      ],
+      "wow_vi": "Dù không gần Mặt Trời nhất, Sao Kim vẫn nóng hơn cả Sao Thủy!",
+      "wow_en": "Even though it isn't closest to the Sun, Venus is hotter than Mercury!"
+    },
+    {
+      "id": "earth", "emoji": "🌍", "order": 3, "color": "#4FB3E8",
+      "name_vi": "Trái Đất", "name_en": "Earth",
+      "type_vi": "Hành tinh đá", "type_en": "Rocky planet",
+      "stats": { "distance_vi": "~150 triệu km từ Mặt Trời", "distance_en": "~150 million km from the Sun", "moon_vi": "1 Mặt Trăng", "moon_en": "1 Moon" },
+      "facts_vi": [
+        "Hành tinh duy nhất ta biết có sự sống.",
+        "71% bề mặt được bao phủ bởi nước.",
+        "Khí quyển có oxy để chúng ta hít thở.",
+        "Có một Mặt Trăng tạo nên thủy triều lên xuống."
+      ],
+      "facts_en": [
+        "The only planet we know of with life.",
+        "71% of its surface is covered by water.",
+        "Its atmosphere has oxygen for us to breathe.",
+        "Its Moon creates the ocean tides."
+      ],
+      "wow_vi": "Đây là ngôi nhà DUY NHẤT của chúng ta — hãy cùng bảo vệ nó!",
+      "wow_en": "It's our ONLY home — let's take care of it!"
+    },
+    {
+      "id": "mars", "emoji": "♂️", "order": 4, "color": "#D14B2E",
+      "name_vi": "Sao Hỏa", "name_en": "Mars",
+      "type_vi": "Hành tinh đá", "type_en": "Rocky planet",
+      "stats": { "nick_vi": "Hành tinh Đỏ", "nick_en": "The Red Planet", "moon_vi": "2 mặt trăng nhỏ", "moon_en": "2 small moons" },
+      "facts_vi": [
+        "Có màu đỏ vì đất chứa nhiều oxit sắt (gỉ sét).",
+        "Có Olympus Mons — núi lửa lớn nhất Hệ Mặt Trời.",
+        "Có hai mặt trăng nhỏ tên Phobos và Deimos.",
+        "Robot tự hành của NASA đang khám phá nơi đây ngay lúc này."
+      ],
+      "facts_en": [
+        "It looks red because its soil is full of iron oxide (rust).",
+        "Home to Olympus Mons — the largest volcano in the Solar System.",
+        "Has two tiny moons named Phobos and Deimos.",
+        "NASA rovers are exploring it right now."
+      ],
+      "wow_vi": "Núi Olympus Mons cao gấp khoảng 3 lần đỉnh Everest!",
+      "wow_en": "Olympus Mons is about 3 times taller than Mount Everest!"
+    },
+    {
+      "id": "jupiter", "emoji": "🪐", "order": 5, "color": "#C9A36A",
+      "name_vi": "Sao Mộc", "name_en": "Jupiter",
+      "type_vi": "Hành tinh khí khổng lồ", "type_en": "Gas giant",
+      "stats": { "size_vi": "Hành tinh lớn nhất", "size_en": "The biggest planet", "moon_vi": "~95 mặt trăng", "moon_en": "~95 moons" },
+      "facts_vi": [
+        "Là hành tinh lớn nhất — một quả cầu khí khổng lồ.",
+        "Vết Đỏ Lớn là một cơn bão khổng lồ tồn tại hàng trăm năm.",
+        "Có khoảng 95 mặt trăng; bốn cái lớn là Io, Europa, Ganymede, Callisto.",
+        "Quay nhanh nhất: một ngày chỉ khoảng 10 giờ."
+      ],
+      "facts_en": [
+        "The largest planet — a giant ball of gas.",
+        "Its Great Red Spot is a storm that has raged for centuries.",
+        "Has about 95 moons; the four big ones are Io, Europa, Ganymede, Callisto.",
+        "Spins the fastest: one day is only about 10 hours."
+      ],
+      "wow_vi": "Sao Mộc lớn đến mức chứa được hơn 1.300 Trái Đất bên trong!",
+      "wow_en": "Jupiter is so big that over 1,300 Earths could fit inside it!"
+    },
+    {
+      "id": "saturn", "emoji": "🪐", "order": 6, "color": "#E3D2A2",
+      "name_vi": "Sao Thổ", "name_en": "Saturn",
+      "type_vi": "Hành tinh khí khổng lồ", "type_en": "Gas giant",
+      "stats": { "ring_vi": "Vành đai băng + đá", "ring_en": "Rings of ice + rock", "moon_vi": "Mặt trăng lớn nhất: Titan", "moon_en": "Largest moon: Titan" },
+      "facts_vi": [
+        "Nổi tiếng với những vành đai tuyệt đẹp làm từ băng và đá.",
+        "Cũng là một hành tinh khí, không có bề mặt rắn để đứng.",
+        "Có rất nhiều mặt trăng; Titan lớn hơn cả Sao Thủy.",
+        "Là hành tinh có mật độ nhẹ nhất."
+      ],
+      "facts_en": [
+        "Famous for its beautiful rings made of ice and rock.",
+        "Also a gas planet — no solid surface to stand on.",
+        "Has many moons; Titan is bigger than Mercury.",
+        "It is the least dense planet of all."
+      ],
+      "wow_vi": "Sao Thổ nhẹ đến mức nó sẽ NỔI nếu có một bể nước đủ lớn!",
+      "wow_en": "Saturn is so light it would FLOAT if you had a big enough bathtub!"
+    },
+    {
+      "id": "uranus", "emoji": "🌀", "order": 7, "color": "#7FD4D6",
+      "name_vi": "Sao Thiên Vương", "name_en": "Uranus",
+      "type_vi": "Hành tinh băng khổng lồ", "type_en": "Ice giant",
+      "stats": { "tilt_vi": "Quay nằm nghiêng ~90°", "tilt_en": "Tilted on its side ~90°", "color_vi": "Màu xanh lơ (metan)", "color_en": "Cyan-blue (methane)" },
+      "facts_vi": [
+        "Quay 'nằm nghiêng', lăn quanh Mặt Trời như một quả bóng.",
+        "Có màu xanh lơ vì khí metan trong khí quyển.",
+        "Là một trong hai hành tinh lạnh nhất.",
+        "Cũng có vành đai mờ, nhưng khó nhìn thấy hơn Sao Thổ."
+      ],
+      "facts_en": [
+        "Spins on its side, rolling around the Sun like a ball.",
+        "Looks cyan-blue because of methane gas in its air.",
+        "One of the two coldest planets.",
+        "It has faint rings too, just harder to see than Saturn's."
+      ],
+      "wow_vi": "Sao Thiên Vương nghiêng tới mức một mùa của nó kéo dài hơn 20 năm Trái Đất!",
+      "wow_en": "Uranus is so tilted that one season lasts over 20 Earth years!"
+    },
+    {
+      "id": "neptune", "emoji": "🔵", "order": 8, "color": "#2E5FE0",
+      "name_vi": "Sao Hải Vương", "name_en": "Neptune",
+      "type_vi": "Hành tinh băng khổng lồ", "type_en": "Ice giant",
+      "stats": { "distance_vi": "Xa Mặt Trời nhất", "distance_en": "Farthest from the Sun", "year_vi": "1 năm = 165 năm Trái Đất", "year_en": "1 year = 165 Earth years" },
+      "facts_vi": [
+        "Là hành tinh xa Mặt Trời nhất trong Hệ Mặt Trời.",
+        "Có màu xanh thẳm rất đẹp.",
+        "Có những cơn gió mạnh nhất Hệ Mặt Trời — tới ~2.100 km/h.",
+        "Phải dùng kính thiên văn mới nhìn thấy, không thấy bằng mắt thường."
+      ],
+      "facts_en": [
+        "The farthest planet from the Sun in the Solar System.",
+        "Has a deep, beautiful blue color.",
+        "Has the strongest winds in the Solar System — up to ~2,100 km/h.",
+        "You need a telescope to see it; it's invisible to the naked eye."
+      ],
+      "wow_vi": "Gió trên Sao Hải Vương còn nhanh hơn cả máy bay phản lực!",
+      "wow_en": "Winds on Neptune blow faster than a jet plane!"
+    }
+  ],
+  "missions": [
+    {
+      "id": 1, "emoji": "🧑‍🚀",
+      "title_vi": "Tân binh vũ trụ", "title_en": "Space Cadet",
+      "age_band_vi": "Khởi đầu", "age_band_en": "Beginner",
+      "desc_vi": "Làm quen với Hệ Mặt Trời qua đài quan sát 3D.",
+      "desc_en": "Get to know the Solar System with the 3D observatory.",
+      "milestones": [
+        { "id": "space-m1-watch3d", "label_vi": "Mở Đài Quan Sát 3D và kéo xoay quanh Hệ Mặt Trời", "label_en": "Open the 3D Observatory and spin around the Solar System" },
+        { "id": "space-m1-biggest", "label_vi": "Tìm ra hành tinh LỚN NHẤT (gợi ý: Sao Mộc)", "label_en": "Find the BIGGEST planet (hint: Jupiter)" },
+        { "id": "space-m1-earth", "label_vi": "Chỉ ra Trái Đất — ngôi nhà của chúng ta", "label_en": "Point out Earth — our home" }
+      ]
+    },
+    {
+      "id": 2, "emoji": "🔭",
+      "title_vi": "Nhà thám hiểm", "title_en": "Explorer",
+      "age_band_vi": "Trung cấp", "age_band_en": "Intermediate",
+      "desc_vi": "Học sâu hơn và chứng minh hiểu biết bằng trò chơi.",
+      "desc_en": "Learn deeper and prove it with the games.",
+      "milestones": [
+        { "id": "space-m2-cards", "label_vi": "Đọc thẻ thông tin của ít nhất 4 hành tinh", "label_en": "Read the fact cards of at least 4 planets" },
+        { "id": "space-m2-quiz", "label_vi": "Làm Đố Vui Vũ Trụ đạt từ 8/10 trở lên (tự tick khi thắng)", "label_en": "Score 8/10 or higher on the Space Quiz (auto-ticks on win)" },
+        { "id": "space-m2-order", "label_vi": "Sắp xếp đúng 8 hành tinh theo thứ tự (tự tick khi đúng)", "label_en": "Put all 8 planets in the right order (auto-ticks when correct)" }
+      ]
+    },
+    {
+      "id": 3, "emoji": "🚀",
+      "title_vi": "Phi hành gia", "title_en": "Astronaut",
+      "age_band_vi": "Thử thách", "age_band_en": "Challenge",
+      "desc_vi": "Chia sẻ điều em học được với gia đình.",
+      "desc_en": "Share what you learned with your family.",
+      "milestones": [
+        { "id": "space-m3-name8", "label_vi": "Kể tên đủ 8 hành tinh theo thứ tự cho bố/anh chị nghe", "label_en": "Name all 8 planets in order out loud to your family" },
+        { "id": "space-m3-journal", "label_vi": "Viết nhật ký về hành tinh em thích nhất (tab Nhật ký)", "label_en": "Write a journal entry about your favorite planet (Journal tab)" },
+        { "id": "space-m3-teach", "label_vi": "Dạy một người trong nhà một 'sự thật wow' về vũ trụ", "label_en": "Teach a family member one 'wow fact' about space" }
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "sq1",
+      "q_vi": "Hành tinh nào gần Mặt Trời nhất?", "q_en": "Which planet is closest to the Sun?",
+      "options_vi": ["Sao Kim", "Sao Thủy", "Trái Đất", "Sao Hỏa"],
+      "options_en": ["Venus", "Mercury", "Earth", "Mars"],
+      "answer": 1,
+      "explain_vi": "Sao Thủy là hành tinh gần Mặt Trời nhất và cũng nhỏ nhất.",
+      "explain_en": "Mercury is the closest planet to the Sun and also the smallest."
+    },
+    {
+      "id": "sq2",
+      "q_vi": "Hành tinh nào là 'ngôi nhà' của chúng ta?", "q_en": "Which planet is our home?",
+      "options_vi": ["Sao Hỏa", "Mặt Trăng", "Trái Đất", "Sao Mộc"],
+      "options_en": ["Mars", "The Moon", "Earth", "Jupiter"],
+      "answer": 2,
+      "explain_vi": "Trái Đất là hành tinh duy nhất ta biết có sự sống.",
+      "explain_en": "Earth is the only planet we know of with life."
+    },
+    {
+      "id": "sq3",
+      "q_vi": "Hành tinh nào lớn nhất Hệ Mặt Trời?", "q_en": "Which is the biggest planet?",
+      "options_vi": ["Sao Thổ", "Sao Mộc", "Sao Hải Vương", "Trái Đất"],
+      "options_en": ["Saturn", "Jupiter", "Neptune", "Earth"],
+      "answer": 1,
+      "explain_vi": "Sao Mộc lớn nhất — chứa được hơn 1.300 Trái Đất.",
+      "explain_en": "Jupiter is the biggest — over 1,300 Earths could fit inside."
+    },
+    {
+      "id": "sq4",
+      "q_vi": "Hành tinh nào nổi tiếng với những vành đai đẹp?", "q_en": "Which planet is famous for its beautiful rings?",
+      "options_vi": ["Sao Thổ", "Sao Hỏa", "Sao Kim", "Sao Thủy"],
+      "options_en": ["Saturn", "Mars", "Venus", "Mercury"],
+      "answer": 0,
+      "explain_vi": "Sao Thổ có vành đai làm từ băng và đá.",
+      "explain_en": "Saturn's rings are made of ice and rock."
+    },
+    {
+      "id": "sq5",
+      "q_vi": "Vì sao Sao Hỏa có màu đỏ?", "q_en": "Why is Mars red?",
+      "options_vi": ["Vì nó rất nóng", "Vì đất chứa sắt gỉ", "Vì gần Mặt Trời", "Vì có núi lửa"],
+      "options_en": ["Because it's very hot", "Because its soil has rusty iron", "Because it's near the Sun", "Because of volcanoes"],
+      "answer": 1,
+      "explain_vi": "Đất Sao Hỏa chứa nhiều oxit sắt (gỉ sét) nên có màu đỏ.",
+      "explain_en": "Mars's soil is full of iron oxide (rust), giving it a red color."
+    },
+    {
+      "id": "sq6",
+      "q_vi": "Hành tinh NÓNG NHẤT là hành tinh nào?", "q_en": "Which is the HOTTEST planet?",
+      "options_vi": ["Sao Thủy", "Sao Kim", "Sao Hỏa", "Sao Mộc"],
+      "options_en": ["Mercury", "Venus", "Mars", "Jupiter"],
+      "answer": 1,
+      "explain_vi": "Sao Kim nóng nhất do hiệu ứng nhà kính dày, dù không gần Mặt Trời nhất.",
+      "explain_en": "Venus is hottest because of its thick greenhouse effect, even though it isn't closest to the Sun."
+    },
+    {
+      "id": "sq7",
+      "q_vi": "Mặt Trời thực ra là gì?", "q_en": "What is the Sun, really?",
+      "options_vi": ["Một hành tinh", "Một ngôi sao", "Một mặt trăng", "Một thiên thạch"],
+      "options_en": ["A planet", "A star", "A moon", "An asteroid"],
+      "answer": 1,
+      "explain_vi": "Mặt Trời là một ngôi sao — quả cầu khí khổng lồ phát sáng.",
+      "explain_en": "The Sun is a star — a giant glowing ball of gas."
+    },
+    {
+      "id": "sq8",
+      "q_vi": "Hành tinh nào xa Mặt Trời nhất?", "q_en": "Which planet is farthest from the Sun?",
+      "options_vi": ["Sao Thiên Vương", "Sao Hải Vương", "Sao Thổ", "Sao Mộc"],
+      "options_en": ["Uranus", "Neptune", "Saturn", "Jupiter"],
+      "answer": 1,
+      "explain_vi": "Sao Hải Vương là hành tinh xa nhất trong Hệ Mặt Trời.",
+      "explain_en": "Neptune is the farthest planet in the Solar System."
+    },
+    {
+      "id": "sq9",
+      "q_vi": "Trái Đất có bao nhiêu Mặt Trăng?", "q_en": "How many moons does Earth have?",
+      "options_vi": ["0", "1", "2", "Rất nhiều"],
+      "options_en": ["0", "1", "2", "Many"],
+      "answer": 1,
+      "explain_vi": "Trái Đất có đúng 1 Mặt Trăng, tạo nên thủy triều.",
+      "explain_en": "Earth has exactly 1 Moon, which creates the tides."
+    },
+    {
+      "id": "sq10",
+      "q_vi": "Ánh sáng Mặt Trời mất bao lâu để tới Trái Đất?", "q_en": "How long does sunlight take to reach Earth?",
+      "options_vi": ["Tức thì", "Khoảng 8 phút", "1 giờ", "1 ngày"],
+      "options_en": ["Instantly", "About 8 minutes", "1 hour", "1 day"],
+      "answer": 1,
+      "explain_vi": "Ánh sáng mất khoảng 8 phút để đi từ Mặt Trời tới Trái Đất.",
+      "explain_en": "Light takes about 8 minutes to travel from the Sun to Earth."
+    }
+  ],
+  "quiz_pass": 8,
+  "order_game": {
+    "prompt_vi": "Sắp xếp 8 hành tinh theo thứ tự từ GẦN Mặt Trời nhất đến XA nhất!",
+    "prompt_en": "Put the 8 planets in order from CLOSEST to the Sun to FARTHEST!",
+    "planets": [
+      { "id": "mercury", "emoji": "☿️", "name_vi": "Sao Thủy", "name_en": "Mercury" },
+      { "id": "venus", "emoji": "♀️", "name_vi": "Sao Kim", "name_en": "Venus" },
+      { "id": "earth", "emoji": "🌍", "name_vi": "Trái Đất", "name_en": "Earth" },
+      { "id": "mars", "emoji": "♂️", "name_vi": "Sao Hỏa", "name_en": "Mars" },
+      { "id": "jupiter", "emoji": "🪐", "name_vi": "Sao Mộc", "name_en": "Jupiter" },
+      { "id": "saturn", "emoji": "🪐", "name_vi": "Sao Thổ", "name_en": "Saturn" },
+      { "id": "uranus", "emoji": "🌀", "name_vi": "Sao Thiên Vương", "name_en": "Uranus" },
+      { "id": "neptune", "emoji": "🔵", "name_vi": "Sao Hải Vương", "name_en": "Neptune" }
+    ]
+  },
+  "careers": [
+    { "vi": "Phi hành gia", "en": "Astronaut", "salary_vn": "Cơ quan vũ trụ (NASA/ESA/VNSC) · cực hiếm & cạnh tranh cao" },
+    { "vi": "Nhà thiên văn học", "en": "Astronomer", "salary_vn": "Nghiên cứu / đại học · 15-40tr/m VN" },
+    { "vi": "Kỹ sư hàng không vũ trụ", "en": "Aerospace Engineer", "salary_vn": "20-60tr/m · vệ tinh, drone, hàng không" },
+    { "vi": "Nhà khoa học hành tinh", "en": "Planetary Scientist", "salary_vn": "Nghiên cứu quốc tế · NASA/ESA/JAXA" }
+  ],
+  "tools": [
+    { "name": "NASA Eyes on the Solar System", "desc_vi": "App 3D miễn phí của NASA — bay tới mọi hành tinh và tàu vũ trụ thật. Bố mở cùng con.", "desc_en": "Free NASA 3D app — fly to every real planet and spacecraft. Open it with a parent." },
+    { "name": "Stellarium", "desc_vi": "Bản đồ sao miễn phí — chỉ đúng hành tinh đang ở đâu trên bầu trời tối nay.", "desc_en": "Free planetarium — shows exactly where the planets are in tonight's sky." }
+  ]
+}

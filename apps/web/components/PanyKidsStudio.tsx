@@ -22,6 +22,7 @@ import FashionDesignTab from '@/components/FashionDesignTab';
 import STEMTab from '@/components/STEMTab';
 import AIGlossaryTab from '@/components/AIGlossaryTab';
 import FindYourTrackTab from '@/components/FindYourTrackTab';
+import SpaceExplorerTab from '@/components/SpaceExplorerTab';
 import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
 import { QUIZ_BANK } from '@/lib/quiz';
 import { RIASEC_TYPES, RIASEC_JUNIOR_8_12, RIASEC_JUNIOR_13_15, MOOD_OPTIONS, CREATIVE_PROMPTS, EXERCISE_CHALLENGES, scoreRiasec } from '@/lib/riasec-junior';
@@ -627,6 +628,7 @@ export default function PanyKidsStudio() {
   const [gamedevProgress, setGamedevProgress] = useState({}); // D-039: {kidId: {milestoneId: ISO date}}
   const [fashionProgress, setFashionProgress] = useState({}); // D-039: {kidId: {milestoneId: ISO date}}
   const [stemProgress, setStemProgress] = useState({}); // D-039: {kidId: {phet_slug: ISO date}}
+  const [spaceProgress, setSpaceProgress] = useState({}); // D-042: {kidId: {milestoneId: ISO date}}
   const [completedQuests, setCompletedQuests] = useState<Record<string, string[]>>({}); // {kidId: [questKey, ...]} — questKey = `${questPillar}-${dayOfWeek}-${date}`
   const [readStories, setReadStories] = useState<string[]>([]); // [storyId, ...]
 
@@ -636,7 +638,7 @@ export default function PanyKidsStudio() {
   // ============== STORAGE ==============
   useEffect(() => {
     const load = async () => {
-      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges', 'parentPin', 'parentLocked', 'creativeWorks', 'exerciseLog', 'moodLog', 'riasecAnswers', 'riasecCompleted', 'savedCareers', 'familyJournal', 'weeklyReviews', 'englishProgress', 'completedQuests', 'readStories', 'gamedevProgress', 'fashionProgress', 'stemProgress'];
+      const keys = ['lang', 'kids', 'progress', 'evals', 'streaks', 'journal', 'portfolio', 'tasks', 'badges', 'parentPin', 'parentLocked', 'creativeWorks', 'exerciseLog', 'moodLog', 'riasecAnswers', 'riasecCompleted', 'savedCareers', 'familyJournal', 'weeklyReviews', 'englishProgress', 'completedQuests', 'readStories', 'gamedevProgress', 'fashionProgress', 'stemProgress', 'spaceProgress'];
       for (const k of keys) {
         try {
           const r = await storage.get(`pks3-${k}`);
@@ -670,6 +672,7 @@ export default function PanyKidsStudio() {
             if (k === 'gamedevProgress') setGamedevProgress(v);
             if (k === 'fashionProgress') setFashionProgress(v);
             if (k === 'stemProgress') setStemProgress(v);
+            if (k === 'spaceProgress') setSpaceProgress(v);
           }
         } catch (e) {}
       }
@@ -704,6 +707,7 @@ export default function PanyKidsStudio() {
   const setGamedevProgressP = (v) => { setGamedevProgress(v); persist('gamedevProgress', v); };  // D-039
   const setFashionProgressP = (v) => { setFashionProgress(v); persist('fashionProgress', v); };  // D-039
   const setStemProgressP = (v) => { setStemProgress(v); persist('stemProgress', v); };  // D-039
+  const setSpaceProgressP = (v) => { setSpaceProgress(v); persist('spaceProgress', v); };  // D-042
 
   const tryParentLogin = (val) => {
     if (val === parentPin) {
@@ -1010,6 +1014,7 @@ export default function PanyKidsStudio() {
         {activeTab === 'stem'        && <STEMTab           lang={lang} kids={kids} activeKidId={activeKidId} progress={stemProgress}   setProgressP={setStemProgressP} />}
         {activeTab === 'glossary'    && <AIGlossaryTab     lang={lang} />}
         {activeTab === 'findtrack'   && <FindYourTrackTab  lang={lang} kids={kids} activeKidId={activeKidId} onNavigate={(tabId) => setActiveTab(tabId)} />}
+        {activeTab === 'space'       && <SpaceExplorerTab   lang={lang} kids={kids} activeKidId={activeKidId} progress={spaceProgress} setProgressP={setSpaceProgressP} />}
         {activeTab === 'english'     && <EnglishTab      t={t} L={L} />}
         {activeTab === 'finance'     && <FinanceTab      t={t} L={L} />}
         {activeTab === 'thinking'    && <ThinkingTab     t={t} L={L} />}

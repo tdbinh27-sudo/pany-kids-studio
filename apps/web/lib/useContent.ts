@@ -11,8 +11,9 @@ import fashionJson from '@/lib/fashion-data.json';
 import stemJson from '@/lib/stem-data.json';
 import glossaryJson from '@/lib/glossary-data.json';
 import findtrackJson from '@/lib/findtrack-data.json';
+import spaceJson from '@/lib/space-data.json';
 
-type Track = 'gamedev' | 'fashion' | 'stem' | 'glossary' | 'findtrack';
+type Track = 'gamedev' | 'fashion' | 'stem' | 'glossary' | 'findtrack' | 'space';
 
 const FALLBACKS: Record<Track, unknown> = {
   gamedev: gamedevJson,
@@ -20,6 +21,7 @@ const FALLBACKS: Record<Track, unknown> = {
   stem: stemJson,
   glossary: glossaryJson,
   findtrack: findtrackJson,
+  space: spaceJson,
 };
 
 // Module-level cache (survives across re-renders, not across page loads)

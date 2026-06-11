@@ -1,5 +1,13 @@
 # Status — Pany Kids Studio
 
+## 🪐 D-042 (2026-06-11) — Space Explorer zone BUILT (local, verified, awaiting push)
+**6th CMS track "Khám Phá Vũ Trụ / Space Explorer"** — embeds MIT solar-system-3d sim via iframe + planet cards (8 + Sun) + 3 astronaut missions + quiz (10 Q) + order mini-game + careers. Bilingual VN↔EN, feeds the per-kid badge/streak progress.
+- ✅ `pnpm build` + `tsc --noEmit` clean · dev-server browser verify PASS (zone + live 3D iframe + all 6 sections render; CDN textures load).
+- New: `apps/web/lib/space-data.json`, `apps/web/components/SpaceExplorerTab.tsx`, `apps/web/public/space/*` (4 MIT files), `artifacts/migration-d042-space-track.sql`, `docs/D-042-space-explorer-design.md`.
+- Edited: `useContent.ts`, content route, admin route, admin page (5→6 tracks), `PanyKidsStudio.tsx` (spaceProgress state + branch), `TreeOfKnowledgeHome.tsx` (NavItem 🪐).
+- ⏳ Anh (Level 2): (1) approve push → Vercel auto-deploy; (2) run `migration-d042-space-track.sql` in Supabase `pany-kids-prod`. Until migration, the route auto-falls-back to bundled `space-data.json` (works fine).
+
+
 **Last updated:** 2026-05-15 ~12:35 GMT+7 (Session 18 — D-035 Tree of Knowledge transformation LIVE)
 **Current state:** Production HEAD `25b5ba9` ✅ Phase 1+2+3a complete. Tree of Knowledge as full dashboard home: dark immersive aesthetic + canonical Gemini image + 27 nav grid + drag-rearrange + editable footer. 13 commits Session 18. Block 1 Resume Gate (#1-4) still pending anh-only. Phase 3b deferred: Library/English restructure.
 

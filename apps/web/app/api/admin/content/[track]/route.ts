@@ -9,7 +9,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin, checkAdminAuth } from '@/lib/supabase-admin';
 
-const VALID_TRACKS = ['gamedev', 'fashion', 'stem', 'glossary', 'findtrack'];
+const VALID_TRACKS = ['gamedev', 'fashion', 'stem', 'glossary', 'findtrack', 'space'];
 
 export async function GET(
   req: Request,

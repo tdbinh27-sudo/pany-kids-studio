@@ -62,6 +62,7 @@ const DEFAULT_NAV: NavItem[] = [
   { id: 'stem',        label: 'STEM Lab',       label_en: 'STEM Lab',    tab: 'stem',        icon: '🔬', glow: '#00BFFF' },
   { id: 'glossary',    label: 'Từ điển AI',     label_en: 'AI Glossary', tab: 'glossary',    icon: '📖', glow: '#845EC2' },
   { id: 'findtrack',   label: 'Bắt đầu từ đâu', label_en: 'Find Track',  tab: 'findtrack',   icon: '🧭', glow: '#00D4AA' },
+  { id: 'space',       label: 'Khám Phá Vũ Trụ', label_en: 'Space Explorer', tab: 'space',    icon: '🪐', glow: '#4FB3E8' },
   // Row 5 — meta
   { id: 'portfolio',   label: 'Portfolio',      label_en: 'Portfolio',   tab: 'portfolio',   icon: '🖼️', glow: '#FF6B9D' },
   { id: 'leaderboard', label: 'Bảng xếp hạng',  label_en: 'Leaderboard', tab: 'leaderboard', icon: '📈', glow: '#FFD43B' },

@@ -10,7 +10,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
-type Track = 'gamedev' | 'fashion' | 'stem' | 'glossary' | 'findtrack';
+type Track = 'gamedev' | 'fashion' | 'stem' | 'glossary' | 'findtrack' | 'space';
 
 const TRACKS: { id: Track; emoji: string; label: string }[] = [
   { id: 'gamedev',   emoji: '🎮', label: 'Lập trình Game' },
@@ -18,6 +18,7 @@ const TRACKS: { id: Track; emoji: string; label: string }[] = [
   { id: 'stem',      emoji: '🔬', label: 'STEM Lab' },
   { id: 'glossary',  emoji: '📖', label: 'Từ điển AI' },
   { id: 'findtrack', emoji: '🧭', label: 'Bắt đầu từ đâu' },
+  { id: 'space',     emoji: '🪐', label: 'Khám Phá Vũ Trụ' },
 ];
 
 const ADMIN_SECRET_KEY = 'pks-admin-secret';
@@ -153,7 +154,7 @@ export default function ContentAdminPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border-2 border-purple-200">
           <h1 className="text-2xl font-bold text-purple-900 mb-2">🔐 Content Admin</h1>
           <p className="text-sm text-slate-600 mb-4">
-            Edit 3 tracks data (Game Dev / Fashion / STEM). Auth via ADMIN_SECRET.
+            Edit 6 tracks data (Game Dev / Fashion / STEM / Glossary / Find Track / Space). Auth via ADMIN_SECRET.
           </p>
           <p className="text-xs text-slate-500 mb-4 font-mono bg-slate-50 p-2 rounded">
             URL: <code>/admin/content?secret=YOUR_ADMIN_SECRET</code>
@@ -178,7 +179,7 @@ export default function ContentAdminPage() {
         <div className="bg-white rounded-2xl shadow-md p-4 mb-4 border border-purple-200 flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-2xl font-bold text-purple-900">📊 Content Admin</h1>
-            <p className="text-xs text-slate-500">D-040 Phase 3 MVP + D-041 Phase 3b · Supabase-backed CMS for Kids Studio 5 tabs</p>
+            <p className="text-xs text-slate-500">D-040 Phase 3 MVP + D-041 Phase 3b + D-042 Space · Supabase-backed CMS for Kids Studio 6 tabs</p>
           </div>
           <div className="flex gap-2">
             <a
