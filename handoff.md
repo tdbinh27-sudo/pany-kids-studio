@@ -36,10 +36,9 @@ bilingual React discovery zone. Full design: `docs/D-042-space-explorer-design.m
 - `GET /api/content/space` → `ok:true, source:bundle, planets:9` (Supabase-not-configured fallback ✓).
 - Console: only 2 pre-existing React SVG warnings (`stop-color`/`stop-opacity`) from an older component — not D-042.
 
-### ⚠️ Anh cần làm để go-live (Level 2)
+### Trạng thái go-live (Level 2)
 
-**Bước 1 — Duyệt push (kích hoạt Vercel deploy):**
-Code đã commit local, CHƯA push. Khi anh duyệt:
+**✅ Bước 1 — ĐÃ PUSH + LIVE:** commit `4923110` pushed → Vercel deploy LIVE (kids.panyvn.app/space/* → 200, /api/content/space → ok code mới). Lệnh đã chạy:
 ```
 cd C:\Users\PanyBinh\Projects\pany-kids-studio
 git push origin main
