@@ -6,7 +6,7 @@
 - New: `apps/web/lib/space-data.json`, `apps/web/components/SpaceExplorerTab.tsx`, `apps/web/public/space/*` (4 MIT files), `artifacts/migration-d042-space-track.sql`, `docs/D-042-space-explorer-design.md`.
 - Edited: `useContent.ts`, content route, admin route, admin page (5→6 tracks), `PanyKidsStudio.tsx` (spaceProgress state + branch), `TreeOfKnowledgeHome.tsx` (NavItem 🪐).
 - ✅ Pushed to GitHub + Vercel deploy LIVE (kids.panyvn.app/space/* → 200, /api/content/space → ok new code, source bundle-fallback).
-- ⏳ Optional remaining: run `migration-d042-space-track.sql` in Supabase `pany-kids-prod` so anh can edit content via `/admin/content`. Until then the bundled `space-data.json` serves (works fine).
+- ✅ Supabase migration APPLIED (project `sbubzbgyvozabgrggjza` pany-kids-prod) — CHECK now includes `'space'`. CMS editable via `/admin/content` 🪐 tab (Save to create row version 1; until Save, bundled `space-data.json` serves). **D-042 fully done + live.**
 
 
 **Last updated:** 2026-05-15 ~12:35 GMT+7 (Session 18 — D-035 Tree of Knowledge transformation LIVE)

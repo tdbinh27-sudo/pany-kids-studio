@@ -44,7 +44,7 @@ cd C:\Users\PanyBinh\Projects\pany-kids-studio
 git push origin main
 ```
 
-**Bước 2 — Apply migration trong Supabase `pany-kids-prod`:**
+**✅ Bước 2 — Migration ĐÃ CHẠY (2026-06-11):** project `sbubzbgyvozabgrggjza` (pany-kids-prod), CHECK content_tracks giờ có 6 track gồm `'space'` (verified qua Supabase MCP). CMS sẵn sàng. SQL gốc (đã chạy, idempotent):
 SQL Editor → paste `artifacts/migration-d042-space-track.sql` → **Ctrl+A trước khi Run** (gotcha D-041) →
 verify CHECK array có 6 track gồm `'space'`. *Chưa chạy migration thì route tự fallback JSON bundle — vẫn chạy.*
 
