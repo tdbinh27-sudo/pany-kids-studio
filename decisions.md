@@ -552,3 +552,6 @@
   - Multi-language editor split (vi/en separate fields)
   - Schema JSONSchema validation client-side
   - CDN webhook for instant cache invalidation (currently 60s ISR)
+
+### D-043: Practice Corner tab (Góc Luyện Tập 🎯) — embedded free OSS learning tools ✅ SHIPPED
+Standalone nav card for bé Phúc's July 2026 study plan. Lang-only tab (no per-kid progress), embeds free open-source interactive tools via lazy iframe: iSpeakerReact (Apache-2.0, English speaking), QuickQWERTY (MIT, typing), GeoGebra 3D + 2D (free embed, geometry) + 6 curated free links (Cambridge A2 Key/B1 Preliminary, Write & Improve, ELSA, Khan Toán 6, ReadTheory). Wiring mirrors D-042 'space': components/PracticeTab.tsx + NAV_ITEMS in TreeOfKnowledgeHome + render switch in PanyKidsStudio. next build + tsc + browser QA pass, 0 app console errors. No CSP in app; external targets confirmed iframe-able. Family use.
