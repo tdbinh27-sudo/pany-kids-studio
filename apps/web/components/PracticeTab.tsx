@@ -13,6 +13,7 @@
  */
 
 import { useState } from 'react';
+import VocabWordle from '@/components/VocabWordle';
 
 type Lang = 'vi' | 'en';
 type Props = { lang: Lang };
@@ -145,6 +146,12 @@ export default function PracticeTab({ lang }: Props) {
             );
           })}
         </div>
+      </div>
+
+      {/* ───────── Vocabulary game ───────── */}
+      <div>
+        <h2 className="text-xl font-bold text-teal-900 mb-3">🎲 {L('Trò chơi từ vựng', 'Vocabulary game')}</h2>
+        <VocabWordle lang={lang} />
       </div>
 
       {/* ───────── Free external links ───────── */}
