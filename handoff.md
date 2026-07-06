@@ -1,5 +1,28 @@
 # Handoff — Pany Kids Studio
 
+## Session 2026-07-06 — D-043 Practice Corner geometry upgrade (Lớp 5 nâng cao → tiền đề Lớp 6) · ✅ LIVE
+
+**Yêu cầu anh:** Trong tab **Góc Luyện Tập**, 2 thẻ **Hình Học 3D** & **Hình Học Phẳng** đang ở mức lớp 3-4 (chỉ nhúng GeoGebra trống, không đề). Bỏ framing sơ cấp, thêm bài **Lớp 5 nâng cao + tiền đề Lớp 6** (mẫu độ khó: quyển MT Books "Hình hộp chữ nhật & lập phương" — diện tích bề mặt/thể tích).
+
+**Đã làm (1 file):** `apps/web/components/PracticeTab.tsx`
+- Giữ nguyên embed GeoGebra 3D/2D làm công cụ "sờ được".
+- Thêm bộ đề có cấu trúc render **bên dưới iframe** khi mở thẻ: mỗi bài có tag độ khó · đề bài · 💡 công thức gợi ý · nút **"▼ Xem đáp án"** (ẩn sẵn, tap-to-reveal). Component mới: `ProblemCard` + `ProblemSet` (local state, không thêm dep).
+- **12 bài** (bilingual vi/en), tất cả đáp án **đã tự tính lại tay**:
+  - 📐 3D (6): HHCN Sxq/Stp/V · thùng không nắp · lập phương + scaling V gấp 8 · khối **khoét góc** (Stp không đổi) · đổi đơn vị → lít · bài ngược tìm chiều cao.
+  - 🔷 2D (6): diện tích thoi/thang/bình hành · trung điểm kép · đo góc kề bù · lục giác đều ghép 6 tam giác.
+- Cập nhật title/desc 2 thẻ + hero + gợi ý bố mẹ theo mức mới.
+
+**Verify:** `tsc --noEmit` exit 0, 0 lỗi.
+
+**Go-live (ĐÃ XONG — anh duyệt Level 2 "commit + deploy luôn"):**
+- Commit `e886a5e` → push `origin/main` ✅ (chỉ stage PracticeTab.tsx; file `artifacts/migration-content-tracks-2026-05-19.sql` đang dirty là thay đổi cũ, KHÔNG phải của session này — để nguyên).
+- Vercel `vercel --prod` **từ gốc repo** (Root Directory project = `apps/web`, chạy trong apps/web sẽ lỗi double-path) → build 22s → aliased **kids.panyvn.app**.
+- Verify live: `https://kids.panyvn.app/` → **HTTP 200** ✅.
+
+**Kiểm tra:** kids.panyvn.app → tab Góc Luyện Tập → mở thẻ 📐/🔷 → đề hiện dưới công cụ, bấm "Xem đáp án".
+
+---
+
 ## Session D-042 (2026-06-11) — Space Explorer zone (Khám Phá Vũ Trụ)
 
 **Decision D-042:** Add a new kid zone "Khám Phá Vũ Trụ / Space Explorer" as the **6th Supabase-CMS track**
