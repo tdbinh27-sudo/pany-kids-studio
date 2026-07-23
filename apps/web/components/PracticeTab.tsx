@@ -39,7 +39,7 @@ type Tool = {
   emoji: string;
   title_vi: string; title_en: string;
   desc_vi: string; desc_en: string;
-  src: string;
+  src?: string; // omit for problems-only cards (no external embed)
   gradient: string;
   credit: string;
   problemsTitle_vi?: string; problemsTitle_en?: string;
@@ -215,6 +215,100 @@ const GEO2D_PROBLEMS: Problem[] = [
   },
 ];
 
+// ─── English grammar — bài tập ngữ pháp A1 → B1 (bổ sung cho Luyện thi ở Quiz Tab) ─────
+const GRAMMAR_PROBLEMS: Problem[] = [
+  {
+    id: 'gr-a1-1', level_vi: 'A1', level_en: 'A1',
+    q_vi: 'Điền: "This ___ my pencil case."  (is / are / am)',
+    q_en: 'Fill in: "This ___ my pencil case."  (is / are / am)',
+    hint_vi: '"This" (số ít) luôn đi với "is".',
+    hint_en: '"This" (singular) always takes "is".',
+    answer_vi: 'is — "This is my pencil case."',
+    answer_en: 'is — "This is my pencil case."',
+  },
+  {
+    id: 'gr-a1-2', level_vi: 'A1', level_en: 'A1',
+    q_vi: 'Chọn số nhiều đúng của "child": children / childs / childes',
+    q_en: 'Pick the correct plural of "child": children / childs / childes',
+    hint_vi: '"Child" là danh từ số nhiều bất quy tắc (không thêm -s).',
+    hint_en: '"Child" is an irregular plural (no -s ending).',
+    answer_vi: 'children — số nhiều bất quy tắc, không phải "childs".',
+    answer_en: 'children — irregular plural, not "childs".',
+  },
+  {
+    id: 'gr-a1-3', level_vi: 'A1', level_en: 'A1',
+    q_vi: 'Điền mạo từ: "I saw ___ elephant at the zoo."  (a / an / the)',
+    q_en: 'Fill in the article: "I saw ___ elephant at the zoo."  (a / an / the)',
+    hint_vi: '"Elephant" bắt đầu bằng nguyên âm (e) → dùng "an".',
+    hint_en: '"Elephant" starts with a vowel sound → use "an".',
+    answer_vi: 'an — "an elephant" vì "elephant" bắt đầu bằng âm nguyên âm.',
+    answer_en: 'an — "an elephant" because it starts with a vowel sound.',
+  },
+  {
+    id: 'gr-a2-1', level_vi: 'A2', level_en: 'A2',
+    q_vi: 'Chia đúng thì: "Look! The dog ___ (run) after the ball right now."',
+    q_en: 'Correct tense: "Look! The dog ___ (run) after the ball right now."',
+    hint_vi: '"Right now" → thì hiện tại tiếp diễn: is/am/are + V-ing.',
+    hint_en: '"Right now" signals present continuous: is/am/are + V-ing.',
+    answer_vi: 'is running — "The dog is running after the ball right now."',
+    answer_en: 'is running — "The dog is running after the ball right now."',
+  },
+  {
+    id: 'gr-a2-2', level_vi: 'A2', level_en: 'A2',
+    q_vi: 'So sánh hơn: "My bag is ___ (heavy) than yours."',
+    q_en: 'Comparative: "My bag is ___ (heavy) than yours."',
+    hint_vi: 'Tính từ 2 âm tiết kết thúc bằng "-y" → đổi y → i rồi thêm -er.',
+    hint_en: 'Two-syllable adjective ending in "-y" → change y to i, add -er.',
+    answer_vi: 'heavier — "heavy" → "heavier" (đổi y thành i, thêm -er).',
+    answer_en: 'heavier — "heavy" → "heavier" (change y to i, add -er).',
+  },
+  {
+    id: 'gr-a2-3', level_vi: 'A2', level_en: 'A2',
+    q_vi: 'Điền giới từ đúng: "The meeting is ___ Monday ___ 9 o\'clock."',
+    q_en: 'Fill in the prepositions: "The meeting is ___ Monday ___ 9 o\'clock."',
+    hint_vi: 'Ngày trong tuần dùng "on"; giờ cụ thể dùng "at".',
+    hint_en: 'Days of the week take "on"; specific clock times take "at".',
+    answer_vi: 'on Monday at 9 o\'clock.',
+    answer_en: 'on Monday at 9 o\'clock.',
+  },
+  {
+    id: 'gr-a2-4', level_vi: 'A2', level_en: 'A2',
+    q_vi: 'Sắp xếp thành câu hỏi đúng: "you / like / do / football / ?"',
+    q_en: 'Rearrange into a correct question: "you / like / do / football / ?"',
+    hint_vi: 'Câu hỏi Yes/No thì hiện tại đơn: Do + S + V(nguyên mẫu) + O?',
+    hint_en: 'Present-simple Yes/No question: Do + subject + base verb + object?',
+    answer_vi: 'Do you like football?',
+    answer_en: 'Do you like football?',
+  },
+  {
+    id: 'gr-b1-1', level_vi: 'B1', level_en: 'B1',
+    q_vi: 'Chia đúng thì: "By the time we arrived, the movie already ___ (start)."',
+    q_en: 'Correct tense: "By the time we arrived, the movie already ___ (start)."',
+    hint_vi: 'Hành động xảy ra TRƯỚC một mốc quá khứ khác → quá khứ hoàn thành (had + PII).',
+    hint_en: 'An action before another past moment → past perfect (had + past participle).',
+    answer_vi: 'had already started — "the movie had already started."',
+    answer_en: 'had already started — "the movie had already started."',
+  },
+  {
+    id: 'gr-b1-2', level_vi: 'B1', level_en: 'B1',
+    q_vi: 'Nối câu bằng đại từ quan hệ: "That is the book. I told you about the book." → "That is the book ___ I told you about."',
+    q_en: 'Join with a relative pronoun: "That is the book. I told you about the book." → "That is the book ___ I told you about."',
+    hint_vi: '"Book" là vật → dùng "which" hoặc "that".',
+    hint_en: '"Book" is a thing → use "which" or "that".',
+    answer_vi: 'which (hoặc that) — "That is the book which/that I told you about."',
+    answer_en: 'which (or that) — "That is the book which/that I told you about."',
+  },
+  {
+    id: 'gr-b1-3', level_vi: 'B1', level_en: 'B1',
+    q_vi: 'Câu điều kiện loại 1: "If she ___ (study) harder, she will pass the exam."',
+    q_en: 'First conditional: "If she ___ (study) harder, she will pass the exam."',
+    hint_vi: 'If + hiện tại đơn, S + will + V. Mệnh đề "if" luôn ở hiện tại đơn.',
+    hint_en: 'If + present simple, S + will + V. The "if" clause always stays in present simple.',
+    answer_vi: 'studies — "If she studies harder, she will pass the exam."',
+    answer_en: 'studies — "If she studies harder, she will pass the exam."',
+  },
+];
+
 const TOOLS: Tool[] = [
   {
     id: 'speaking', emoji: '🗣️',
@@ -257,6 +351,17 @@ const TOOLS: Tool[] = [
     problemsTitle_vi: 'Đề bài luyện tập — Hình phẳng & Góc',
     problemsTitle_en: 'Practice — plane shapes & angles',
     problems: GEO2D_PROBLEMS,
+  },
+  {
+    id: 'grammar', emoji: '📝',
+    title_vi: 'Bài Tập Ngữ Pháp Tiếng Anh', title_en: 'English Grammar Exercises',
+    desc_vi: 'Bài tập ngữ pháp A1 → B1 (thì động từ, mạo từ, so sánh, giới từ, mệnh đề quan hệ, câu điều kiện) — làm không tính giờ, giải rồi bấm "Xem đáp án". Muốn thi thử có chấm điểm? Sang tab Quiz → "Luyện thi Tiếng Anh".',
+    desc_en: 'A1 → B1 grammar drills (tenses, articles, comparatives, prepositions, relative clauses, conditionals) — untimed, tap "Show answer" to check. Want a scored mock test? See Quiz tab → "English Exam Prep".',
+    gradient: 'linear-gradient(135deg,#FF9F43,#FF6B9D)',
+    credit: 'PANY Kids Studio · tự biên soạn',
+    problemsTitle_vi: 'Đề bài luyện tập — Ngữ pháp A1 → B1',
+    problemsTitle_en: 'Practice — grammar A1 → B1',
+    problems: GRAMMAR_PROBLEMS,
   },
 ];
 
@@ -342,8 +447,8 @@ export default function PracticeTab({ lang }: Props) {
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-white">{L('Góc Luyện Tập Hè', 'Summer Practice Corner')}</h1>
             <p className="text-sm text-white/90 mt-1">
-              {L('Công cụ tương tác miễn phí cho tháng 7 — luyện nói tiếng Anh, gõ phím, và hình học (Lớp 5 nâng cao → tiền đề Lớp 6) ngay trong app. Bấm mở từng thẻ để chơi.',
-                 'Free interactive tools for July — English speaking, typing and geometry (Grade-5 advanced → Grade-6 prep), right in the app. Tap a card to play.')}
+              {L('Công cụ tương tác miễn phí — luyện nói tiếng Anh, gõ phím, hình học, ngữ pháp tiếng Anh và trò chơi từ vựng ngay trong app. Bấm mở từng thẻ để chơi.',
+                 'Free interactive tools — English speaking, typing, geometry, English grammar and a vocabulary game, right in the app. Tap a card to play.')}
             </p>
           </div>
         </div>
@@ -371,21 +476,30 @@ export default function PracticeTab({ lang }: Props) {
 
                 {isOpen && (
                   <div>
-                    <div className="bg-slate-100 border-t border-slate-200" style={{ position: 'relative', width: '100%', height: 560 }}>
-                      <iframe
-                        src={tool.src}
-                        title={L(tool.title_vi, tool.title_en)}
-                        loading="lazy"
-                        allow="microphone; fullscreen; autoplay; clipboard-write"
-                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
-                      />
-                    </div>
-                    <div className="px-4 py-2 flex items-center justify-between flex-wrap gap-2 bg-slate-50 border-t border-slate-100">
-                      <span className="text-[11px] text-slate-400 italic">{tool.credit}</span>
-                      <a href={tool.src} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-teal-700 hover:text-teal-900 hover:underline">
-                        {L('Mở tab mới ↗', 'Open in new tab ↗')}
-                      </a>
-                    </div>
+                    {tool.src && (
+                      <>
+                        <div className="bg-slate-100 border-t border-slate-200" style={{ position: 'relative', width: '100%', height: 560 }}>
+                          <iframe
+                            src={tool.src}
+                            title={L(tool.title_vi, tool.title_en)}
+                            loading="lazy"
+                            allow="microphone; fullscreen; autoplay; clipboard-write"
+                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                          />
+                        </div>
+                        <div className="px-4 py-2 flex items-center justify-between flex-wrap gap-2 bg-slate-50 border-t border-slate-100">
+                          <span className="text-[11px] text-slate-400 italic">{tool.credit}</span>
+                          <a href={tool.src} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-teal-700 hover:text-teal-900 hover:underline">
+                            {L('Mở tab mới ↗', 'Open in new tab ↗')}
+                          </a>
+                        </div>
+                      </>
+                    )}
+                    {!tool.src && (
+                      <div className="border-t border-slate-200 px-4 pt-3 flex items-center justify-between flex-wrap gap-2 bg-slate-50">
+                        <span className="text-[11px] text-slate-400 italic">{tool.credit}</span>
+                      </div>
+                    )}
                     <ProblemSet tool={tool} L={L} />
                   </div>
                 )}

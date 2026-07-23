@@ -33,6 +33,7 @@ import type { Career } from '@/lib/careers-v2';
 import { ASK_PARENT_PROMPTS, WEEKLY_REVIEW_PROMPTS, SHOW_TELL_IDEAS, FAMILY_ACTIVITIES } from '@/lib/family-prompts';
 import { LISTEN_WORDS, SPEAK_SENTENCES, READING_PASSAGES, WRITING_PROMPTS, getLevelForAge, pickRandomItems, pronunciationScore } from '@/lib/english-skills';
 import type { CEFRLevel } from '@/lib/english-skills';
+import { EXAM_PREP, getPassRequirement } from '@/lib/exam-prep';
 import { speak, stopSpeaking, listen, ttsSupported, asrSupported, loadVoices } from '@/lib/speech';
 import { ALL_QUESTS, getQuestsByAge, getQuestsForDay } from '@/lib/quests';
 import type { Quest, AgeGroup } from '@/lib/quests';
@@ -2582,8 +2583,9 @@ function LibraryTab({ t, L }) {
 
 function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
   const [filter, setFilter] = React.useState({ pillar: null, age: null });
-  const [mode, setMode] = React.useState<'pillar' | 'math'>('pillar');
+  const [mode, setMode] = React.useState<'pillar' | 'math' | 'english'>('pillar');
   const [mathLevel, setMathLevel] = React.useState<MathLevel | null>(null);
+  const [examLevel, setExamLevel] = React.useState<CEFRLevel | null>(null);
 
   // Adapter: map MathQuestion → QUIZ_BANK shape so render code below stays unchanged
   const mathBank = React.useMemo(() => {
@@ -2602,16 +2604,41 @@ function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
     }));
   }, [mathLevel]);
 
+  // Adapter: map ExamQuestion (lib/exam-prep.ts, "Luyện thi") → QUIZ_BANK shape.
+  // Question text stays English-only (that IS the test); explanation stays Vietnamese.
+  const englishBank = React.useMemo(() => {
+    const set = EXAM_PREP[examLevel || 'A1'];
+    return set.questions.map((q, i) => ({
+      id: `exam-${set.level}-${i}`,
+      pillar: 'english',
+      age: `${set.emoji} ${set.certName_vi}`,
+      vi_q: q.q,
+      en_q: q.q,
+      vi_options: q.options,
+      en_options: q.options,
+      answer: q.correctIdx,
+      _isExam: true,
+      _passage: q.passage || null,
+      _explain: q.explanation_vi,
+    }));
+  }, [examLevel]);
+
   const filteredQuiz = mode === 'math'
     ? mathBank
+    : mode === 'english'
+    ? englishBank
     : QUIZ_BANK.filter(q => (!filter.pillar || q.pillar === filter.pillar) && (!filter.age || q.age === filter.age));
   const current = filteredQuiz[quizState.qIdx];
 
   const startQuiz = (kidId, pillar = null, age = null) => {
+    const kid = kids.find(k => k.id === kidId);
     if (mode === 'math') {
       // Auto-pick math level for kid if not set yet
-      const kid = kids.find(k => k.id === kidId);
       if (!mathLevel && kid) setMathLevel(getMathLevelForKid(kid.age));
+    }
+    if (mode === 'english') {
+      // Auto-pick CEFR level for kid if not set yet (same logic as EnglishSkillsTab)
+      if (!examLevel && kid) setExamLevel(getLevelForAge(kid.age));
     }
     setFilter({ pillar, age });
     setQuizState({ kidId, qIdx: 0, score: 0, answered: null, pillar, age });
@@ -2642,16 +2669,33 @@ function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
           <h3 className="display" style={{ fontSize: 20, marginTop: 0, fontWeight: 700 }}>🧩 {L('Chọn học viên & lĩnh vực', 'Pick student & topic')}</h3>
 
           {/* MODE TOGGLE — Pillar Quiz vs Math Quiz */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14, padding: 4, background: C.soft, borderRadius: 12, width: 'fit-content' }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14, padding: 4, background: C.soft, borderRadius: 12, width: 'fit-content', flexWrap: 'wrap' }}>
             <button onClick={() => setMode('pillar')} className="btn-bounce body-f" style={{ background: mode === 'pillar' ? C.purple : 'transparent', color: mode === 'pillar' ? '#fff' : C.purple, border: 'none', padding: '6px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>📚 {L('Quiz Trụ cột', 'Pillar Quiz')}</button>
             <button onClick={() => setMode('math')} className="btn-bounce body-f" style={{ background: mode === 'math' ? C.coral : 'transparent', color: mode === 'math' ? '#fff' : C.coral, border: 'none', padding: '6px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>🔢 {L('Quiz Toán', 'Math Quiz')}</button>
+            <button onClick={() => setMode('english')} className="btn-bounce body-f" style={{ background: mode === 'english' ? '#FF6B9D' : 'transparent', color: mode === 'english' ? '#fff' : '#FF6B9D', border: 'none', padding: '6px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>🎓 {L('Luyện thi Tiếng Anh', 'English Exam Prep')}</button>
           </div>
 
           <div className="body-f" style={{ fontSize: 13, color: C.sub, marginBottom: 16 }}>
             {mode === 'pillar'
               ? L(`${QUIZ_BANK.length} câu hỏi sẵn — lọc theo trụ cột & độ tuổi`, `${QUIZ_BANK.length} questions ready — filter by pillar & age`)
-              : L(`${ALL_MATH_QUESTIONS.length} câu toán — lọc theo cấp lớp`, `${ALL_MATH_QUESTIONS.length} math questions — filter by grade level`)}
+              : mode === 'math'
+              ? L(`${ALL_MATH_QUESTIONS.length} câu toán — lọc theo cấp lớp`, `${ALL_MATH_QUESTIONS.length} math questions — filter by grade level`)
+              : L('Đề mô phỏng theo chuẩn Cambridge Young Learners / KET — chọn cấp độ bên dưới', 'Mock tests modeled on Cambridge Young Learners / KET — pick a level below')}
           </div>
+
+          {/* English exam-prep level picker (mirrors math level picker) */}
+          {mode === 'english' && (
+            <div style={{ marginBottom: 14 }}>
+              <div className="body-f" style={{ fontSize: 12, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{L('Cấp độ thi', 'Test level')}</div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {(['K', 'A1', 'A2', 'B1'] as CEFRLevel[]).map(lv => (
+                  <button key={lv} onClick={() => setExamLevel(lv)} className="btn-bounce body-f" style={{ background: examLevel === lv ? '#FF6B9D' : '#fff', color: examLevel === lv ? '#fff' : '#FF6B9D', border: '2px solid #FF6B9D', padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>
+                    {EXAM_PREP[lv].emoji} {lv} · {L(EXAM_PREP[lv].certName_vi, EXAM_PREP[lv].certName)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Math level picker (only show in math mode) */}
           {mode === 'math' && (
@@ -2709,6 +2753,18 @@ function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
           <div className="hand" style={{ fontSize: 22, color: C.pink, marginTop: 8 }}>
             {quizState.score === filteredQuiz.length ? L('Hoàn hảo!', 'Perfect!') : quizState.score >= filteredQuiz.length / 2 ? L('Làm tốt lắm!', 'Well done!') : L('Cố lên, thử lại nhé!', 'Keep going, try again!')}
           </div>
+          {mode === 'english' && examLevel && (() => {
+            const pct = Math.round((quizState.score / filteredQuiz.length) * 100);
+            const pass = pct >= getPassRequirement(examLevel);
+            const set = EXAM_PREP[examLevel];
+            return (
+              <div style={{ marginTop: 14, padding: '10px 18px', borderRadius: 999, display: 'inline-block', background: pass ? '#E5FAEB' : '#FFF4D1', border: `2px solid ${pass ? C.mint : C.gold}` }}>
+                <span className="body-f" style={{ fontSize: 13, fontWeight: 700, color: pass ? C.mint : C.gold }}>
+                  {pass ? '✅' : '📚'} {pct}% — {set.emoji} {L(set.certName_vi, set.certName)} {pass ? L('ĐẠT', 'PASS') : L('cần luyện thêm', 'keep practicing')}
+                </span>
+              </div>
+            );
+          })()}
           <div style={{ marginTop: 24, display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Btn onClick={reset} color={C.purple} icon={RotateCw}>{L('Quiz mới', 'New quiz')}</Btn>
           </div>
@@ -2726,8 +2782,13 @@ function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
             <Pill color={PILLARS.find(p => p.id === current.pillar)?.color || C.purple}>
               {L(PILLARS.find(p => p.id === current.pillar)?.vi, PILLARS.find(p => p.id === current.pillar)?.en)} · {current.age}
             </Pill>
+            {current._passage && (
+              <div className="body-f" style={{ marginTop: 10, padding: 12, background: C.soft, borderRadius: 12, fontSize: 13, lineHeight: 1.6, color: C.ink, fontStyle: 'italic' }}>
+                📖 {current._passage}
+              </div>
+            )}
             <h3 className="display" style={{ fontSize: 22, fontWeight: 700, marginTop: 10, lineHeight: 1.4 }}>
-              {L(current.vi_q, current.en_q)}
+              {current._passage ? '❓ ' : ''}{L(current.vi_q, current.en_q)}
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10, marginTop: 18 }}>
@@ -2760,6 +2821,11 @@ function QuizTab({ kids, quizState, setQuizState, t, L, lang }) {
                 <div className="display" style={{ fontSize: 18, fontWeight: 700, color: quizState.answered === current.answer ? C.mint : C.coral }}>
                   {quizState.answered === current.answer ? t('correct') : t('wrong')}
                 </div>
+                {current._explain && (
+                  <div className="body-f" style={{ fontSize: 12, color: C.sub, marginTop: 8, lineHeight: 1.5, textAlign: 'left', background: '#fff', borderRadius: 10, padding: 10 }}>
+                    💡 {current._explain}
+                  </div>
+                )}
                 <div style={{ marginTop: 10 }}>
                   <Btn onClick={next} color={C.purple} icon={ChevronRight}>{quizState.qIdx + 1 >= filteredQuiz.length ? L('Xem kết quả', 'See result') : L('Câu tiếp', 'Next')}</Btn>
                 </div>

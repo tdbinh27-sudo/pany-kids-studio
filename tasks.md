@@ -98,10 +98,12 @@
 - [ ] Voucher phần thưởng: 30+ designs in-house
 - [ ] Truyện song ngữ thư viện: 50 entries
 - [ ] Quiz Toán: 1000 questions × 4 cấp (currently has QUIZ_BANK with smaller set)
-- [ ] English vocab expansion: 68 → 200+ (more A2/B1 words)
-- [ ] English reading passages: 3 → 20+ (mix VN context + general)
-- [ ] English writing prompts: 9 → 30+ (per level)
-- [ ] English speaking sentences: 17 → 50+ (longer + dialogue)
+- [x] English vocab expansion: 68 → 210 (done, already exceeded target before this note was updated)
+- [x] English reading passages: 3 → 21 (done)
+- [x] English writing prompts: 9 → 30 (done)
+- [x] English speaking sentences: 17 → 55 (done)
+- [x] English exam-prep / "Luyện thi": NEW — 32 mock-test Qs (K/A1/A2/B1) mapped to real Cambridge YLE/KET cert names, added as 3rd mode in QuizTab (2026-07-23)
+- [x] English grammar drills: NEW — 10 problems A1→B1, added as card in PracticeTab (2026-07-23)
 
 ### UX iteration based on feedback
 - [ ] Top 3 features per kid request
@@ -266,3 +268,8 @@
 - [ ] Drag-drop scene composer UI cho Fashion Tier 3 (thay Figma external)
 - [ ] STEM journal auto-link mỗi sim Phúc làm xong
 - [ ] Hardware kit decision Micro:bit / Arduino budget Q3
+
+### 🔴 UX/perf audit findings (2026-07-23) — chưa fix, cần quyết định
+- [ ] **CRITICAL — silent data loss risk:** `lib/storage.ts` nuốt lỗi quota im lặng (`/* quota exceeded — silent for now */`, dòng ~20) — khi localStorage đầy, MỌI save sau đó (quiz progress, journal, badges...) fail âm thầm, không cảnh báo ai. Driver chính: `StudioCreativeTab` lưu tranh vẽ dạng PNG base64 KHÔNG nén (`canvasRef.current?.toDataURL('image/png')`, PanyKidsStudio.tsx:4064) vào mảng `creativeWorks` không giới hạn số lượng — 3 con vẽ hằng ngày trong vài tuần có thể chạm quota trình duyệt (5-10MB/origin). Fix đề xuất: (a) đổi sang `image/jpeg` quality~0.7 hoặc resize canvas trước khi export, (b) cap mảng `creativeWorks`/`write`/`speak` log (giữ N gần nhất), (c) storage.set() log warning + báo UI khi quota exceeded thay vì nuốt lỗi.
+- [ ] **Bundle size:** không dùng `next/dynamic` ở đâu cả — mọi tab component (GameDev/Fashion/STEM/AIGlossary/FindYourTrack/SpaceExplorer/Practice/VocabWordle/ChatBot/VietnamMap...) bundle chung 1 chunk JS ~752KB raw cho route `/`, dù 1 bé chỉ dùng vài tab. Fix: `next/dynamic(() => import(...), {ssr:false})` cho các tab nặng/ít dùng.
+- [ ] Các mảng progress khác cũng append-forever không cap: `write` (PanyKidsStudio.tsx:5603, lưu cả full text bài viết + AI feedback), `speak` (:5381, lưu cả transcript) — nhẹ hơn creativeWorks nhưng cùng pattern, nên fix chung 1 lượt.

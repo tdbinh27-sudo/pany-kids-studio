@@ -1,5 +1,32 @@
 # Handoff — Pany Kids Studio
 
+## Session 2026-07-23 — D-044 English exam-prep + grammar drills + UX/perf audit · ✅ verified local, chưa push/deploy
+
+**Yêu cầu anh:** bổ sung nội dung tiếng Anh đầy đủ Nghe/Nói/Đọc/Viết/Game/luyện thi cho các lứa tuổi, KHÔNG tạo tab mới — chỉ bổ sung vào tab có sẵn. Kèm rà soát tối ưu webapp.
+
+**Rà soát trước khi làm (quan trọng):** Listen/Speak/Read/Write đã ĐẦY ĐỦ từ trước (LISTEN_WORDS 210 từ, SPEAK_SENTENCES 55, READING_PASSAGES 21, WRITING_PROMPTS 30 — tasks.md backlog cũ "68→200+" etc. đã lỗi thời, thực tế đã vượt target). Game đã có (VocabWordle trong Practice Corner). **Chỉ thiếu "luyện thi" (exam-prep) và bài tập ngữ pháp riêng** → đó là scope thật của session này.
+
+**Đã làm (3 file, không tab mới):**
+1. `lib/exam-prep.ts` (mới) — 32 câu hỏi mock-test K/A1/A2/B1, ánh xạ tên chứng chỉ Cambridge thật (Starters/Movers-Flyers/KET) để điểm số có ý nghĩa ngoài đời. Vocab theo chủ đề YLE chính thức (nguồn tham khảo `ozbonus/yle-vocabulary-dataset` CC-BY-SA-4.0, câu hỏi tự viết 100%).
+2. `components/PanyKidsStudio.tsx` — thêm mode thứ 3 "🎓 Luyện thi Tiếng Anh" vào `QuizTab` (vốn đã có toggle Pillar/Math) — tái dùng 100% UI/scoring có sẵn, chỉ thêm adapter + CEFR-level picker + badge ĐẠT/chưa đạt theo % + hiển thị đoạn văn đọc hiểu + giải thích 💡 sau khi trả lời.
+3. `components/PracticeTab.tsx` — thêm thẻ "📝 Bài Tập Ngữ Pháp Tiếng Anh" (10 bài A1→B1) dùng lại pattern `ProblemCard` tap-to-reveal đã chứng minh ở D-043 (Hình Học). Thẻ này KHÔNG có iframe (chỉnh `Tool.src` thành optional).
+
+**Verify ALL PASS:** `tsc --noEmit` exit 0 · `pnpm build` exit 0 (21 routes) · browser test đầy đủ qua agent-browser (mới cài trong session — Playwright MCP không có sẵn): chạy hết 1 bài test A1 8 câu (8/8, badge "✅ 100% — ⭐ Cambridge Starters ĐẠT" hiện đúng), xác nhận đoạn đọc hiểu 📖 hiện tách riêng đẹp, xác nhận thẻ Ngữ Pháp mở ra không bị vỡ layout (đã bỏ iframe đúng ý), bấm "Xem đáp án" hoạt động. Console chỉ có 2 warning SVG cũ đã biết từ trước (stop-color/stop-opacity, không liên quan session này).
+
+**Rà soát tối ưu (yêu cầu 2 của anh) — đã ghi đầy đủ vào `tasks.md` mục "🔴 UX/perf audit findings":**
+- 🔴 **Nghiêm trọng:** `lib/storage.ts` nuốt lỗi quota localStorage âm thầm — khi đầy quota, MỌI save sau đó fail không cảnh báo. Nguyên nhân chính: tranh vẽ ở Studio Sáng Tạo lưu PNG base64 không nén, không giới hạn số lượng — 3 con vẽ vài tuần có thể chạm quota. Chưa fix (ngoài scope session này, cần anh quyết định có làm ngay không).
+- 🟡 Bundle `/` route ~752KB JS chưa code-split (không `next/dynamic` ở đâu cả) — mọi tab đều bundle chung dù 1 bé chỉ dùng vài tab.
+- 🟡 `write`/`speak` progress logs cũng append-forever, nhẹ hơn nhưng cùng pattern nên sửa chung đợt sau.
+
+**Chưa làm (chờ anh):** `git add` 3 file + commit (chưa push origin/main, chưa `vercel --prod` — session lớn hơn D-042/D-043 nên dừng ở local để anh duyệt trước khi lên production cho 3 con dùng). Muốn fix luôn phần "🔴 storage quota" ở trên → nói "fix storage quota" để resume.
+
+### Resume command
+```
+"Tiếp tục Pany Kids Studio — D-044 đã xong local, muốn push+deploy" hoặc "fix storage quota"
+```
+
+---
+
 ## Session 2026-07-06 — D-043 Practice Corner geometry upgrade (Lớp 5 nâng cao → tiền đề Lớp 6) · ✅ LIVE
 
 **Yêu cầu anh:** Trong tab **Góc Luyện Tập**, 2 thẻ **Hình Học 3D** & **Hình Học Phẳng** đang ở mức lớp 3-4 (chỉ nhúng GeoGebra trống, không đề). Bỏ framing sơ cấp, thêm bài **Lớp 5 nâng cao + tiền đề Lớp 6** (mẫu độ khó: quyển MT Books "Hình hộp chữ nhật & lập phương" — diện tích bề mặt/thể tích).
