@@ -1,6 +1,6 @@
 # Handoff — Pany Kids Studio
 
-## Session 2026-07-23 — D-044 English exam-prep + grammar drills + UX/perf audit · ✅ verified local, chưa push/deploy
+## Session 2026-07-23 — D-044 English exam-prep + grammar drills + UX/perf audit · ✅ LIVE
 
 **Yêu cầu anh:** bổ sung nội dung tiếng Anh đầy đủ Nghe/Nói/Đọc/Viết/Game/luyện thi cho các lứa tuổi, KHÔNG tạo tab mới — chỉ bổ sung vào tab có sẵn. Kèm rà soát tối ưu webapp.
 
@@ -18,7 +18,9 @@
 - 🟡 Bundle `/` route ~752KB JS chưa code-split (không `next/dynamic` ở đâu cả) — mọi tab đều bundle chung dù 1 bé chỉ dùng vài tab.
 - 🟡 `write`/`speak` progress logs cũng append-forever, nhẹ hơn nhưng cùng pattern nên sửa chung đợt sau.
 
-**Chưa làm (chờ anh):** `git add` 3 file + commit (chưa push origin/main, chưa `vercel --prod` — session lớn hơn D-042/D-043 nên dừng ở local để anh duyệt trước khi lên production cho 3 con dùng). Muốn fix luôn phần "🔴 storage quota" ở trên → nói "fix storage quota" để resume.
+**✅ Go-live (2026-07-23, anh duyệt "push & deploy luôn"):** commit `adab76e` → push `origin/main` → `vercel --prod` từ gốc repo → aliased **kids.panyvn.app**. Verify live qua agent-browser trên chính domain prod (không chỉ local): tab Quiz → nút "🎓 Luyện thi Tiếng Anh" xuất hiện đúng; Góc Luyện Tập → thẻ "📝 Bài Tập Ngữ Pháp Tiếng Anh" xuất hiện đúng. `https://kids.panyvn.app/` → HTTP 200.
+
+**Còn treo (chưa fix, anh chưa quyết):** phần "🔴 storage quota" silent-fail ở trên — nói "fix storage quota" để resume khi nào anh muốn làm.
 
 ### Resume command
 ```
