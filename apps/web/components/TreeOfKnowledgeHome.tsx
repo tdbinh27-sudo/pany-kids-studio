@@ -64,6 +64,7 @@ const DEFAULT_NAV: NavItem[] = [
   { id: 'findtrack',   label: 'Bắt đầu từ đâu', label_en: 'Find Track',  tab: 'findtrack',   icon: '🧭', glow: '#00D4AA' },
   { id: 'space',       label: 'Khám Phá Vũ Trụ', label_en: 'Space Explorer', tab: 'space',    icon: '🪐', glow: '#4FB3E8' },
   { id: 'practice',    label: 'Góc Luyện Tập',   label_en: 'Practice Corner', tab: 'practice', icon: '🎯', glow: '#0891b2' },
+  { id: 'draw',        label: 'Vẽ & Sáng Tạo',   label_en: 'Draw & Create',   tab: 'draw',     icon: '🖍️', glow: '#be185d' },
   // Row 5 — meta
   { id: 'portfolio',   label: 'Portfolio',      label_en: 'Portfolio',   tab: 'portfolio',   icon: '🖼️', glow: '#FF6B9D' },
   { id: 'leaderboard', label: 'Bảng xếp hạng',  label_en: 'Leaderboard', tab: 'leaderboard', icon: '📈', glow: '#FFD43B' },

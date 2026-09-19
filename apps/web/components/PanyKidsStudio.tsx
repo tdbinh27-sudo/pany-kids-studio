@@ -24,6 +24,7 @@ import AIGlossaryTab from '@/components/AIGlossaryTab';
 import FindYourTrackTab from '@/components/FindYourTrackTab';
 import SpaceExplorerTab from '@/components/SpaceExplorerTab';
 import PracticeTab from '@/components/PracticeTab';
+import DrawStudioTab from '@/components/DrawStudioTab';
 import { CURATED_RESOURCES, LAST_REFRESHED, getResourcesFor } from '@/lib/curated';
 import { QUIZ_BANK } from '@/lib/quiz';
 import { RIASEC_TYPES, RIASEC_JUNIOR_8_12, RIASEC_JUNIOR_13_15, MOOD_OPTIONS, CREATIVE_PROMPTS, EXERCISE_CHALLENGES, scoreRiasec } from '@/lib/riasec-junior';
@@ -1018,6 +1019,7 @@ export default function PanyKidsStudio() {
         {activeTab === 'findtrack'   && <FindYourTrackTab  lang={lang} kids={kids} activeKidId={activeKidId} onNavigate={(tabId) => setActiveTab(tabId)} />}
         {activeTab === 'space'       && <SpaceExplorerTab   lang={lang} kids={kids} activeKidId={activeKidId} progress={spaceProgress} setProgressP={setSpaceProgressP} />}
         {activeTab === 'practice'    && <PracticeTab       lang={lang} />}
+        {activeTab === 'draw'        && <DrawStudioTab     lang={lang} />}
         {activeTab === 'english'     && <EnglishTab      t={t} L={L} />}
         {activeTab === 'finance'     && <FinanceTab      t={t} L={L} />}
         {activeTab === 'thinking'    && <ThinkingTab     t={t} L={L} />}
