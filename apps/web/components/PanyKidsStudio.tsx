@@ -684,7 +684,21 @@ export default function PanyKidsStudio() {
     load();
   }, []);
 
-  const persist = async (k, v) => { try { await storage.set(`pks3-${k}`, JSON.stringify(v)); } catch (e) {} };
+  // D-046 (2026-09-22): the 4 track-progress keys also mirror to Supabase
+  // (family_progress + recompute family_kids.learning_summary) so "AI gia sư
+  // riêng cho từng bé" has durable, cross-device long-term memory — not just
+  // this browser's localStorage. Fire-and-forget, never blocks/fails the UI.
+  const SYNCED_PROGRESS_KEYS = ['spaceProgress', 'gamedevProgress', 'fashionProgress', 'stemProgress'];
+  const persist = async (k, v) => {
+    try { await storage.set(`pks3-${k}`, JSON.stringify(v)); } catch (e) {}
+    if (SYNCED_PROGRESS_KEYS.includes(k) && activeKidId) {
+      fetch('/api/family/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kidId: activeKidId, key: k, value: v }),
+      }).catch(() => {}); // best-effort — localStorage above already has the fast local copy
+    }
+  };
   const setLangP = (v) => { setLang(v); persist('lang', v); };
   const setKidsP = (v) => { setKids(v); persist('kids', v); };
   const setProgP = (v) => { setProgress(v); persist('progress', v); };

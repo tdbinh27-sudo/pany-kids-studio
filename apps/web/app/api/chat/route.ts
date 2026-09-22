@@ -20,6 +20,63 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { chat, ChatContext, ChatTurn } from "@/lib/claude";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+
+/**
+ * D-046 (2026-09-22) — "AI gia sư riêng cho từng bé". Loads the kid's stored
+ * profile + distilled learning_summary from Supabase and merges it into ctx
+ * server-side (client never supplies bio/goals directly — can't be edited via
+ * localStorage). Fails open: any Supabase/env issue → chat proceeds exactly as
+ * before this feature existed, just without personalization for that turn.
+ */
+async function enrichWithKidMemory(ctx: ChatContext): Promise<{ ctx: ChatContext; familyId: string | null }> {
+  if (!ctx.kidId) return { ctx, familyId: null };
+  const admin = getSupabaseAdmin();
+  if (!admin) return { ctx, familyId: null };
+  try {
+    const { data, error } = await admin
+      .from("family_kids")
+      .select("family_id, hobbies, goals, favorite_subject, bio, learning_summary")
+      .eq("id", ctx.kidId)
+      .maybeSingle();
+    if (error || !data) return { ctx, familyId: null };
+    return {
+      ctx: {
+        ...ctx,
+        kidHobbies: data.hobbies ?? undefined,
+        kidGoals: data.goals ?? undefined,
+        kidFavoriteSubject: data.favorite_subject ?? undefined,
+        kidBio: data.bio ?? undefined,
+        learningSummary: data.learning_summary ?? undefined,
+      },
+      familyId: data.family_id ?? null,
+    };
+  } catch {
+    return { ctx, familyId: null };
+  }
+}
+
+/** Fire-and-forget chat log — never blocks or fails the user-facing reply. */
+function logChatTurns(opts: {
+  familyId: string | null;
+  kidId?: string;
+  model: string;
+  userMessage: string;
+  reply: string;
+}) {
+  if (!opts.familyId) return; // no family resolved (solo/legacy ctx) — skip, nothing to scope rows to
+  const admin = getSupabaseAdmin();
+  if (!admin) return;
+  admin
+    .from("family_chat_history")
+    .insert([
+      { family_id: opts.familyId, kid_id: opts.kidId ?? null, role: "user", content: opts.userMessage },
+      { family_id: opts.familyId, kid_id: opts.kidId ?? null, role: "assistant", content: opts.reply, model: opts.model },
+    ])
+    .then(({ error }) => {
+      if (error) console.error("[/api/chat] chat_history insert failed:", error.message);
+    });
+}
 
 // D-034: 20 messages/day per family (sliding 24h)
 const DAILY_LIMIT = 20;
@@ -144,11 +201,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const { ctx: enrichedCtx, familyId } = await enrichWithKidMemory(ctx);
     const result = await chat({
       apiKey,
-      ctx,
+      ctx: enrichedCtx,
       history,
       userMessage: message.trim(),
+    });
+
+    logChatTurns({
+      familyId,
+      kidId: ctx.kidId,
+      model: result.model,
+      userMessage: message.trim(),
+      reply: result.reply,
     });
 
     return NextResponse.json(

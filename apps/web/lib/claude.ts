@@ -31,6 +31,31 @@ export type ChatContext = {
   // to shared "default-family" bucket (all kids share the 20/day quota).
   // Multi-tenant SaaS (post-P1 Supabase wire) → client passes real family_id UUID.
   familyId?: string;
+
+  // D-046 (2026-09-22) — "AI gia sư riêng cho từng bé". Resolved SERVER-SIDE in
+  // /api/chat from `family_kids` (never trust client-supplied bio/goals — a kid
+  // could edit localStorage). Audited against HKUDS/DeepTutor's memory design;
+  // borrowed the idea, not the code: a handful of distilled facts beats a raw
+  // history dump for steering tone/content (research: "5 extracted facts
+  // outperform 40K tokens of raw history on adaptation quality").
+  kidHobbies?: string;
+  kidGoals?: string;
+  kidFavoriteSubject?: string;
+  kidBio?: string;
+  learningSummary?: KidLearningSummary;
+};
+
+/**
+ * D-046 — distilled long-term memory for one kid. Rule-based, NOT LLM-generated
+ * (cost control) — recomputed by /api/family/progress whenever progress syncs.
+ * Kept intentionally small: a handful of facts, not a transcript.
+ */
+export type KidLearningSummary = {
+  total_completed?: number;
+  recent_topics?: string[];      // most recent completed item IDs, newest first
+  streak_days?: number;
+  last_active_date?: string;     // YYYY-MM-DD
+  updated_at?: string;           // ISO timestamp
 };
 
 /**
@@ -353,6 +378,26 @@ export function buildSystemPrompt(ctx: ChatContext): string {
     ? `\n\nNGỮ CẢNH HIỆN TẠI: kid=${ctx.kidName} age=${ctx.kidAge ?? "?"} lang=${ctx.lang} tab=${ctx.currentTab ?? "?"} progress=${ctx.overallPct ?? 0}% streak=${ctx.streakDays ?? 0}days pillar_focus=${ctx.pillarFocus ?? "?"}`
     : "";
 
+  // D-046: long-term memory block — only appears once the kid has a profile
+  // and/or synced progress history. Short on purpose (see type doc above).
+  const memoryFacts: string[] = [];
+  if (ctx.kidFavoriteSubject) memoryFacts.push(`môn yêu thích: ${ctx.kidFavoriteSubject}`);
+  if (ctx.kidHobbies) memoryFacts.push(`sở thích: ${ctx.kidHobbies}`);
+  if (ctx.kidGoals) memoryFacts.push(`mục tiêu con đặt ra: ${ctx.kidGoals}`);
+  if (ctx.kidBio) memoryFacts.push(`ghi chú: ${ctx.kidBio}`);
+  if (ctx.learningSummary?.total_completed) {
+    memoryFacts.push(`đã hoàn thành ${ctx.learningSummary.total_completed} mốc học tập tính đến nay`);
+  }
+  if (ctx.learningSummary?.recent_topics?.length) {
+    memoryFacts.push(`gần đây nhất đã học/luyện: ${ctx.learningSummary.recent_topics.slice(0, 5).join(", ")}`);
+  }
+  if (typeof ctx.learningSummary?.streak_days === "number" && ctx.learningSummary.streak_days > 0) {
+    memoryFacts.push(`chuỗi ngày học liên tiếp: ${ctx.learningSummary.streak_days} ngày`);
+  }
+  const memoryLine = memoryFacts.length
+    ? `\n\nGHI NHỚ DÀI HẠN VỀ CON (dùng để cá nhân hoá giọng điệu & ví dụ, KHÔNG đọc lại nguyên văn cho con nghe):\n- ${memoryFacts.join("\n- ")}`
+    : "";
+
   // D-028: inject single-year age-specific tone hint from age-curriculum.
   // Lazy-load to avoid circular imports and keep this module pure.
   let toneHint = "";
@@ -370,7 +415,7 @@ export function buildSystemPrompt(ctx: ChatContext): string {
     }
   }
 
-  const fullPrompt = rules + toneHint + contextLine;
+  const fullPrompt = rules + toneHint + contextLine + memoryLine;
   // D-030: apply per-family bot rename if configured. No-op for default 'Đại Ka'.
   const customName = ctx.lang === "en" ? (ctx.botName_en ?? ctx.botName) : ctx.botName;
   return applyBotNameOverride(fullPrompt, customName);
